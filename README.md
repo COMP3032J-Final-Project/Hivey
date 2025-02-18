@@ -1,5 +1,6 @@
 # SyncE
 
+[developer docs](./dev.md)
 
 ## Specification
 
