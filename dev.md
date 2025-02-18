@@ -9,7 +9,7 @@ This behavior is defined in `/src/params/expr.ts`.
 
 - [shadcn-svelte](https://next.shadcn-svelte.com/docs/components/button)
 - [tailwindcss](https://v3.tailwindcss.com/) NOTE we use tailwindcss v3 since
-  shadcn-svelte haven't support it yet.
+  shadcn-svelte haven't support v4 yet.
 - [paraglide-sveltekit](https://inlang.com/m/dxnzrydw/paraglide-sveltekit-i18n/getting-started)
   i18n/translation
 
