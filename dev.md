@@ -5,6 +5,10 @@ This project uses [sveltekit](https://svelte.dev/docs/kit/introduction)
 Every thing inside `/src/routes/[page=expr]/` (experiment) is development phase only.
 This behavior is defined in `/src/params/expr.ts`.
 
+# Icon
+
+Use [Lucide icon](https://lucide.dev/icons/) to provide consistent apperanece.
+
 # Used Libraries:
 
 - [shadcn-svelte](https://next.shadcn-svelte.com/docs/components/button)
@@ -12,7 +16,6 @@ This behavior is defined in `/src/params/expr.ts`.
   shadcn-svelte haven't support v4 yet.
 - [paraglide-sveltekit](https://inlang.com/m/dxnzrydw/paraglide-sveltekit-i18n/getting-started)
   i18n/translation
-
 
 ## Quick Start Guide for Used Libraries
 
