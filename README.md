@@ -1,4 +1,4 @@
-# SyncE
+# Hivey
 
 [developer docs](./dev.md)
 

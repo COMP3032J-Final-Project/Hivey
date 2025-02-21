@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "synce",
+      "name": "hivey",
       "dependencies": {
         "@inlang/paraglide-sveltekit": "^0.15.5",
         "@prgm/sveltekit-progress-bar": "^3.0.2",
