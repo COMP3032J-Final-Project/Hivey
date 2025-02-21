@@ -2,7 +2,8 @@ This project uses [sveltekit](https://svelte.dev/docs/kit/introduction)
 
 # NOTE
 
-Every thing inside `/src/routes/[page=expr]/` (experiment) is development phase only.
+- Please click `watch` button on the top-right corner to subscribe notifications.
+- Every thing inside `/src/routes/[page=expr]/` (experiment) is development phase only.
 This behavior is defined in `/src/params/expr.ts`.
 
 # Icon
