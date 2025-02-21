@@ -2,19 +2,19 @@
     import * as m from '$lib/paraglide/messages';
     import { Button } from "$lib/components/ui/button/index";
     
-	  let { children } = $props();
+	let { children } = $props();  
 </script>
 
 <div class="flex flex-col">
-    <div class="min-h-screen bg-gradient-to-br from-primary to-primary/60 text-white">
+    <div class="min-h-screen bg-gradient-to-br from-primary to-primary/30 text-white">
         <nav class="flex justify-between items-center p-6 px-8">
             <a href="/" class="text-3xl font-bold text-white">{ m.app_name() }</a>
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center gap-8">
                 <div class="flex items-center gap-4 ml-8">
-                    <Button href="#signin">Sign in</Button>
-                    <Button variant="secondary" href="#signup">Sign up</Button>
+                    <Button href="/auth/signin">Sign in</Button>
+                    <Button variant="secondary" href="/auth/signup">Sign up</Button>
                 </div>
             </div>
 
