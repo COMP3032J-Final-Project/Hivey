@@ -5,7 +5,8 @@ Description=Hivey web front-end service
 After=network.target
 
 [Service]
-Type=simple
+# good explanation of systemd service types: https://superuser.com/questions/1274901/systemd-forking-vs-simple
+Type=exec
 User=student
 WorkingDirectory=/var/www/hivey/frontend/
 # we use Caddy to reverse proxy Hivey
