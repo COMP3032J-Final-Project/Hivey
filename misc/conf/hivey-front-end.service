@@ -1,0 +1,15 @@
+# reference: https://bun.sh/guides/ecosystem/systemd
+
+[Unit]
+Description=Hivey web front-end service
+After=network.target
+
+[Service]
+Type=simple
+User=student
+WorkingDirectory=/var/www/hivey/frontend/
+ExecStart=/home/student/.bun/bin/bun run index.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
