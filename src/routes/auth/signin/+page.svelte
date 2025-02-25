@@ -1,5 +1,4 @@
 <script lang="ts">
-    import * as m from '$lib/paraglide/messages';
     import { Button } from "$lib/components/ui/button/index";
     
 </script>
@@ -17,10 +16,13 @@
             <input type="password" name="password" id="password" autocomplete="current-password"
                    class="w-full rounded-md bg-gray-100 px-3 py-1.5 text-base text-gray-900">
         </div>
-        <!-- <button type="submit" class="mt-6 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 font-semibold text-gray-100 shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            Sign In
-        </button> -->
-        <Button type="submit" variant="default" size="lg" class="mt-6 w-full font-semibold">
+        <div class="form-group form-check mt-4">
+            <label class="cursor-pointer label">
+                <input type="checkbox" name="remember" class="checkbox">
+                <span class="label-text">Remember Me</span>
+            </label>
+        </div>
+        <Button type="submit" variant="default" size="lg" class="mt-4 w-full font-semibold">
             Sign In
         </Button>
         <div class="mt-4 flex justify-center">
