@@ -14,6 +14,7 @@ Environment="PROTOCOL_HEADER=x-forwarded-proto"
 Environment="HOST_HEADER=x-forwarded-host"
 ExecStart=/home/student/.bun/bin/bun run index.js
 Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
