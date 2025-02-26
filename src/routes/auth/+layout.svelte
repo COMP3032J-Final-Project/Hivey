@@ -3,9 +3,9 @@
     let { children } = $props();
 </script>
 
-<div class="flex flex-col min-h-screen bg-gradient-to-br from-primary to-primary/30 text-white">
+<div class="flex flex-col min-h-screen bg-gradient-to-br from-primary to-primary/30 text--foreground">
     <nav class="flex justify-between items-center p-6 px-8">
-        <a href="/" class="text-3xl font-bold text-white">{ m.app_name() }</a>
+        <a href="/" class="text-3xl font-bold">{ m.app_name() }</a>
     </nav>
 
     <main class="flex flex-grow items-center justify-center p-6">

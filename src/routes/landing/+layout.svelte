@@ -6,15 +6,15 @@
 </script>
 
 <div class="flex flex-col">
-    <div class="min-h-screen bg-gradient-to-br from-primary to-primary/30 text-white">
+    <div class="min-h-screen bg-gradient-to-br from-primary to-primary/30 text-primary-foreground">
         <nav class="flex justify-between items-center p-6 px-8">
-            <a href="/" class="text-3xl font-bold text-white">{ m.app_name() }</a>
+            <a href="/" class="text-3xl font-bold">{ m.app_name() }</a>
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center gap-8">
                 <div class="flex items-center gap-4 ml-8">
-                    <Button href="/auth/signin">Sign in</Button>
-                    <Button variant="secondary" href="/auth/signup">Sign up</Button>
+                    <Button href="/auth/signin" variant="link" class="text-primary-foreground">Sign in</Button>
+                    <Button variant="secondary" href="/auth/signup" class="shadow">Sign up</Button>
                 </div>
             </div>
 
@@ -27,22 +27,16 @@
         </nav>
 
         <main>
-            <section class="text-center px-8 py-16 max-w-4xl mx-auto">
-                <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-                    Compose papers faster
+            <section class="text-center px-7 py-14 max-w-4xl mx-auto">
+                <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+                    One Editor, All Your Formats
                 </h1>
                 <p class="text-lg md:text-xl mb-8 opacity-90">
-                    Focus on your text and let Typst take care of layout and formatting.
+                    Collaborate in real-time while seamlessly previewing your work in Typst, LaTeX, or Markdown.
                 </p>
                 
                 <div class="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 justify-center">
-                    <a href="#signup" class="bg-white text-black px-6 py-3 rounded font-medium hover:opacity-90 transition-opacity">
-                        Sign up for free and try it now!
-                    </a>
-                    <a href="https://github.com/typst/typst" 
-                        class="border-2 border-white px-6 py-3 rounded font-medium hover:opacity-90 transition-opacity">
-                        View on GitHub
-                    </a>
+                    <Button size="lg" variant="secondary" href="/auth/signup">Sign up for free and try it now!</Button>
                 </div>
             </section>
 
