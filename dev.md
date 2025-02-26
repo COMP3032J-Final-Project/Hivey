@@ -18,6 +18,20 @@ Use [Lucide icon](https://lucide.dev/icons/) to provide consistent apperanece.
 - [paraglide-sveltekit](https://inlang.com/m/dxnzrydw/paraglide-sveltekit-i18n/getting-started)
   i18n/translation
 
+# Image Assets
+
+Please put them inside `src/lib/images` directory. Then you can write HTML code like
+this:
+
+``` html
+<enhanced:img class="w-12 h-12" src="$lib/images/logo.svg" alt="Logo" />
+```
+
+More information about `enhanced:img` tag: [SvelteKit - best practice - Images - @sveltejs/enhanced-img](https://svelte.dev/docs/kit/images#sveltejs-enhanced-img)
+
+Note that there is also `/static` directory, where the file is directly put into
+out website's root directory. See [SvelteKit - Project structure](https://svelte.dev/docs/kit/project-structure)
+
 ## Quick Start Guide for Used Libraries
 
 ### Shadcn-Svelte
