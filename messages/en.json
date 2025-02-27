@@ -1,5 +1,16 @@
 {
-	  "$schema": "https://inlang.com/schema/inlang-message-format",
-	  "hello_world": "Hello, {name} from en!",
-    "app_name": "Hivey"
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"hello_world": "Hello, {name} from en!",
+    "app_name": "Hivey",
+	"sign_up":"Sign Up",
+	"sign_in":"Sign In",
+	"sign_out":"Sign Out",
+	"name":"Name",
+	"email":"Email",
+	"password":"Password",
+	"confirm_password":"Confirm Password",
+	"remember_me":"Remember Me",
+	"to_sign_in":"Already Have An Account? Sign In",
+	"to_sign_up":"Need An Account? Sign Up"
+
 }
