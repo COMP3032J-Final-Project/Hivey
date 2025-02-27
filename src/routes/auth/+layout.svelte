@@ -6,7 +6,6 @@
 <div class="flex flex-col min-h-screen bg-gradient-to-br from-primary to-primary/30 text--foreground">
     <nav class="flex justify-between items-center p-6 px-8">
         <a href="/" class="text-3xl font-bold flex items-center gap-2">
-            <!-- Icon for logo - you can replace with your actual logo -->
             <enhanced:img class="w-12 h-12" src="$lib/images/logo.svg" alt="Logo" />
             <span>{ m.app_name() }</span>
         </a>

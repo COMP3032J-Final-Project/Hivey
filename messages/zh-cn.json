@@ -11,6 +11,8 @@
 	"confirm_password":"确认密码",
 	"remember_me":"记住我",
 	"to_sign_in":"已有账户？登录",
-	"to_sign_up":"需要账户？注册"
-
+	"to_sign_up":"需要账户？注册",
+	"share":"分享",
+	"download":"下载"
+	
 }

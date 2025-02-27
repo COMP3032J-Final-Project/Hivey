@@ -11,6 +11,8 @@
 	"confirm_password":"Confirm Password",
 	"remember_me":"Remember Me",
 	"to_sign_in":"Already Have An Account? Sign In",
-	"to_sign_up":"Need An Account? Sign Up"
-
+	"to_sign_up":"Need An Account? Sign Up",
+	"share":"Share",
+	"download":"Download"
+	
 }
