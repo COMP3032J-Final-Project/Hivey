@@ -3,11 +3,7 @@
 	  import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	  import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	  import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-    import { Plus, Settings } from 'lucide-svelte';
-    
-	  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
-	  import LogOut from "lucide-svelte/icons/log-out";
-	  import Sparkles from "lucide-svelte/icons/sparkles";
+    import { Settings, ChevronsUpDown, LogOut } from 'lucide-svelte';
 
 	  let { user }: { user: { name: string; email: string; avatar: string } } = $props();
 	  const sidebar = useSidebar();
