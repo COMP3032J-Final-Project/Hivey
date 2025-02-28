@@ -40,6 +40,8 @@
 		"@inlang/paraglide-sveltekit": "^0.15.5",
 		"@prgm/sveltekit-progress-bar": "^3.0.2",
 		"@sveltejs/enhanced-img": "^0.4.4",
-		"arctic": "^3.4.0"
+		"@zerodevx/svelte-toast": "^0.9.6",
+		"arctic": "^3.4.0",
+		"axios": "^1.8.1"
 	}
 }

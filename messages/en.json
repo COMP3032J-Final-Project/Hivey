@@ -11,6 +11,14 @@
 	"confirm_password":"Confirm Password",
 	"remember_me":"Remember Me",
 	"to_sign_in":"Already Have An Account? Sign In",
-	"to_sign_up":"Need An Account? Sign Up"
-
+	"to_sign_up":"Need An Account? Sign Up",
+	"error_user_exists":"User already exists",
+	"error_password_mismatch":"Passwords do not match",
+	"error_invalid_email":"Invalid email",
+	"error_invalid_user": "Invalid username or password",
+	"error_empty_username":"Username cannot be empty",
+	"error_empty_password":"Password cannot be empty",
+	"error_weak_password":"Password is too weak",
+	"error_network":"Network error",
+	"error_unknown":"Unknown error"
 }

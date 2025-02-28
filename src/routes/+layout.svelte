@@ -4,7 +4,12 @@
  import '../app.css';
  let { children } = $props();
  import { ProgressBar } from "@prgm/sveltekit-progress-bar";
+
+ import { SvelteToast } from '@zerodevx/svelte-toast';
 </script>
+
+<!-- TODO Toast 组件居中 -->
+<SvelteToast />
 
 <ProgressBar class="text-primary" />
 
