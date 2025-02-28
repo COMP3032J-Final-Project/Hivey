@@ -42,6 +42,7 @@
 		"@sveltejs/enhanced-img": "^0.4.4",
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"arctic": "^3.4.0",
-		"axios": "^1.8.1"
+		"axios": "^1.8.1",
+		"jsrepo": "^1.41.2"
 	}
 }

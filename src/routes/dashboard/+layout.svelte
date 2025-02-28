@@ -67,6 +67,10 @@
 						            title: "Shared with Me",
 						            url: "#",
 					          },
+                    {
+						            title: "Favourite",
+						            url: "#",
+					          },
 				        ],
 			      }
 		    ]

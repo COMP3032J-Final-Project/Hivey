@@ -12,6 +12,10 @@
 	"remember_me":"Remember Me",
 	"to_sign_in":"Already Have An Account? Sign In",
 	"to_sign_up":"Need An Account? Sign Up",
+	"share":"Share",
+	"download":"Download",
+	
+	"to_sign_up":"Need An Account? Sign Up",
 	"error_user_exists":"User already exists",
 	"error_password_mismatch":"Passwords do not match",
 	"error_invalid_email":"Invalid email",

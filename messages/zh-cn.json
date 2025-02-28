@@ -12,6 +12,8 @@
 	"remember_me":"记住我",
 	"to_sign_in":"已有账户？登录",
 	"to_sign_up":"需要账户？注册",
+	"share":"分享",
+	"download":"下载",
 	"error_user_exists":"用户已存在",
 	"error_password_mismatch":"密码不匹配",
 	"error_invalid_email":"无效的电子邮件",
@@ -20,5 +22,5 @@
 	"error_weak_password":"密码太弱",
 	"error_empty_password":"密码不能为空",
 	"error_network":"网络错误",
-	"error_unknown":"未知错误"
+	"error_unknown":"未知错误"	
 }
