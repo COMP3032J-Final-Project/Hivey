@@ -74,23 +74,33 @@
   });
 
   // 初始 Markdown 文本
-  let markDownText = `
-# 一号标题
+let markDownText = `
+# Heading 1
 
-## 二号标题
+## Heading 2
 
-### 三号标题
+### Heading 3
 
-这是百度的链接 [https://www.baidu.com/](https://www.baidu.com/)
+This is a link to [Google](https://www.google.com/).
+
+Here is an example of inline code: \`console.log('Hello, World!');\`.
+
+Below is a code block:
 
 \`\`\`javascript
-console.log('hello world')
+function greet(name) {
+    console.log(\`Hello, ${name}!\`);
+}
+greet('Alice');
 \`\`\`
 
-下面是一张图片
+Here is an image:
 
-![风景图](https://img0.baidu.com/it/u=1090967238,1582698902&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500)
-  `;
+![Landscape](https://img0.baidu.com/it/u=1090967238,1582698902&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500)
+
+This is **bold text** and this is *italic text*. You can also combine them like ***bold and italic***.
+
+`;
 
   // 渲染 Markdown 文本
   let renderMdText = (text: string) => {
@@ -156,7 +166,7 @@ console.log('hello world')
             <textarea
                 class="editor-area"
                 bind:value={markDownText}
-                placeholder="输入 Markdown 文本...">
+                placeholder="Start typing...">
             </textarea>
             <!-- <textarea class="flex-1 p-4 font-mono text-sm outline-none resize-none bg-transparent" placeholder="Start typing..."/> -->
         </div>
