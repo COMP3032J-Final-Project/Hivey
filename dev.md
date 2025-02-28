@@ -10,6 +10,7 @@ This behavior is defined in `/src/params/expr.ts`.
 
 - [lucide-svelte](https://lucide.dev/) the same icon library that shadcn-svelte uses.
 - [shadcn-svelte](https://next.shadcn-svelte.com/docs/components/button)
+- [shadcn-svelte-extras](https://github.com/ieedan/shadcn-svelte-extras)
 - [tailwindcss](https://v3.tailwindcss.com/) NOTE we use tailwindcss v3 since
   shadcn-svelte haven't support v4 yet.
 - [paraglide-sveltekit](https://inlang.com/m/dxnzrydw/paraglide-sveltekit-i18n/getting-started)
@@ -49,6 +50,21 @@ You can modify the component to suit your need (e.g. add more control properties
 
 Configuration is at `components.json`, where you can find the defined location of
 installed components.
+
+### Shadcn Svelte Extras
+
+To add a component, instead of using command like
+
+``` sh
+jsrepo add ui/chat 
+```
+
+You should run
+
+``` sh
+bunx jsrepo add ui/chat  # if you installed bun
+# or `npx jsrepo add ui/chat`
+```
 
 
 ### paraglide-sveltekit

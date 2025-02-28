@@ -40,6 +40,7 @@
 		"@inlang/paraglide-sveltekit": "^0.15.5",
 		"@prgm/sveltekit-progress-bar": "^3.0.2",
 		"@sveltejs/enhanced-img": "^0.4.4",
-		"arctic": "^3.4.0"
+		"arctic": "^3.4.0",
+		"jsrepo": "^1.41.2"
 	}
 }
