@@ -43,6 +43,9 @@
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"arctic": "^3.4.0",
 		"axios": "^1.8.1",
-		"jsrepo": "^1.41.2"
+		"jsrepo": "^1.41.2",
+		"codemirror": "^6.0.0",
+		"@codemirror/lang-markdown":"^6.3.2",
+		"markdown-it": "^14.0.0"
 	}
 }
