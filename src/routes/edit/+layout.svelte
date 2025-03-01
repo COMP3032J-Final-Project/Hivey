@@ -67,54 +67,52 @@
     }
 
     // 初始化 MarkdownIt 实例
-  const markdownRender = new MarkdownIt({
+    const markdownRender = new MarkdownIt({
     html: true,
     linkify: true,
     typographer: true,
-  });
+    });
+    
+    // 初始 Markdown 文本
+    let markDownText = $state(
+    `
+## Lists
 
-  // 初始 Markdown 文本
-let markDownText = `
-# Heading 1
+### Unordered
+- Create a list by starting a line with \`+\`, \`-\`, or \`*\`
+- Sub-lists are made by indenting 2 spaces:
+  - Marker character change forces new list start:
+    - Ac tristique libero volutpat at
+    - Facilisis in pretium nisl aliquet
+    - Nulla volutpat aliquam velit
+- Very easy!
 
-## Heading 2
+### Ordered
+1. Lorem ipsum dolor sit amet
+2. Consectetur adipiscing elit
+3. Integer molestie lorem at massa
+4. You can use sequential numbers...
+5. ...or keep all the numbers as \`1.\`
 
-### Heading 3
+Start numbering with offset:
+57. foo
+58. bar
+`
+    );
 
-This is a link to [Google](https://www.google.com/).
-
-Here is an example of inline code: \`console.log('Hello, World!');\`.
-
-Below is a code block:
-
-\`\`\`javascript
-function greet(name) {
-    console.log(\`Hello, ${name}!\`);
-}
-greet('Alice');
-\`\`\`
-
-Here is an image:
-
-![Landscape](https://img0.baidu.com/it/u=1090967238,1582698902&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500)
-
-This is **bold text** and this is *italic text*. You can also combine them like ***bold and italic***.
-
-`;
-
-  // 渲染 Markdown 文本
-  let renderMdText = (text: string) => {
+    // 渲染 Markdown 文本
+    let renderMdText = (text: string) => {
     return markdownRender.render(text);
-  };
+    };
 
-  // 实时更新预览
-  let previewHtml = writable('');
+    // 实时更新预览
+    let previewHtml = writable('');
 
-  $effect(() => {
-    const htmlString = renderMdText(markDownText); // 确保 htmlString 被正确定义
-    previewHtml.set(htmlString); // 使用 set 方法更新 store
-    console.log("previewHtml:", $previewHtml); // 调试输出
-  });
+    $effect(() => {
+    const htmlString = renderMdText(markDownText);
+    previewHtml.set(htmlString);
+    console.log("previewHtml:", $previewHtml);
+    });
 </script>
 
 <div class="h-screen flex flex-col">
@@ -239,5 +237,64 @@ This is **bold text** and this is *italic text*. You can also combine them like 
 
     .preview-area :global(p) {
         line-height: 20px;
+    }
+
+    .preview-area :global(ol) {
+    list-style-type: decimal;
+    padding-left: 20px;
+    }
+
+    .preview-area :global(ul) {
+        list-style-type: disc;
+        padding-left: 20px;
+    }
+
+    .preview-area :global(li) {
+        margin-bottom: 8px;
+    }
+
+    .preview-area :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    }
+
+    .preview-area :global(th),
+    .preview-area :global(td) {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    }
+
+    .preview-area :global(th) {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    }
+
+    .preview-area :global(tbody tr:nth-child(odd)) {
+    background-color: #f9f9f9;
+    }
+
+    .preview-area :global(tbody tr:nth-child(even)) {
+    background-color: #fff;
+    }
+
+    .preview-area :global(tbody tr:hover) {
+    background-color: #f1f1f1;
+    }
+
+    .preview-area :global(thead) {
+    position: sticky;
+    top: 0;
+    background-color: #f5f5f5;
+    z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+    .preview-area :global(table) {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
     }
 </style>
