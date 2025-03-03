@@ -76,6 +76,27 @@
     // 初始 Markdown 文本
     let markDownText = $state(
     `
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+This is a link to [Google](https://www.google.com/).
+
+Here is an example of inline code: \`console.log('Hello, World!');\`.
+
+Below is a code block:
+
+\`\`\`javascript
+function greet(name) {
+    console.log(\`Hello, ${name}!\`);
+}
+greet('Alice');
+\`\`\`
+
+This is **bold text** and this is *italic text*. You can also combine them like ***bold and italic***.
+
 ## Lists
 
 ### Unordered
@@ -83,20 +104,20 @@
 - Sub-lists are made by indenting 2 spaces:
   - Marker character change forces new list start:
     - Ac tristique libero volutpat at
-    - Facilisis in pretium nisl aliquet
-    - Nulla volutpat aliquam velit
-- Very easy!
 
 ### Ordered
 1. Lorem ipsum dolor sit amet
-2. Consectetur adipiscing elit
-3. Integer molestie lorem at massa
-4. You can use sequential numbers...
-5. ...or keep all the numbers as \`1.\`
+2. You can use sequential numbers...
+3. ...or keep all the numbers as \`1.\`
 
 Start numbering with offset:
 57. foo
 58. bar
+
+Here is an image:
+
+![Landscape](https://img0.baidu.com/it/u=1090967238,1582698902&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500)
+
 `
     );
 
