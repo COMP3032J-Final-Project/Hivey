@@ -5,7 +5,12 @@
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import { writable } from 'svelte/store';
+    import { onMount } from 'svelte';
     import MarkdownIt from 'markdown-it';
+    import { EditorView, basicSetup } from 'codemirror';
+    import { lineNumbers} from '@codemirror/view';
+    import { EditorState } from '@codemirror/state';
+    import { markdown } from '@codemirror/lang-markdown';
     let { children } = $props();
     
     const leftWidth = writable(200);
@@ -66,13 +71,6 @@
       window.removeEventListener('mouseup', stopRightDrag);
     }
 
-    // 初始化 MarkdownIt 实例
-    const markdownRender = new MarkdownIt({
-    html: true,
-    linkify: true,
-    typographer: true,
-    });
-    
     // 初始 Markdown 文本
     let markDownText = $state(
     `
@@ -90,7 +88,7 @@ Below is a code block:
 
 \`\`\`javascript
 function greet(name) {
-    console.log(\`Hello, ${name}!\`);
+    console.log(\`Hello!\`);
 }
 greet('Alice');
 \`\`\`
@@ -121,18 +119,53 @@ Here is an image:
 `
     );
 
+    onMount(() => {
+        const startState = EditorState.create({
+            doc: markDownText, // 使用初始的 markDownText
+            extensions: [
+                basicSetup, 
+                markdown(), 
+                lineNumbers({}),
+                EditorView.lineWrapping, 
+                EditorView.theme({
+                    ".cm-scroller": {
+                        overflow: "auto", // 确保滚动条启用
+                    },
+                }),
+                EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        // 当编辑器内容变化时，更新 markDownText
+                        markDownText = update.state.doc.toString();
+                    }
+                })
+            ]
+        });
+
+        new EditorView({
+            state: startState,
+            parent: document.getElementById('editor-area') as HTMLElement
+        });
+    });
+
+
+    // 初始化 MarkdownIt 实例
+    const markdownRender = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+    });
+
     // 渲染 Markdown 文本
     let renderMdText = (text: string) => {
-    return markdownRender.render(text);
+        return markdownRender.render(text);
     };
 
     // 实时更新预览
     let previewHtml = writable('');
 
     $effect(() => {
-    const htmlString = renderMdText(markDownText);
-    previewHtml.set(htmlString);
-    console.log("previewHtml:", $previewHtml);
+        const htmlString = renderMdText(markDownText);
+        previewHtml.set(htmlString);
     });
 </script>
 
@@ -182,12 +215,9 @@ Here is an image:
             <div class="p-2 border-b border-gray-200 bg-white">
                 <Button variant="secondary" class="text-gray-600" size="sm">Format</Button>
             </div>
-            <textarea
-                class="editor-area"
-                bind:value={markDownText}
-                placeholder="Start typing...">
-            </textarea>
-            <!-- <textarea class="flex-1 p-4 font-mono text-sm outline-none resize-none bg-transparent" placeholder="Start typing..."/> -->
+            <div class="editor-container">
+                <div id="editor-area" class="editor-area"></div>
+            </div>
         </div>
 
         <!-- Right Preview -->
@@ -211,7 +241,8 @@ Here is an image:
     .editor-area {
         width: 100%;
         height: 100%;
-        padding: 16px;
+        max-height: 87vh;
+        padding: 5px;
         font-family: monospace;
         font-size: 14px;
         line-height: 1.5;
@@ -219,6 +250,7 @@ Here is an image:
         outline: none;
         resize: none;
         background-color: #f9f9f9;
+        overflow-y: auto;
     }
 
     .preview-area {
