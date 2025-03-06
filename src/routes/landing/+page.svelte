@@ -5,7 +5,7 @@
 <!-- Features Section -->
 <div class="py-16 md:py-24 bg-background">
     <div class="max-w-7xl mx-auto px-6 md:px-8">
-        <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">Why Choose SyncE?</h2>
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">Why Choose Hivey?</h2>
         
         <div class="grid md:grid-cols-3 gap-8">
             <!-- Feature 1 -->

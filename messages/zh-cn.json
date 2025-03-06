@@ -22,5 +22,8 @@
 	"error_weak_password":"密码太弱",
 	"error_empty_password":"密码不能为空",
 	"error_network":"网络错误",
-	"error_unknown":"未知错误"	
+	"error_unknown":"未知错误",
+	"sign_up_for_free":"免费注册",
+	"learn_more":"了解更多"
+
 }

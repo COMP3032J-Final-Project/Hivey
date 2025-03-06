@@ -43,8 +43,8 @@
             {#if mobileMenuOpen}
                 <div class="md:hidden px-8 pb-6 pt-2 bg-primary/90 absolute w-full" transition:fade={{ duration: 200 }}>
                     <div class="flex flex-col space-y-4">
-                        <Button href="/auth/signin" variant="link" class="text-primary-foreground justify-start">Sign in</Button>
-                        <Button variant="secondary" href="/auth/signup" class="shadow">Sign up</Button>
+                        <Button href="/auth/signin" variant="link" class="text-primary-foreground justify-start">{m.sign_in()}</Button>
+                        <Button variant="secondary" href="/auth/signup" class="shadow">{m.sign_up()}</Button>
                     </div>
                 </div>
             {/if}
@@ -63,19 +63,19 @@
                     <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                         One Editor, <span class="text-secondary-foreground">All Your Formats</span>
                     </h1>
-                    <p class="text-lg md:text-xl mb-10 opacity-90 max-w-2xl mx-auto">
+                    <p class="text-lg md:text-xl mb-10 opacity-90 max-w-xl mx-auto">
                         Collaborate in real-time while seamlessly previewing your work in Typst, LaTeX, or Markdown.
                     </p>
                     
                     <div class="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 justify-center">
                         <Button size="lg" variant="secondary" href="/auth/signup" class="font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8">
-                            Sign up for free
+                            {m.sign_up_for_free()}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                         </Button>
                         <Button size="lg" variant="outline" class="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10">
-                            Learn more
+                            {m.learn_more()}
                         </Button>
                     </div>
                 </div>
@@ -84,10 +84,10 @@
             <!-- Editor Preview Section -->
             <section class="max-w-7xl mx-auto px-4 md:px-8 pb-16 md:pb-24 relative z-0">
                 <div class="bg-card rounded-xl shadow-2xl overflow-hidden border border-white/10">
-                    <!-- Replace this with an actual editor mockup image of SyncE -->
+                    <!-- Replace this with an actual editor mockup image of Hivey -->
                     <img 
                         src="https://picsum.photos/1200/600" 
-                        alt="SyncE Editor Interface"
+                        alt="Hivey Editor Interface"
                         class="w-full">
                     <!--
                     <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
@@ -104,7 +104,7 @@
     <div class="bg-primary/10 py-16 md:py-20">
         <div class="max-w-5xl mx-auto px-6 md:px-8 text-center">
             <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to streamline your document workflow?</h2>
-            <p class="text-lg mb-8 max-w-2xl mx-auto text-muted-foreground">Join thousands of researchers, students, and professionals who are already using SyncE.</p>
+            <p class="text-lg mb-8 max-w-2xl mx-auto text-muted-foreground">Join thousands of researchers, students, and professionals who are already using Hivey.</p>
             <Button size="lg" href="/auth/signup" class="font-medium shadow-lg text-lg px-8">
                 Get started for free
             </Button>
