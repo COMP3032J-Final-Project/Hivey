@@ -126,18 +126,17 @@
                 </div>
                 
                 <div class="flex gap-6">
-                    <a href="/about" class="text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
+                    <a href="https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link"  target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.about()}</a>
                     <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-                    <a href="/pricing" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-                    <a href="/contact" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+                    <a href="/footer/pricing" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.pricing()}</a>
+                    <a href="/footer/contact" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact()}</a>
                 </div>
             </div>
             
             <div class="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-muted-foreground">Â© {new Date().getFullYear()} { m.app_name() }. All rights reserved.</p>
+                <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} { m.app_name() }. All rights reserved.</p>
                 <div class="flex gap-4 mt-4 md:mt-0">
-                    <a href="/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms</a>
-                    <a href="/privacy" class="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
+                    <a href="/footer/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">{m.terms()}</a>
                 </div>
             </div>
         </div>
