@@ -27,3 +27,4 @@ src/lib/paraglide
 
 # IDE
 .cursorrules
+.aider*
