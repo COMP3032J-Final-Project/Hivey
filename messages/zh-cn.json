@@ -44,5 +44,9 @@
   "ready_to_streamline_your_document_workflow":"准备好优化您的文档工作流程了吗？",
   "join_thousands_of_researchers_students_and_professionals":"加入数千名研究人员、学生和专业人士，他们已经在使用Hivey。",
   "the_collaborative_editor_for_all_your_document_formats":"一个编辑器，所有格式",
-  "all_rights_reserved":"所有权利保留。"
+  "all_rights_reserved":"所有权利保留。",
+  "to_sign_up":"需要账户？注册",
+  "success_sign_up":"注册成功！正在跳转...",
+  "success_sign_in":"登录成功！正在跳转...",
+  "loading":"加载中..."
 }
