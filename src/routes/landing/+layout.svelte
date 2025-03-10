@@ -128,15 +128,15 @@
                 <div class="flex gap-6">
                     <a href="https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link"  target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.about()}</a>
                     <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-                    <a href="/footer/pricing" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.pricing()}</a>
-                    <a href="/footer/contact" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact()}</a>
+                    <a href="#" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.pricing()}</a>
+                    <a href="#" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact()}</a>
                 </div>
             </div>
             
             <div class="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
                 <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} { m.app_name() }. All rights reserved.</p>
                 <div class="flex gap-4 mt-4 md:mt-0">
-                    <a href="/footer/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">{m.terms()}</a>
+                    <a href="/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">{m.terms()}</a>
                 </div>
             </div>
         </div>

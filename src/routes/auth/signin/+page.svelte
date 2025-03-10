@@ -116,7 +116,7 @@
             >
         </div>
 
-        <!-- Remeber Me -->
+        <!-- Remember Me -->
         <div class="form-group form-check mt-4">
             <label class="cursor-pointer label flex items-center gap-2">
                 <input 
