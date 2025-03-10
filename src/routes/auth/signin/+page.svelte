@@ -5,7 +5,8 @@
     import { postUserLogin } from '$lib/api/auth';
     import type { LoginForm } from '$lib/types/auth';
     import { goto } from '$app/navigation';
-    import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+    // 导入自定义toast函数
+    import { success, failure } from '$lib/components/ui/toast';
     import { page } from '$app/stores';
     import { onMount } from 'svelte';
 
@@ -17,40 +18,6 @@
 
 	// 记住我选项
 	let rememberMe = false;
-
-	// 成功提示样式
-	const successToast = {
-		theme: {
-			'--toastBackground': 'rgba(76, 175, 80, 0.95)',
-			'--toastColor': 'white',
-			'--toastBarBackground': '#2E7D32',
-			'--toastBorderRadius': '8px',
-			'--toastBoxShadow': '0 4px 12px rgba(0, 0, 0, 0.15)',
-			'--toastPadding': '12px 16px',
-			'--toastWidth': 'auto',
-			'--toastMinWidth': '280px',
-			'--toastMaxWidth': '320px'
-		},
-		duration: 1000,
-		position: 'top-center'
-	};
-
-	// 错误提示样式
-	const errorToast = {
-		theme: {
-			'--toastBackground': 'rgba(244, 67, 54, 0.95)',
-			'--toastColor': 'white',
-			'--toastBarBackground': '#C62828',
-			'--toastBorderRadius': '8px',
-			'--toastBoxShadow': '0 4px 12px rgba(0, 0, 0, 0.15)',
-			'--toastPadding': '12px 16px',
-			'--toastWidth': 'auto',
-			'--toastMinWidth': '280px',
-			'--toastMaxWidth': '320px'
-		},
-		duration: 1000,
-		position: 'top-center'
-	};
 
     // 从注册页面跳转过来时自动填充表单
     onMount(() => {
@@ -93,7 +60,7 @@
             }
 
             // 登录成功处理
-            toast.push('🎉 Login successful! Jumping...', successToast);
+            success('🎉 登录成功！正在跳转...');
             
             // 存储用户信息（可以使用更安全的方式如sessionStorage或状态管理）
             localStorage.setItem('currentUser', JSON.stringify(user));
@@ -113,7 +80,7 @@
             };
             const errorMessage = (error as { message: string }).message;
             
-            toast.push(messageMap[errorMessage] || m.error_unknown(), errorToast);
+            failure(messageMap[errorMessage] || m.error_unknown());
         }
     };
 </script>

@@ -5,45 +5,14 @@
 	import { postUserRegister } from '$lib/api/auth';
 	import { type RegisterForm } from '$lib/types/auth';
 	import { goto } from '$app/navigation';
-	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+	// 导入自定义toast函数
+	import { success, failure } from '$lib/components/ui/toast';
 
 	let formData: RegisterForm = {
 		username: '',
 		email: '',
 		password: '',
 		confirm_password: ''
-	};
-
-	const successToast = {
-		theme: {
-			'--toastBackground': 'rgba(76, 175, 80, 0.95)',
-			'--toastColor': 'white',
-			'--toastBarBackground': '#2E7D32',
-			'--toastBorderRadius': '8px',
-			'--toastBoxShadow': '0 4px 12px rgba(0, 0, 0, 0.15)',
-			'--toastPadding': '12px 16px',
-			'--toastWidth': 'auto',
-			'--toastMinWidth': '280px',
-			'--toastMaxWidth': '320px'
-		},
-		duration: 1000,
-		position: 'top-center'
-	};
-
-	const errorToast = {
-		theme: {
-			'--toastBackground': 'rgba(244, 67, 54, 0.95)',
-			'--toastColor': 'white',
-			'--toastBarBackground': '#C62828',
-			'--toastBorderRadius': '8px',
-			'--toastBoxShadow': '0 4px 12px rgba(0, 0, 0, 0.15)',
-			'--toastPadding': '12px 16px',
-			'--toastWidth': 'auto',
-			'--toastMinWidth': '280px',
-			'--toastMaxWidth': '320px'
-		},
-		duration: 1000,
-		position: 'top-center'
 	};
 
 	const handleSubmit = async (e: Event) => {
@@ -60,7 +29,7 @@
 			const user = await postUserRegister(formData);
 
 			// 注册成功处理
-			toast.push('🎉 Registered successfully! jumping...', successToast);
+			success('🎉 注册成功！正在跳转...');
 			setTimeout(() => {
 				// 带着用户信息跳转到登录页并自动填充用户邮箱和密码
 				goto(`/auth/signin`,{
@@ -84,7 +53,7 @@
 			};
 			const errorMessage = (error as { message: string }).message;
 
-			toast.push(messageMap[errorMessage] || m.error_unknown(), errorToast);
+			failure(messageMap[errorMessage] || m.error_unknown());
 		}
 	};
 </script>
