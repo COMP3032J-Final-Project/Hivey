@@ -1,5 +1,7 @@
 <script lang="ts">
     import * as m from '$lib/paraglide/messages';
+    import Footer from '$lib/components/Footer.svelte';
+    import Header from '$lib/components/Header.svelte';
     import { Button } from "$lib/components/ui/button/index";
     import { fade } from 'svelte/transition';
     import { assets } from '$app/paths';
@@ -15,40 +17,7 @@
 <div class="flex flex-col min-h-screen">
     <!-- Hero Section with Gradient Background -->
     <div class="bg-gradient-to-br from-primary to-primary/30 text-primary-foreground">
-        <header class="relative z-10">
-            <nav class="flex justify-between items-center p-6 px-8 max-w-7xl mx-auto">
-                <a href="/" class="text-3xl font-bold flex items-center gap-2">
-                    <!-- Icon for logo - you can replace with your actual logo -->
-                    <enhanced:img class="w-12 h-12" src="$lib/images/logo.svg" alt="Logo" />
-                    <span>{ m.app_name() }</span>
-                </a>
-                
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center gap-8">
-                    <div class="flex items-center gap-4">
-                        <Button href="/auth/signin" variant="link" class="text-primary-foreground font-medium">{ m.sign_in() }</Button>
-                        <Button variant="secondary" href="/auth/signup" class="shadow-md hover:shadow-lg transition-all duration-300">{ m.sign_up() }</Button>
-                    </div>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <button class="md:hidden focus:outline-none" on:click={toggleMobileMenu}>
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-16 6h16"}/>
-                    </svg>
-                </button>
-            </nav>
-            
-            <!-- Mobile Menu -->
-            {#if mobileMenuOpen}
-                <div class="md:hidden px-8 pb-6 pt-2 bg-primary/90 absolute w-full" transition:fade={{ duration: 200 }}>
-                    <div class="flex flex-col space-y-4">
-                        <Button href="/auth/signin" variant="link" class="text-primary-foreground justify-start">{m.sign_in()}</Button>
-                        <Button variant="secondary" href="/auth/signup" class="shadow">{m.sign_up()}</Button>
-                    </div>
-                </div>
-            {/if}
-        </header>
+        <Header />
 
         <main>
             <!-- Hero Content -->
@@ -110,34 +79,5 @@
         </div>
     </div>
     
-    <!-- Footer -->
-    <footer class="bg-muted py-12">
-        <div class="max-w-7xl mx-auto px-6 md:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-6 md:mb-0">
-                    <a href="/" class="text-xl font-bold flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        { m.app_name() }
-                    </a>
-                    <p class="mt-2 text-sm text-muted-foreground">{m.the_collaborative_editor_for_all_your_document_formats()}</p>
-                </div>
-                
-                <div class="flex gap-6">
-                    <a href="https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link"  target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.about()}</a>
-                    <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.features()}</a>
-                    <a href="#" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.pricing()}</a>
-                    <a href="#" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact()}</a>
-                </div>
-            </div>
-            
-            <div class="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} { m.app_name() }. {m.all_rights_reserved()}</p>
-                <div class="flex gap-4 mt-4 md:mt-0">
-                    <a href="/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">{m.terms()}</a>
-                </div>
-            </div>
-        </div>
-    </footer>    
+    <Footer />
 </div>
