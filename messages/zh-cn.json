@@ -1,9 +1,9 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "about": "关于",
+  "about": "关于Hivey",
   "app_name": "Hivey",
   "confirm_password":"确认密码",
-  "contact": "联系方式",
+  "contact": "联系我们",
   "download":"下载",
   "email":"电子邮件",
   "error_empty_password":"密码不能为空",
@@ -19,14 +19,14 @@
   "learn_more":"了解更多",
   "name":"用户名",
   "password":"密码",
-  "pricing": "价格",
+  "pricing": "计划&定价",
   "remember_me":"记住我",
   "share":"分享",
   "sign_in":"登录",
   "sign_out":"登出",
   "sign_up":"注册",
   "sign_up_for_free":"免费注册",
-  "terms": "条款",
+  "terms": "隐私和条款",
   "to_sign_in":"已有账户？登录",
   "to_sign_up":"需要账户？注册"
 }

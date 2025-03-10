@@ -3,7 +3,7 @@
   "about": "About",
   "app_name": "Hivey",
   "confirm_password":"Confirm Password",
-  "contact": "Concact",
+  "contact": "Contact",
   "download":"Download",
   "email":"Email",
   "error_empty_password":"Password cannot be empty",
@@ -26,7 +26,7 @@
   "sign_out":"Sign Out",
   "sign_up":"Sign Up",
   "sign_up_for_free":"Sign up for free",
-  "terms": "Terms",
+  "terms": "Terms and Privacy",
   "to_sign_in":"Already Have An Account? Sign In",
   "to_sign_up":"Need An Account? Sign Up"
 }
