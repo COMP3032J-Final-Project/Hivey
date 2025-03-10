@@ -38,9 +38,6 @@
     {#if mobileMenuOpen}
         <div class="md:hidden px-8 pb-6 pt-2 bg-primary/90 absolute w-full" transition:fade={{ duration: 200 }}>
             <div class="flex flex-col space-y-4">
-                <a href="/features" class="text-primary-foreground py-2">{ m.features() }</a>
-                <a href="#pricing" class="text-primary-foreground py-2">{ m.pricing() }</a>
-                <a href="#contact" class="text-primary-foreground py-2">{ m.contact() }</a>
                 <Button href="/auth/signin" variant="link" class="text-primary-foreground justify-start">{m.sign_in()}</Button>
                 <Button variant="secondary" href="/auth/signup" class="shadow">{m.sign_up()}</Button>
             </div>
