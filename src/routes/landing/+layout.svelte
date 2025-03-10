@@ -61,10 +61,10 @@
                 
                 <div class="text-center px-7 py-14 md:py-20 max-w-4xl mx-auto relative z-0">
                     <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                        One Editor, <span class="text-secondary-foreground">All Your Formats</span>
+                        {m.one_editor_all_formats()}    
                     </h1>
                     <p class="text-lg md:text-xl mb-10 opacity-90 max-w-xl mx-auto">
-                        Collaborate in real-time while seamlessly previewing your work in Typst, LaTeX, or Markdown.
+                        {m.one_editor_all_formats_description()}
                     </p>
                     
                     <div class="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 justify-center">
@@ -74,7 +74,7 @@
                                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                         </Button>
-                        <Button size="lg" variant="outline" class="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10">
+                        <Button size="lg" variant="outline" class="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10" href="/features">
                             {m.learn_more()}
                         </Button>
                     </div>
@@ -84,7 +84,6 @@
             <!-- Editor Preview Section -->
             <section class="max-w-7xl mx-auto px-4 md:px-8 pb-16 md:pb-24 relative z-0">
                 <div class="bg-card rounded-xl shadow-2xl overflow-hidden border border-white/10">
-                    <!-- Replace this with an actual editor mockup image of Hivey -->
                     <img 
                         src="https://picsum.photos/1200/600" 
                         alt="Hivey Editor Interface"
@@ -103,10 +102,10 @@
     <!-- CTA Section -->
     <div class="bg-primary/10 py-16 md:py-20">
         <div class="max-w-5xl mx-auto px-6 md:px-8 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to streamline your document workflow?</h2>
-            <p class="text-lg mb-8 max-w-2xl mx-auto text-muted-foreground">Join thousands of researchers, students, and professionals who are already using Hivey.</p>
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">{m.ready_to_streamline_your_document_workflow()}</h2>   
+            <p class="text-lg mb-8 max-w-2xl mx-auto text-muted-foreground">{m.join_thousands_of_researchers_students_and_professionals()}</p>
             <Button size="lg" href="/auth/signup" class="font-medium shadow-lg text-lg px-8">
-                Get started for free
+                {m.get_started_for_free()}
             </Button>
         </div>
     </div>
@@ -122,19 +121,19 @@
                         </svg>
                         { m.app_name() }
                     </a>
-                    <p class="mt-2 text-sm text-muted-foreground">The collaborative editor for all your document formats.</p>
+                    <p class="mt-2 text-sm text-muted-foreground">{m.the_collaborative_editor_for_all_your_document_formats()}</p>
                 </div>
                 
                 <div class="flex gap-6">
                     <a href="https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link"  target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.about()}</a>
-                    <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
+                    <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.features()}</a>
                     <a href="#" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.pricing()}</a>
                     <a href="#" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact()}</a>
                 </div>
             </div>
             
             <div class="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} { m.app_name() }. All rights reserved.</p>
+                <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} { m.app_name() }. {m.all_rights_reserved()}</p>
                 <div class="flex gap-4 mt-4 md:mt-0">
                     <a href="/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">{m.terms()}</a>
                 </div>
