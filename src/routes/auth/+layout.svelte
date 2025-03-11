@@ -1,5 +1,6 @@
 <script lang="ts">
     import * as m from '$lib/paraglide/messages';
+    import LanguageButton from "$lib/components/language-button.svelte";
     let { children } = $props();
 </script>
 
@@ -9,6 +10,7 @@
             <enhanced:img class="w-12 h-12" src="$lib/images/logo.svg" alt="Logo" />
             <span>{ m.app_name() }</span>
         </a>
+        <LanguageButton />
     </nav>
     
     <main class="flex flex-grow items-center justify-center p-6">
