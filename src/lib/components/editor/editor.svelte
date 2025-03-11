@@ -5,7 +5,9 @@
     import { EditorState } from '@codemirror/state';
     import { markdown } from '@codemirror/lang-markdown';
     
-    let { value = $bindable() } = $props(); 
+    let { value = $bindable() } = $props();
+
+    let editorAreaElem: HTMLElement;
 
     onMount(() => {
         const startState = EditorState.create({
@@ -27,8 +29,7 @@
                 }),
                 EditorView.updateListener.of((update) => {
                     if (update.docChanged) {
-                        const newText = update.state.doc.toString();
-                        value = newText;
+                        value = update.state.doc.toString();
                     }
                 })
             ]
@@ -36,9 +37,9 @@
 
         new EditorView({
             state: startState,
-            parent: document.getElementById('editor-area') as HTMLElement
+            parent: editorAreaElem
         });
     });
 </script>
 
-<div id="editor-area" class="w-full h-full"></div>
+<div bind:this={editorAreaElem} class="w-full h-full"></div>
