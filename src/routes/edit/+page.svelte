@@ -3,8 +3,8 @@
     import { Button } from "$lib/components/ui/button";
     import * as Breadcrumb from "$lib/components/ui/breadcrumb";
     import * as Resizable from "$lib/components/ui/resizable/index.js";
-    import MarkdownEditor from "$lib/components/editor/editor.svelte";
-    import MarkdownPreview from "$lib/components/editor/markdown-preview.svelte";
+    import Editor from "$lib/components/editor.svelte";
+    import Previewer from "$lib/components/previewer.svelte";
     
     let docContent = $state("");
 
@@ -55,16 +55,13 @@
                     <Button variant="secondary" class="text-gray-600" size="sm" onclick={formatMarkdown}>Format</Button>
                 </div>
                 <div class="flex-1 h-full">
-                    <MarkdownEditor bind:value={docContent}/>
+                    <Editor bind:value={docContent}/>
                 </div>
             </div>
         </Resizable.Pane>
         <Resizable.Handle />
         <Resizable.Pane>
-            <div class="h-full p-4 overflow-y-auto">
-                <h3 class="text-sm font-semibold text-gray-500 mb-4">Preview</h3>
-                <MarkdownPreview content={docContent} />
-            </div>
+            <Previewer fileType="markdown" content={docContent} />
         </Resizable.Pane>
     </Resizable.PaneGroup>
 </div>
