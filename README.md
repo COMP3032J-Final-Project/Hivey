@@ -31,13 +31,22 @@ first check the `scripts` entry in `package.json`, then run command like `bun ru
 
 ## Building
 
+You can preview the production build with `bun run preview`.
+
+To manually do this, you can do the following steps.
+
 To create a production version of the app:
 
 ```bash
 bun run build
 ```
 
-You can preview the production build with `bun run preview`.
+Then move the `build` directory in another random directory which doesn't have parent directories
+that contains `node_modules` directories (to ensure we have no libraries installed at the
+beginning of server run).
+
+Finally you can run `bun ./index.js` in that build directory to server up.
+
 
 TODO
 
