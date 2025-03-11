@@ -20,8 +20,8 @@
     // Initial Markdown text
     let markdownText = $state(initialContent);
 
-    function handleEditorChange(event: CustomEvent<string>) {
-        markdownText = event.detail;
+    function handleEditorChange(newText: string) {
+        markdownText = newText;
     }
     
     function handleLeftResize(event: CustomEvent<number>) {
@@ -83,10 +83,10 @@
         <!-- Editor Area -->
         <div class="flex-1 flex flex-col bg-gray-50" style="width: calc(100% - {leftWidth + rightWidth}px)">
             <div class="p-2 border-b border-gray-200 bg-white">
-                <Button variant="secondary" class="text-gray-600" size="sm" on:click={formatMarkdown}>Format</Button>
+                <Button variant="secondary" class="text-gray-600" size="sm" onclick={formatMarkdown}>Format</Button>
             </div>
             <div class="flex-1 h-full">
-                <MarkdownEditor initialValue={markdownText} on:change={handleEditorChange} />
+                <MarkdownEditor value={markdownText} change={handleEditorChange} />
             </div>
         </div>
 

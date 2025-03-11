@@ -10,16 +10,16 @@
     import { markdown } from '@codemirror/lang-markdown';
     
     let {
-        initialValue,
+        value,
         change = (_: string) => {}
     }: {
-        initialValue: string,
+        value: string,
         change: (newText: string) => void 
     } = $props(); 
 
     onMount(() => {
         const startState = EditorState.create({
-            doc: initialValue,
+            doc: value,
             extensions: [
                 basicSetup,
                 markdown(), 
