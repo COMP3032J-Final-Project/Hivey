@@ -37,5 +37,7 @@ export interface LoginForm {
   password: string;
 }
 
-
-
+// 刷新token表单
+export interface RefreshUserAuthForm {
+  refresh_token: string;
+}
