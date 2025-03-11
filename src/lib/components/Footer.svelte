@@ -19,7 +19,7 @@
                 <a href="https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.about()}</a>
                 <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.features()}</a>
                 <a href="#pricing" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.pricing()}</a>
-                <a href="#contact" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact()}</a>
+                <a href="/contact" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact()}</a>
             </div>
         </div>
         
