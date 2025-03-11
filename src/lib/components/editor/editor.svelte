@@ -1,7 +1,3 @@
-<!--
-     Custom Event: on:change  (change: string)
--->
-
 <script lang="ts">
     import { onMount } from 'svelte';
     import { EditorView, basicSetup } from 'codemirror';
@@ -9,13 +5,7 @@
     import { EditorState } from '@codemirror/state';
     import { markdown } from '@codemirror/lang-markdown';
     
-    let {
-        value,
-        change = (_: string) => {}
-    }: {
-        value: string,
-        change: (newText: string) => void 
-    } = $props(); 
+    let { value = $bindable() } = $props(); 
 
     onMount(() => {
         const startState = EditorState.create({
@@ -38,7 +28,7 @@
                 EditorView.updateListener.of((update) => {
                     if (update.docChanged) {
                         const newText = update.state.doc.toString();
-                        change(newText);
+                        value = newText;
                     }
                 })
             ]

@@ -6,15 +6,8 @@
     import MarkdownEditor from "$lib/components/editor/editor.svelte";
     import MarkdownPreview from "$lib/components/editor/markdown-preview.svelte";
     
-    const initialContent = ``;
-    
-    // Initial Markdown text
-    let markdownText = $state(initialContent);
+    let docContent = $state("");
 
-    function handleEditorChange(newText: string) {
-        markdownText = newText;
-    }
-    
     function formatMarkdown() {
         // Implement markdown formatting logic here
         console.log('Format markdown');
@@ -62,7 +55,7 @@
                     <Button variant="secondary" class="text-gray-600" size="sm" onclick={formatMarkdown}>Format</Button>
                 </div>
                 <div class="flex-1 h-full">
-                    <MarkdownEditor value={markdownText} change={handleEditorChange} />
+                    <MarkdownEditor bind:value={docContent}/>
                 </div>
             </div>
         </Resizable.Pane>
@@ -70,7 +63,7 @@
         <Resizable.Pane>
             <div class="h-full p-4 overflow-y-auto">
                 <h3 class="text-sm font-semibold text-gray-500 mb-4">Preview</h3>
-                <MarkdownPreview content={markdownText} />
+                <MarkdownPreview content={docContent} />
             </div>
         </Resizable.Pane>
     </Resizable.PaneGroup>
