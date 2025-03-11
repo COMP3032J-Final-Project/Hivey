@@ -2,34 +2,17 @@
     import * as m from '$lib/paraglide/messages';
     import { Button } from "$lib/components/ui/button";
     import * as Breadcrumb from "$lib/components/ui/breadcrumb";
+    import * as Resizable from "$lib/components/ui/resizable/index.js";
     import MarkdownEditor from "$lib/components/editor/editor.svelte";
     import MarkdownPreview from "$lib/components/editor/markdown-preview.svelte";
-    import ResizablePanel from "$lib/components/editor/resizable-panel.svelte";
-    
-    // Panel width configuration
-    let leftWidth = $state(200);
-    let rightWidth = $state(650);
-    const LEFT_MIN_WIDTH = 100;
-    const LEFT_MAX_WIDTH = 300;
-    const RIGHT_MIN_WIDTH = 500;
-    const RIGHT_MAX_WIDTH = 800;
     
     const initialContent = ``;
-
     
     // Initial Markdown text
     let markdownText = $state(initialContent);
 
     function handleEditorChange(newText: string) {
         markdownText = newText;
-    }
-    
-    function handleLeftResize(event: CustomEvent<number>) {
-        leftWidth = event.detail;
-    }
-    
-    function handleRightResize(event: CustomEvent<number>) {
-        rightWidth = event.detail;
     }
     
     function formatMarkdown() {
@@ -65,43 +48,30 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="flex-1 flex overflow-hidden">
-        <!-- Left Sidebar -->
-        <ResizablePanel 
-            width={leftWidth} 
-            minWidth={LEFT_MIN_WIDTH} 
-            maxWidth={LEFT_MAX_WIDTH}
-            on:resize={handleLeftResize}
-        >
+    <Resizable.PaneGroup direction="horizontal">
+        <Resizable.Pane defaultSize={20}>
             <div class="h-full p-4 overflow-y-auto">
                 <h3 class="text-sm font-semibold text-gray-500 mb-4">Files</h3>
                 <div class="text-gray-700">File Tree</div>
             </div>
-        </ResizablePanel>
-
-        <!-- Editor Area -->
-        <div class="flex-1 flex flex-col bg-gray-50" style="width: calc(100% - {leftWidth + rightWidth}px)">
-            <div class="p-2 border-b border-gray-200 bg-white">
-                <Button variant="secondary" class="text-gray-600" size="sm" onclick={formatMarkdown}>Format</Button>
+        </Resizable.Pane>
+        <Resizable.Handle />
+        <Resizable.Pane>
+            <div class="flex-1 flex flex-col bg-gray-50">
+                <div class="p-2 border-b border-gray-200 bg-white">
+                    <Button variant="secondary" class="text-gray-600" size="sm" onclick={formatMarkdown}>Format</Button>
+                </div>
+                <div class="flex-1 h-full">
+                    <MarkdownEditor value={markdownText} change={handleEditorChange} />
+                </div>
             </div>
-            <div class="flex-1 h-full">
-                <MarkdownEditor value={markdownText} change={handleEditorChange} />
-            </div>
-        </div>
-
-        <!-- Right Preview -->
-        <ResizablePanel 
-            width={rightWidth} 
-            minWidth={RIGHT_MIN_WIDTH} 
-            maxWidth={RIGHT_MAX_WIDTH}
-            resizeFrom="left"
-            on:resize={handleRightResize}
-        >
+        </Resizable.Pane>
+        <Resizable.Handle />
+        <Resizable.Pane>
             <div class="h-full p-4 overflow-y-auto">
                 <h3 class="text-sm font-semibold text-gray-500 mb-4">Preview</h3>
                 <MarkdownPreview content={markdownText} />
             </div>
-        </ResizablePanel>
-    </div>
+        </Resizable.Pane>
+    </Resizable.PaneGroup>
 </div>
