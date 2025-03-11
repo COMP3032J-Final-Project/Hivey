@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { success, failure } from '$lib/components/ui/toast';
 
-	let formData: RegisterForm = {
+	let formData = {
 		username: '',
 		email: '',
 		password: '',
@@ -24,8 +24,14 @@
 			if (formData.password !== formData.confirm_password)
 				throw new Error(m.error_password_mismatch());
 
+			const registerForm: RegisterForm = {
+				username: formData.username,
+				email: formData.email,
+				password: formData.password
+			};
+
 			// 调用注册接口
-			const userInfo: UserInfo = await postUserRegister(formData);
+			const userInfo: UserInfo = await postUserRegister(registerForm);
 
 			// 注册成功处理
 			success(m.success_sign_up());

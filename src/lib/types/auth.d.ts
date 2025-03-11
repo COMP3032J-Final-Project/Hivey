@@ -29,7 +29,6 @@ export interface RegisterForm {
   username: string;
   email: string;
   password: string;
-  confirm_password: string;
 }
 
 // 用户登录表单

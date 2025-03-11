@@ -4,9 +4,9 @@ import type { UserInfo, UserAuth, User, RegisterForm, LoginForm } from '$lib/typ
 import * as m from '$lib/paraglide/messages';
 
 const ip_address = '127.0.0.1'; // 开发环境下的 IP 地址, 部署时需要修改
-const port = '8080';
+const port = '8000';
 const base_url = `http://${ip_address}:${port}`;
-const is_mock = true;
+const is_mock = false;
 
 // 注册新用户
 export const postUserRegister = async (form: RegisterForm): Promise<UserInfo> => {
@@ -25,9 +25,7 @@ export const postUserRegister = async (form: RegisterForm): Promise<UserInfo> =>
 	}
 
 	try {
-		// 使用完整的URL，包括http://前缀和端口号
 		const response = await axios.post<APIResponse<UserInfo>>(`${base_url}/user/register`, form);
-		// 根据响应状态码返回用户友好的错误消息
 		switch (response.data.code) {
 			case 200:
 				if (response.data.data) {			
