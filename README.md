@@ -47,12 +47,6 @@ beginning of server run).
 
 Finally you can run `bun ./index.js` in that build directory to server up.
 
-
-TODO
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-
 ## Unit Test
 
 https://svelte.dev/docs/svelte/testing
