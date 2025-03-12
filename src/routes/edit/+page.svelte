@@ -1,5 +1,6 @@
 <script lang="ts">
     import * as m from '$lib/paraglide/messages';
+    import * as Menubar from "$lib/components/ui/menubar";
     import { Button } from "$lib/components/ui/button";
     import * as Resizable from "$lib/components/ui/resizable/index.js";
     import * as AvatarGroup from '$lib/components/ui/avatar-group';
@@ -30,9 +31,45 @@
 </script>
 
 <div class="h-screen flex flex-col">
-    <header class="h-12 flex justify-between px-4 bg-primary/50">
+    <header class="h-12 flex justify-between px-4">
         <div class="hidden md:flex items-center">
-            Actions Here
+            <Menubar.Root class="border-0 bg-transparent">
+                <Menubar.Menu>
+                    <Menubar.Trigger >File</Menubar.Trigger>
+                    <Menubar.Content>
+                        <Menubar.Item>
+                            New File
+                            <Menubar.Shortcut>⌘T</Menubar.Shortcut>
+                        </Menubar.Item>
+                        <Menubar.Separator />
+                        <Menubar.Sub>
+                            <Menubar.SubTrigger>Export As</Menubar.SubTrigger>
+                            <Menubar.SubContent>
+                                <Menubar.Item>PDF</Menubar.Item>
+                                <Menubar.Item>PNG</Menubar.Item>
+                            </Menubar.SubContent>
+                        </Menubar.Sub>
+                    </Menubar.Content>
+                </Menubar.Menu>
+                <Menubar.Menu>
+                    <Menubar.Trigger>Edit</Menubar.Trigger>
+                    <Menubar.Content>
+                        <Menubar.Item>
+                            Search & Replace
+                            <Menubar.Shortcut>⌘T</Menubar.Shortcut>
+                        </Menubar.Item>
+                    </Menubar.Content>
+                </Menubar.Menu>
+                <Menubar.Menu>
+                    <Menubar.Trigger>View</Menubar.Trigger>
+                    <Menubar.Content>
+                        <Menubar.Item>
+                            Search & Replace
+                            <Menubar.Shortcut>⌘T</Menubar.Shortcut>
+                        </Menubar.Item>
+                    </Menubar.Content>
+                </Menubar.Menu>
+            </Menubar.Root>
         </div>
         
         <div class="flex items-center">
@@ -63,9 +100,9 @@
         </Resizable.Pane>
         <Resizable.Handle />
         <Resizable.Pane  defaultSize={40}>
-            <div class="flex-1 flex flex-col bg-gray-50">
-                <div class="p-2 border-b border-gray-200 bg-white">
-                    <Button variant="secondary" class="text-gray-600" size="sm" onclick={formatMarkdown}>Format</Button>
+            <div class="flex-1 flex flex-col">
+                <div class="p-2 border-b">
+                    <Button variant="secondary" size="sm" onclick={formatMarkdown}>Format</Button>
                 </div>
                 <div class="flex-1 h-full">
                     <Editor bind:value={docContent}/>

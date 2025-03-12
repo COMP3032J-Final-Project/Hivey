@@ -16,7 +16,7 @@
 
 <div class="flex flex-col min-h-screen">
     <!-- Hero Section with Gradient Background -->
-    <div class="bg-gradient-to-br from-primary to-primary/30 text-primary-foreground">
+    <div class="bg-gradient-to-br from-primary/60 to-primary/30 text-primary-foreground">
         <Header />
 
         <main>

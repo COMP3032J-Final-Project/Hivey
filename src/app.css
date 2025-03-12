@@ -5,66 +5,69 @@
 @layer base {
     /* most settings are generated through https://themes.fkaya.dev/ */
     :root {
-        --background: 0 0% 100%;
-        --foreground: 0 0% 5%;
+        /* Light Mode - Honey Theme */
+        --background: 45 70% 97%;        /* Very light honey tint */
+        --foreground: 35 25% 12%;        /* Dark amber-brown for text */
 
-        --card: 0 0% 100%;
-        --card-foreground: 0 0% 5%;
+        --card: 45 60% 99%;              /* Slightly off-white with honey tone */
+        --card-foreground: 35 25% 12%;   /* Same as foreground */
 
-        --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 5%;
+        --popover: 45 60% 99%;           /* Matching card background */
+        --popover-foreground: 35 25% 12%;/* Same as foreground */
 
-        --primary: 46 99% 68%;
-        --primary-foreground: 0 0% 2%;
+        --primary: 43 96% 58%;           /* Rich honey amber */
+        --primary-foreground: 35 40% 10%;/* Dark brown that contrasts with primary */
 
-        --secondary: 0 0% 96%;
-        --secondary-foreground: 0 0% 5%;
+        --secondary: 35 25% 91%;         /* Soft warm tan/beige */
+        --secondary-foreground: 35 30% 15%;/* Darker brown for contrast on secondary */
 
-        --muted: 0 0% 96%;
-        --muted-foreground: 0 0% 45%;
+        --muted: 40 30% 92%;             /* Muted warm beige */
+        --muted-foreground: 35 15% 40%;  /* Subdued brown for less important text */
 
-        --accent: 0 0% 96%;
-        --accent-foreground: 0 0% 5%;
+        --accent: 38 90% 65%;            /* Slightly orangier honey tone */
+        --accent-foreground: 35 40% 10%; /* Dark brown that contrasts with accent */
 
-        --destructive: 0 84% 60%;
+        --destructive: 0 84% 60%;        /* Keep red for destructive actions */
         --destructive-foreground: 0 0% 98%;
 
-        --border: 0 0% 92%;
-        --input: 0 0% 85%;
-        --ring: 0 0% 76%;
+        --border: 40 30% 85%;            /* Subtle honey-tinted border */
+        --input: 40 25% 80%;             /* Slightly darker for input fields */
+        --ring: 43 96% 58%;              /* Match primary for focus rings */
 
         --radius: 0.5rem;
     }
 
     .dark {
-        --background: 60 3% 6%;
-        --foreground: 0 0% 98%;
+        /* Dark Mode - Honeycomb Theme */
+        --background: 35 25% 8%;         /* Deep dark amber-brown */
+        --foreground: 40 30% 92%;        /* Light warm beige text */
 
-        --card: 60 6% 7%;
-        --card-foreground: 0 0% 98%;
+        --card: 35 30% 12%;              /* Slightly lighter than background */
+        --card-foreground: 40 30% 96%;   /* Almost white with warm tint */
 
-        --popover: 60 6% 7%;
-        --popover-foreground: 0 0% 98%;
+        --popover: 35 30% 12%;           /* Matching card */
+        --popover-foreground: 40 30% 96%;/* Matching card foreground */
 
-        --primary: 46 98% 74%;
-        --primary-foreground: 0 0% 2%;
+        --primary: 43 90% 60%;           /* Vibrant honey color */
+        --primary-foreground: 35 40% 10%;/* Dark brown for contrast */
 
-        --secondary: 45 5% 15%;
-        --secondary-foreground: 0 0% 98%;
+        --secondary: 35 20% 22%;         /* Darker amber tone */
+        --secondary-foreground: 40 30% 92%;/* Light text for contrast */
 
-        --muted: 50 5% 22%;
-        --muted-foreground: 45 5% 49%;
+        --muted: 35 15% 28%;             /* Muted dark amber */
+        --muted-foreground: 40 15% 65%;  /* Medium honey-beige for less important text */
 
-        --accent: 45 45% 14%;
-        --accent-foreground: 0 0% 98%;
+        --accent: 38 60% 50%;            /* Rich mid-tone amber with more saturation */
+        --accent-foreground: 40 30% 96%; /* Light text for contrast */
 
-        --destructive: 0 84% 60%;
+        --destructive: 0 70% 55%;        /* Slightly darker red for dark mode */
         --destructive-foreground: 0 0% 98%;
 
-        --border: 40 5% 12%;
-        --input: 45 4% 18%;
-        --ring: 46 98% 40%;
+        --border: 35 25% 20%;            /* Dark amber borders */
+        --input: 35 20% 25%;             /* Slightly lighter for input fields */
+        --ring: 43 90% 50%;              /* Slightly darker honey for focus rings */
     }
+
 }
 
 @layer base {
