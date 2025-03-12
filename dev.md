@@ -53,10 +53,15 @@ installed components.
 
 ### Shadcn Svelte Extras
 
+NOTE: I recommend to clone the repo, manually copy the component source code to our Repo
+and modify it if necessary since its parent shadcn-svelte is not exactly the same as the
+official shadcn-svelte (e.g. It uses utility functions at location `$lib/utils/utils.js`
+instead of `$lib/utils.js`)
+
 To add a component, instead of using command like
 
 ``` sh
-jsrepo add ui/chat 
+jsrepo add ui/chat
 ```
 
 You should run
