@@ -1,8 +1,8 @@
 <script lang="ts">
     import * as m from '$lib/paraglide/messages';
     import { Button } from "$lib/components/ui/button";
-    import * as Breadcrumb from "$lib/components/ui/breadcrumb";
     import * as Resizable from "$lib/components/ui/resizable/index.js";
+    import * as AvatarGroup from '$lib/components/ui/avatar-group';
     import Editor from "$lib/components/editor.svelte";
     import Previewer from "$lib/components/previewer.svelte";
     
@@ -12,36 +12,49 @@
         // Implement markdown formatting logic here
         console.log('Format markdown');
     }
+
+    const members = [
+		    {
+			      username: 'huntabyte',
+			      image: 'https://github.com/huntabyte.png'
+		    },
+		    {
+			      username: 'AdrianGonz97',
+			      image: 'https://github.com/AdrianGonz97.png'
+		    },
+		    {
+			      username: 'shyakadavis',
+			      image: 'https://github.com/shyakadavis.png'
+		    }
+	  ];
 </script>
 
 <div class="h-screen flex flex-col">
-    <header class="h-15 flex items-center justify-between px-4 py-1 border-b border-gray-200">
-        <a href="/" class="text-xl flex items-center">
-            <enhanced:img class="w-12 h-12" src="$lib/images/logo.svg" alt="Logo" />
-            <span class="ml-2">{ m.app_name() }</span>
-        </a>
-        
+    <header class="h-12 flex justify-between px-4 bg-primary/50">
         <div class="hidden md:flex items-center">
-            <Breadcrumb.Root>
-                <Breadcrumb.List>
-                    <Breadcrumb.Item class="hidden md:block">
-                        <Breadcrumb.Link href="#">Username</Breadcrumb.Link>
-                    </Breadcrumb.Item>
-                    <Breadcrumb.Separator class="hidden md:block" />
-                    <Breadcrumb.Item>
-                        <Breadcrumb.Page>Project name</Breadcrumb.Page>
-                    </Breadcrumb.Item>
-                </Breadcrumb.List>
-            </Breadcrumb.Root>
+            Actions Here
+        </div>
+        
+        <div class="flex items-center">
+            <span class="text-xl font-medium">Project Name</span>
         </div>
         
         <div class="hidden md:flex items-center gap-4">
-            <Button variant="link" href="#" size="sm" class="text-primary-foreground">{ m.share() }</Button>
-            <Button variant="secondary" href="#" size="sm" class="shadow-md hover:shadow-lg transition-all duration-300">{ m.download() }</Button>
+            <AvatarGroup.Root>
+	              {#each members as member (member.username)}
+		                <AvatarGroup.Member class="size-8">
+			                  <AvatarGroup.MemberImage src={member.image} alt={member.username} />
+			                  <AvatarGroup.MemberFallback>
+				                    {member.username[0]}
+			                  </AvatarGroup.MemberFallback>
+		                </AvatarGroup.Member>
+	              {/each}
+	              <AvatarGroup.Etc class="size-8" plus={2} />
+            </AvatarGroup.Root>
         </div>
     </header>
 
-    <Resizable.PaneGroup direction="horizontal">
+    <Resizable.PaneGroup direction="horizontal" autoSaveId="project">
         <Resizable.Pane defaultSize={20}>
             <div class="h-full p-4 overflow-y-auto">
                 <h3 class="text-sm font-semibold text-gray-500 mb-4">Files</h3>
@@ -49,7 +62,7 @@
             </div>
         </Resizable.Pane>
         <Resizable.Handle />
-        <Resizable.Pane>
+        <Resizable.Pane  defaultSize={40}>
             <div class="flex-1 flex flex-col bg-gray-50">
                 <div class="p-2 border-b border-gray-200 bg-white">
                     <Button variant="secondary" class="text-gray-600" size="sm" onclick={formatMarkdown}>Format</Button>
@@ -60,7 +73,7 @@
             </div>
         </Resizable.Pane>
         <Resizable.Handle />
-        <Resizable.Pane>
+        <Resizable.Pane defaultSize={40}>
             <Previewer fileType="markdown" content={docContent} />
         </Resizable.Pane>
     </Resizable.PaneGroup>
