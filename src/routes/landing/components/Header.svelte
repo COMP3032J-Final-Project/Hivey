@@ -24,7 +24,7 @@
             <div class="flex items-center gap-4">
                 <LanguageButton />
                 <Button href="/auth/signin" variant="link" class="text-primary-foreground font-medium">{ m.sign_in() }</Button>
-                <Button variant="secondary" href="/auth/signup" class="shadow-md hover:shadow-lg transition-all duration-300">{ m.sign_up() }</Button>
+                <Button href="/auth/signup" class="shadow-md hover:shadow-lg transition-all duration-300">{ m.sign_up() }</Button>
             </div>
         </div>
 

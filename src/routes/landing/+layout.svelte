@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as m from '$lib/paraglide/messages';
-    import Footer from '$lib/components/Footer.svelte';
-    import Header from '$lib/components/Header.svelte';
+    import Footer from './components/Footer.svelte';
+    import Header from './components/Header.svelte';
     import { Button } from "$lib/components/ui/button/index";
     import { fade } from 'svelte/transition';
     import { assets } from '$app/paths';
@@ -16,7 +16,7 @@
 
 <div class="flex flex-col min-h-screen">
     <!-- Hero Section with Gradient Background -->
-    <div class="bg-gradient-to-br from-primary/60 to-primary/30 text-primary-foreground">
+    <div class="bg-gradient-to-br from-primary/40 to-primary/20 text-primary-foreground">
         <Header />
 
         <main>
@@ -30,20 +30,20 @@
                 
                 <div class="text-center px-7 py-14 md:py-20 max-w-4xl mx-auto relative z-0">
                     <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                        {m.one_editor_all_formats()}    
+                        {m.one_editor_all_formats()}
                     </h1>
                     <p class="text-lg md:text-xl mb-10 opacity-90 max-w-xl mx-auto">
                         {m.one_editor_all_formats_description()}
                     </p>
                     
                     <div class="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 justify-center">
-                        <Button size="lg" variant="secondary" href="/auth/signup" class="font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8">
+                        <Button size="lg" href="/auth/signup" class="font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8">
                             {m.sign_up_for_free()}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                         </Button>
-                        <Button size="lg" variant="outline" class="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10" href="/features">
+                        <Button size="lg" variant="outline" class="bg-transparent hover:bg-accent" href="/features">
                             {m.learn_more()}
                         </Button>
                     </div>

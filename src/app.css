@@ -3,78 +3,75 @@
 @tailwind utilities;
 
 @layer base {
-    /* most settings are generated through https://themes.fkaya.dev/ */
+    /* https://www.readyjs.dev/tools/shadcn-ui-theme-generator?primaryColor=%23ffd500&saturation=100&lightness=22&chartColor=%23eac923&radius=0.7&chartColorScheme=double-complementary */
     :root {
-        /* Light Mode - Honey Theme */
-        --background: 45 70% 97%;        /* Very light honey tint */
-        --foreground: 35 25% 12%;        /* Dark amber-brown for text */
-
-        --card: 45 60% 99%;              /* Slightly off-white with honey tone */
-        --card-foreground: 35 25% 12%;   /* Same as foreground */
-
-        --popover: 45 60% 99%;           /* Matching card background */
-        --popover-foreground: 35 25% 12%;/* Same as foreground */
-
-        --primary: 43 96% 58%;           /* Rich honey amber */
-        --primary-foreground: 35 40% 10%;/* Dark brown that contrasts with primary */
-
-        --secondary: 35 25% 91%;         /* Soft warm tan/beige */
-        --secondary-foreground: 35 30% 15%;/* Darker brown for contrast on secondary */
-
-        --muted: 40 30% 92%;             /* Muted warm beige */
-        --muted-foreground: 35 15% 40%;  /* Subdued brown for less important text */
-
-        --accent: 38 90% 65%;            /* Slightly orangier honey tone */
-        --accent-foreground: 35 40% 10%; /* Dark brown that contrasts with accent */
-
-        --destructive: 0 84% 60%;        /* Keep red for destructive actions */
-        --destructive-foreground: 0 0% 98%;
-
-        --border: 40 30% 85%;            /* Subtle honey-tinted border */
-        --input: 40 25% 80%;             /* Slightly darker for input fields */
-        --ring: 43 96% 58%;              /* Match primary for focus rings */
-
-        --radius: 0.5rem;
+        --background: 50.1 100% 92.2%;
+        --foreground: 50.1 5% 6.1%;
+        --card: 50.1 50% 92.2%;
+        --card-foreground: 50.1 5% 11.1%;
+        --popover: 50.1 100% 96.1%;
+        --popover-foreground: 50.1 100% 2.2%;
+        --primary: 50.1 100% 50%;
+        --primary-foreground: 0, 0%, 0%;
+        --secondary: 50.1 30% 74.4%;
+        --secondary-foreground: 0 0% 0%;
+        --muted: 88.1 30% 87.2%;
+        --muted-foreground: 50.1 5% 36.1%;
+        --accent: 88.1 30% 82.2%;
+        --accent-foreground: 50.1 5% 11.1%;
+        --destructive: 0 100% 34.4%;
+        --destructive-foreground: 50.1 5% 92.2%;
+        --border: 50.1 30% 57%;
+        --input: 50.1 30% 25%;
+        --ring: 50.1 88.7% 45.3%;
+        --radius: 0.7rem;
+        --sidebar-background: 50, 100%, 88%;
+        --sidebar-foreground: 50, 5%, 5%;
+        --sidebar-primary: 50, 100%, 45%;
+        --sidebar-primary-foreground: 0 0% 0%;
+        --sidebar-accent: 88, 30%, 78%;
+        --sidebar-accent-foreground: 0 0% 0%;
+        --sidebar-border: 50, 30%, 54%;
+        --sidebar-ring: 40, 98%, 45%;
     }
 
     .dark {
-        /* Dark Mode - Honeycomb Theme */
-        --background: 35 25% 8%;         /* Deep dark amber-brown */
-        --foreground: 40 30% 92%;        /* Light warm beige text */
-
-        --card: 35 30% 12%;              /* Slightly lighter than background */
-        --card-foreground: 40 30% 96%;   /* Almost white with warm tint */
-
-        --popover: 35 30% 12%;           /* Matching card */
-        --popover-foreground: 40 30% 96%;/* Matching card foreground */
-
-        --primary: 43 90% 60%;           /* Vibrant honey color */
-        --primary-foreground: 35 40% 10%;/* Dark brown for contrast */
-
-        --secondary: 35 20% 22%;         /* Darker amber tone */
-        --secondary-foreground: 40 30% 92%;/* Light text for contrast */
-
-        --muted: 35 15% 28%;             /* Muted dark amber */
-        --muted-foreground: 40 15% 65%;  /* Medium honey-beige for less important text */
-
-        --accent: 38 60% 50%;            /* Rich mid-tone amber with more saturation */
-        --accent-foreground: 40 30% 96%; /* Light text for contrast */
-
-        --destructive: 0 70% 55%;        /* Slightly darker red for dark mode */
-        --destructive-foreground: 0 0% 98%;
-
-        --border: 35 25% 20%;            /* Dark amber borders */
-        --input: 35 20% 25%;             /* Slightly lighter for input fields */
-        --ring: 43 90% 50%;              /* Slightly darker honey for focus rings */
+        --background: 50.1 50% 6.1%;
+        --foreground: 50.1 5% 92.2%;
+        --card: 50.1 50% 2.2%;
+        --card-foreground: 50.1 5% 92.2%;
+        --popover: 50.1 50% 5%;
+        --popover-foreground: 50.1 5% 92.2%;
+        --primary: 50.1 100% 50%;
+        --primary-foreground: 0, 0%, 0%;
+        --secondary: 50.1 30% 12.2%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 88.1 30% 17.2%;
+        --muted-foreground: 50.1 5% 61.1%;
+        --accent: 88.1 30% 17.2%;
+        --accent-foreground: 50.1 5% 91.1%;
+        --destructive: 0 100% 34.4%;
+        --destructive-foreground: 50.1 5% 92.2%;
+        --border: 50.1 30% 25%;
+        --input: 50.1 30% 25%;
+        --ring: 50.1 88.7% 45.3%;
+        --radius: 0.7rem;
+        --sidebar-background: 50, 50%, 8%;
+        --sidebar-foreground: 50, 5%, 100%;
+        --sidebar-primary: 50, 100%, 40%;
+        --sidebar-primary-foreground: 0, 0%, 0%;
+        --sidebar-accent: 88, 30%, 15%;
+        --sidebar-accent-foreground: 0 0% 100%;
+        --sidebar-border: 50, 30%, 24%;
+        --sidebar-ring: 40, 98%, 45%;
     }
-
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
 }

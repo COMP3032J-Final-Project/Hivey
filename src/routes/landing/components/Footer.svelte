@@ -2,7 +2,7 @@
     import * as m from '$lib/paraglide/messages';
 </script>
 
-<footer class="bg-muted py-12">
+<footer class="py-12">
     <div class="max-w-7xl mx-auto px-6 md:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="mb-6 md:mb-0">

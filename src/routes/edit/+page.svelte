@@ -31,7 +31,7 @@
 </script>
 
 <div class="h-screen flex flex-col">
-    <header class="h-12 flex justify-between px-4">
+    <header class="h-12 flex justify-between px-4 bg-sidebar">
         <div class="hidden md:flex items-center">
             <Menubar.Root class="border-0 bg-transparent">
                 <Menubar.Menu>
