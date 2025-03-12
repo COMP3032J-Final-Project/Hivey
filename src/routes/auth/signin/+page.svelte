@@ -7,11 +7,11 @@
 	  import { page } from '$app/stores';
 	  import { onMount } from 'svelte';
     
-    import { Button } from "$lib/components/ui/button/index.js";
+      import { Button } from "$lib/components/ui/button/index.js";
 	  import * as Card from "$lib/components/ui/card/index.js";
 	  import { Input } from "$lib/components/ui/input/index.js";
 	  import { Label } from "$lib/components/ui/label/index.js";
-    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
+      import { Checkbox } from "$lib/components/ui/checkbox/index.js";
 
 	  // 表单数据
 	  let formData: LoginForm = {
@@ -91,22 +91,22 @@
 	  };
 </script>
 
-<Card.Root class="mx-auto max-w-sm">
+<Card.Root class="mx-auto w-full max-w-md">
 	  <Card.Header>
-		    <Card.Title class="text-2xl">{ m.sign_in() }</Card.Title>
-		    <Card.Description>Enter your email below to login to your account</Card.Description>
+		    <Card.Title class="text-3xl">{ m.sign_in() }</Card.Title>
 	  </Card.Header>
 	  <Card.Content>
-		    <form class="mt-6" on:submit={handleSubmit} enctype="application/x-www-form-urlencoded">
+		    <form on:submit={handleSubmit} enctype="application/x-www-form-urlencoded">
 		        <!-- username (email) -->
 		        <div>
                 <Label for="email">{m.email()}</Label>
-				        <Input
+				        <Input 
+							
 				            id="email"
 				            type="email"
 				            name="username"
 				            autocomplete="email"
-                    bind:value={formData.email}
+                    		bind:value={formData.email}
 				            disabled={isLoading}
 				            required
                 />
@@ -129,7 +129,7 @@
             <!-- Remember Me -->
             <div class="form-group form-check mt-4">
                 <Label
-                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 peer-data-[disabled=true]:cursor-not-allowed peer-data-[disabled=true]:opacity-70"
+                    class="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 peer-data-[disabled=true]:cursor-not-allowed peer-data-[disabled=true]:opacity-70"
                 >
                     <Checkbox
                         name="remember" 
@@ -141,7 +141,7 @@
                 </Label>
             </div>
 
-		        <Button type="submit" class="mt-4 w-full font-semibold" disabled={isLoading}>
+		        <Button type="submit" class="mt-4 w-full font-semibold" size="lg" disabled={isLoading}>
 			          {isLoading ? m.loading() : m.sign_in()}
 		        </Button>
 

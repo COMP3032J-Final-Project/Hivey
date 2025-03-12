@@ -5,13 +5,10 @@
 	  import { goto } from '$app/navigation';
 	  import { success, failure } from '$lib/components/ui/toast';
 
-    import { Button } from "$lib/components/ui/button/index.js";
+      import { Button } from "$lib/components/ui/button/index.js";
 	  import * as Card from "$lib/components/ui/card/index.js";
 	  import { Input } from "$lib/components/ui/input/index.js";
 	  import { Label } from "$lib/components/ui/label/index.js";
-    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-
-
 
 	  let formData = {
 		    username: '',
@@ -58,14 +55,13 @@
 	  };
 </script>
 
-<Card.Root class="mx-auto max-w-sm">
+<Card.Root class="mx-auto w-full max-w-md">
 	  <Card.Header>
-		    <Card.Title class="text-2xl">{ m.sign_in() }</Card.Title>
-		    <Card.Description>Enter your email below to login to your account</Card.Description>
+		    <Card.Title class="text-3xl">{ m.sign_up() }</Card.Title>
 	  </Card.Header>
 	  <Card.Content>
-        <form class="mt-6" on:submit={handleSubmit}>
-		        <!-- 用户名 -->
+        <form on:submit={handleSubmit}>
+		        <!-- username -->
 		        <div>
 			          <Label for="name">{m.name()}</Label>
 			          <Input
@@ -77,7 +73,7 @@
 			          />
 		        </div>
 
-		        <!-- 邮箱 -->
+		        <!-- email -->
 		        <div class="mt-4">
 			          <Label for="email" class="mb-2 block">{m.email()}</Label>
 			          <Input
@@ -89,7 +85,7 @@
 			          />
 		        </div>
 
-		        <!-- 密码 -->
+		        <!-- password -->
 		        <div class="mt-4">
 			          <Label for="password" class="mb-2 block">{m.password()}</Label>
 			          <Input
@@ -101,15 +97,9 @@
 			          />
 		        </div>
 
-		        <!-- 确认密码 -->
+		        <!-- confirm password -->
 		        <div class="mt-4">
 			          <Label for="confirm-password">{m.confirm_password()}</Label>
-			          {#if formData.confirm_password && formData.password !== formData.confirm_password}
-				            <div class="mt-1 text-sm text-red-500">
-					              {m.error_password_mismatch()}
-				            </div>
-			          {/if}
-
 			          <Input
 				            type="password"
 				            name="confirm-password"
@@ -117,9 +107,14 @@
 				            autocomplete="new-password"
 				            bind:value={formData.confirm_password}
 			          />
+					  {#if formData.confirm_password && formData.password !== formData.confirm_password}
+				            <div class="mt-1 text-red-500">
+					              {m.error_password_mismatch()}
+				            </div>
+			          {/if}
 		        </div>
 
-		        <Button type="submit" class="mt-4 w-full font-semibold">
+		        <Button type="submit" class="mt-4 w-full font-semibold" size="lg">
 			          {m.sign_up()}
 		        </Button>
             
