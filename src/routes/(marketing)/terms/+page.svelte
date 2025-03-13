@@ -20,7 +20,7 @@
             {m.thank_you_for_using()} {m.app_name()}! 
         </p>
         <p class="text-lg text-muted-foreground mb-6">
-            {m.below()}<a href="/contact" class="underline">{m.get_in_touch_with_us()}</a>.
+            {m.below()}<a href="/contact" class="underline"> {m.get_in_touch_with_us()}</a>.
         </p>
     </div>
 
