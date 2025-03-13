@@ -28,7 +28,6 @@
   "remember_me":"记住我",
   "share":"分享",
   "sign_in":"登录",
-  "sign_out":"登出",
   "sign_up":"注册",
   "sign_up_for_free":"免费注册",
   "terms": "隐私和条款",
@@ -109,5 +108,11 @@
   "generate_new_avatar":"随机",
   "bio":"个性签名",
   "bio_description":"展示您的个性和风格",
-  "username":"用户名"
+  "username":"用户名",
+  "contact_us":"联系我们",
+  "about_us":"关于我们",
+  "message":"消息",
+  "subject":"主题",
+  "send":"发送",
+  "contact_us_description":"在您有任何关于Hivey的问题或想要提供反馈时，请使用下面的联系表单。我们期待您的来信！"
 }

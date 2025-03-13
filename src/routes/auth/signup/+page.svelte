@@ -57,7 +57,7 @@
 
 <Card.Root class="mx-auto w-full max-w-md">
 	  <Card.Header>
-		    <Card.Title class="text-3xl">{ m.sign_up() }</Card.Title>
+		    <Card.Title>{ m.sign_up() }</Card.Title>
 	  </Card.Header>
 	  <Card.Content>
         <form on:submit={handleSubmit}>

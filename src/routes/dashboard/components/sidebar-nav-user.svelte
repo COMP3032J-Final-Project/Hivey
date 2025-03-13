@@ -9,19 +9,19 @@
 	import { postLogoutUserAuth } from '$lib/api/auth';
 	import { failure, success } from '$lib/components/ui/toast';
 	import * as m from '$lib/paraglide/messages';
-	let { user }: { user: User | null } = $props();
-	const sidebar = useSidebar();
-
-	// 处理登出
-	async function handleLogout() {
-		try {
-			await postLogoutUserAuth();
-			success(m.sign_out());
-			goto('/auth/signin');
-		} catch (error) {
-			failure(m.error_logout_failed());
-		}
-	}
+	  let { user }: { user: User | null } = $props();
+	  const sidebar = useSidebar();
+    
+    // 处理登出
+    async function handleLogout() {
+      try {
+        await postLogoutUserAuth();
+        success(m.logout());
+        goto('/auth/signin');
+      } catch (error) {
+        failure(m.error_logout_failed());
+      }
+    }
 </script>
 
 <Sidebar.Menu>
