@@ -20,7 +20,7 @@ import { notification } from '$lib/components/ui/toast';
 
 
 
-// 获取 API 基础 URL
+// 定义AxiosClint的基础URL
 const ip_address = '127.0.0.1'; // 开发环境下的 IP 地址, 部署时需要修改
 const port = '8000';
 const base_url = `http://${ip_address}:${port}`;

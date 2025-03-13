@@ -2,7 +2,7 @@
 export interface UserInfo {
   username: string;
   email: string;
-  password: string;
+  password?: string;
 }
 
 // 用户认证信息
@@ -15,9 +15,12 @@ export interface UserAuth {
 
 // 完整用户模型
 export interface User extends UserInfo, Partial<UserAuth> {
+  is_active: boolean;
+  is_superuser: boolean;
+  avatar?: string;
   // username: string;
   // email: string;
-  // password: string;
+  // password?: string;
   // access_token?: string;
   // refresh_token?: string;
   // token_type?: string;

@@ -12,10 +12,7 @@ import type {
 import * as m from '$lib/paraglide/messages';
 import { browser } from '$app/environment';
 
-const ip_address = '127.0.0.1'; // 开发环境下的 IP 地址, 部署时需要修改
-const port = '8000';
-const base_url = `http://${ip_address}:${port}`;
-const is_mock = false; // 在没有启动后端服务时, 设置为true可以提供mock假数据
+const is_mock = true; // 在没有启动后端服务时, 设置为true可以提供mock假数据
 
 // 注册新用户
 export const postUserRegister = async (form: RegisterForm): Promise<UserInfo> => {
@@ -113,6 +110,83 @@ export const postUserLogin = async (form: LoginForm): Promise<UserAuth> => {
 	}
 };
 
+// 获取用户信息
+export const getUserInfo = async (): Promise<User> => {
+	// Mock Response
+	if (is_mock) {
+		const mock_response: APIResponse<User> = {
+			code: 200,
+			msg: "success get user info",
+			data: {
+				email: 'test@qq.com',
+				username: 'test',
+				is_active: true,
+				is_superuser: false,
+				avatar: 'https://avatars.githubusercontent.com/u/100000000?v=4' // 添加avatar字段，使用DiceBear API生成随机头像
+			}
+		};
+		return mock_response.data as User;
+	}
+
+	try {
+		const response = await axiosClient.get<APIResponse<User>>(`/user/me`);
+		switch (response.data.code) {
+			case 200:
+				if (response.data.data) {
+					return response.data.data;
+				}
+				throw new Error(m.error_unknown());
+			default:
+				throw new Error(response.data.msg || m.error_unknown());
+		}
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(error.response?.data?.msg || m.error_network());
+		}
+		throw error;
+	}
+};
+
+// 更新用户信息
+export const putUserInfo = async (form: User): Promise<User> => {
+	// Mock Response
+	if (is_mock) {
+		const mock_response: APIResponse<User> = {
+			code: 200,
+			msg: "success update user info",
+			data: {
+				email: 'test@qq.com',
+				username: 'test',
+				avatar: 'https://avatars.githubusercontent.com/u/100000000?v=4',
+				is_active: true,
+				is_superuser: false
+			}
+		};
+		return mock_response.data as User;
+	}
+
+	try {
+		const response = await axiosClient.put<APIResponse<User>>(`/user/me`, form);
+		switch (response.data.code) {
+			case 200:
+				if (response.data.data) {
+					return response.data.data;
+				}
+				throw new Error(m.error_unknown());
+			case 401:
+				throw new Error(m.error_user_not_login());
+			default:
+				throw new Error(response.data.msg || m.error_unknown());
+		}
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(error.response?.data?.msg || m.error_network());
+		}
+		throw error;
+	}
+};
+
+
 // 刷新用户token
 export const postRefreshUserAuth = async (form: RefreshUserAuthForm): Promise<UserAuth> => {
 	// Mock Response
@@ -132,7 +206,7 @@ export const postRefreshUserAuth = async (form: RefreshUserAuthForm): Promise<Us
 
 	try {
 		// 注意：刷新 Token 时不使用拦截器，避免循环调用
-		const response = await axios.post<APIResponse<UserAuth>>(`${base_url}/auth/refresh`, form);
+		const response = await axiosClient.post<APIResponse<UserAuth>>(`/auth/refresh`, form);
 		switch (response.data.code) {
 			case 200:
 				if (response.data.data) {

@@ -4,9 +4,24 @@
 	  import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	  import { useSidebar } from "$lib/components/ui/sidebar/index.js";
     import { Settings, ChevronsUpDown, LogOut } from 'lucide-svelte';
-
-	  let { user }: { user: { name: string; email: string; avatar: string } } = $props();
+    import type { User } from '$lib/types/auth';
+    import { goto } from '$app/navigation';
+    import { postLogoutUserAuth } from '$lib/api/auth';
+    import { failure, success } from '$lib/components/ui/toast';
+	import * as m from '$lib/paraglide/messages';
+	  let { user }: { user: User | null } = $props();
 	  const sidebar = useSidebar();
+    
+    // 处理登出
+    async function handleLogout() {
+      try {
+        await postLogoutUserAuth();
+        success(m.sign_out());
+        goto('/auth/signin');
+      } catch (error) {
+        failure(m.error_logout_failed());
+      }
+    }
 </script>
 
 <Sidebar.Menu>
@@ -20,12 +35,16 @@
 						            {...props}
 					          >
 						            <Avatar.Root class="h-8 w-8 rounded-lg">
-							              <Avatar.Image src={user.avatar} alt={user.name} />
-							              <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+                          {#if user?.avatar}
+                            <Avatar.Image src={user.avatar} alt={user.username || ''} />
+                          {/if}
+							              <Avatar.Fallback class="rounded-lg">
+                            {user?.username ? user.username.substring(0, 2).toUpperCase() : 'CN'}
+                          </Avatar.Fallback>
 						            </Avatar.Root>
 						            <div class="grid flex-1 text-left text-sm leading-tight">
-							              <span class="truncate font-semibold">{user.name}</span>
-							              <span class="truncate text-xs">{user.email}</span>
+							              <span class="truncate font-semibold">{user?.username || m.error_user_not_login()}</span>
+							              <span class="truncate text-xs">{user?.email || m.error_user_not_login()}</span>
 						            </div>
 						            <ChevronsUpDown class="ml-auto size-4" />
 					          </Sidebar.MenuButton>
@@ -40,12 +59,16 @@
 				        <DropdownMenu.Label class="p-0 font-normal">
 					          <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 						            <Avatar.Root class="h-8 w-8 rounded-lg">
-							              <Avatar.Image src={user.avatar} alt={user.name} />
-							              <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+                          {#if user?.avatar}
+                            <Avatar.Image src={user.avatar} alt={user.username || ''} />
+                          {/if}
+										  <Avatar.Fallback class="rounded-lg">
+											{user?.username ? user.username.substring(0, 2).toUpperCase() : 'CN'}
+										  </Avatar.Fallback>
 						            </Avatar.Root>
 						            <div class="grid flex-1 text-left text-sm leading-tight">
-							              <span class="truncate font-semibold">{user.name}</span>
-							              <span class="truncate text-xs">{user.email}</span>
+							              <span class="truncate font-semibold">{user?.username || m.error_user_not_login()}</span>
+							              <span class="truncate text-xs">{user?.email || m.error_user_not_login()}</span>
 						            </div>
 					          </div>
 				        </DropdownMenu.Label>
@@ -53,11 +76,11 @@
 				        <DropdownMenu.Group>
 					          <DropdownMenu.Item>
 						            <Settings />
-                        Settings
+									{m.settings()}
 					          </DropdownMenu.Item>
-                    <DropdownMenu.Item>
+                    <DropdownMenu.Item onclick={handleLogout}>
 					              <LogOut />
-					              Log out
+					              {m.sign_out()}
 					          </DropdownMenu.Item>
 				        </DropdownMenu.Group>
 			      </DropdownMenu.Content>

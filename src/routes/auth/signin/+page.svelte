@@ -20,7 +20,7 @@
 	  };
 
 	  // 记住我选项
-	  let rememberMe = false;
+	  let rememberMe = true;
 	  // 加载状态
 	  let isLoading = false;
 

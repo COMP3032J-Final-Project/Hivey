@@ -17,6 +17,7 @@
   "error_weak_password":"Password is too weak",
   "error_user_not_login":"User not logged in",
   "error_session_expired":"Your session has expired, please login again",
+  "error_logout_failed":"Logout failed, please try again",
   "features":"Features",
   "hello_world": "Hello, {name} from en!",
   "learn_more":"Learn More",
@@ -94,6 +95,8 @@
   "hivey_competitor_features_6":"delivers superior user experience with multi-user cursors and real-time editing indicators.",
   "hivey_competitor_features_7":"includes robust commenting and annotation systems for effective team communication.",
   "hivey_competitor_features_8":"provides structured project management tools alongside editing capabilities.",
-  "overview_of_hivey":"Overview of Hivey"
-
+  "overview_of_hivey":"Overview of Hivey",
+  "settings":"Settings",
+  "profile":"Profile",
+  "logout":"Logout"
 }

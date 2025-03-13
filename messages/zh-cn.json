@@ -17,6 +17,7 @@
   "error_weak_password":"密码太弱",
   "error_user_not_login":"用户未登录",
   "error_session_expired":"您的登录会话已过期，请重新登录",
+  "error_logout_failed":"登出失败，请重试",
   "features":"功能",
   "hello_world": "Hello, {name} from zh-cn!",
   "learn_more":"了解更多",
@@ -94,6 +95,8 @@
   "hivey_competitor_features_6":"提供卓越的用户体验，多用户光标和实时编辑指示器。",
   "hivey_competitor_features_7":"提供强大的评论和注释系统，实现有效的团队沟通。",
   "hivey_competitor_features_8":"提供结构化的项目管理工具，与编辑功能相结合。",
-  "overview_of_hivey":"Hivey概述"
-
+  "overview_of_hivey":"Hivey概述",
+  "settings":"设置",
+  "profile":"个人资料",
+  "logout":"登出"
 }
