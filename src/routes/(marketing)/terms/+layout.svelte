@@ -9,11 +9,8 @@
     }
 </script>
 
-<div class="bg-primary/10">
-    <Header />
+<Header />
 
-    <div class="max-w-5xl mx-auto px-6 md:px-8">
-        {@render children()}
-    </div>
-
+<div class="max-w-5xl mx-auto px-6 md:px-8">
+    {@render children()}
 </div>

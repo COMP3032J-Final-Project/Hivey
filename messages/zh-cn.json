@@ -80,6 +80,20 @@
   "account_registration_and_security":"账户注册和安全",
   "account_registration_and_security_description":"要使用 Hivey 的某些功能，您可能需要注册一个账户。您有责任维护账户凭证的保密性，并对在您的账户下进行的所有活动负责。如果您的账户遭到未经授权的使用或出现任何其他安全漏洞，您必须立即通知我们。",
   "service_availability":"服务可用性",
-  "service_availability_description":"我们致力于提供持续的服务，但因维护、紧急情况或其他不可控因素，我们可能需要暂停或调整服务。对于任何计划中的服务中断，我们将尽合理努力通知您。"
-  
+  "service_availability_description":"我们致力于提供持续的服务，但因维护、紧急情况或其他不可控因素，我们可能需要暂停或调整服务。对于任何计划中的服务中断，我们将尽合理努力通知您。",
+  "try_it_now":"立即体验 Hivey！",
+  "try_it_now_description":"体验由先进的CRDT技术驱动的无缝协作编辑，支持多种文件格式，实现无冲突的实时同步。",
+  "try_it_now_button":"免费注册，立即试用",
+  "github_button":"查看GitHub源代码",
+  "why_use_hivey":"为什么选择Hivey而不是...",
+  "hivey_competitor_features_1":"支持多种文件格式，不仅仅是特定文档类型。",
+  "hivey_competitor_features_2":"无缝集成本地文件系统，无需繁琐的上传/下载过程。",
+  "hivey_competitor_features_3":"保留原始文件格式，无需转换，保持与外部工具的兼容性。",
+  "hivey_competitor_features_4":"提供先进的协作功能，由CRDT技术驱动，实现无冲突的实时编辑。",
+  "hivey_competitor_features_5":"提供实时光标和存在感知，增强团队协作。",
+  "hivey_competitor_features_6":"提供卓越的用户体验，多用户光标和实时编辑指示器。",
+  "hivey_competitor_features_7":"提供强大的评论和注释系统，实现有效的团队沟通。",
+  "hivey_competitor_features_8":"提供结构化的项目管理工具，与编辑功能相结合。",
+  "overview_of_hivey":"Hivey概述"
+
 }

@@ -1,10 +1,11 @@
 <script lang="ts">
+    import * as m from '$lib/paraglide/messages';
     import Header from '../components/Header.svelte';
-    import Footer from '../components/Footer.svelte';
+    let { children } = $props();
 </script>
 
 <Header />
 
 <main class="flex-grow">
-    <slot />
+    {@render children()}
 </main>
