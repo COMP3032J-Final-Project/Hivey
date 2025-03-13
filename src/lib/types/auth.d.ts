@@ -15,9 +15,10 @@ export interface UserAuth {
 
 // 完整用户模型
 export interface User extends UserInfo, Partial<UserAuth> {
-  is_active: boolean;
-  is_superuser: boolean;
+  is_active?: boolean;
+  is_superuser?: boolean;
   avatar?: string;
+  bio?: string; // 用户个性签名
   // username: string;
   // email: string;
   // password?: string;

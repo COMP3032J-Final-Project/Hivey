@@ -78,7 +78,7 @@
 
 			      // 延迟跳转到首页
 			      setTimeout(() => {
-				        goto('/dashboard');
+				        goto('/dashboard/repository');
 			      }, 1500);
 		    } catch (error) {
 			      // 直接使用错误消息

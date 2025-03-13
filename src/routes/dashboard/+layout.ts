@@ -29,8 +29,6 @@ export const load: LayoutLoad = async (): Promise<DashboardLayoutData> => {
 		// const projects: Project[] = await getUserProjects();
 		return { user };
 	} catch (error) {
-		console.error('获取用户信息失败:', error);
-		// 如果获取用户信息失败，返回null
 		return { user: null };
 	}
 };

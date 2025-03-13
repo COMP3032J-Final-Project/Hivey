@@ -122,7 +122,8 @@ export const getUserInfo = async (): Promise<User> => {
 				username: 'test',
 				is_active: true,
 				is_superuser: false,
-				avatar: 'https://avatars.githubusercontent.com/u/100000000?v=4' // 添加avatar字段，使用DiceBear API生成随机头像
+				avatar: 'https://avatars.githubusercontent.com/u/100000000?v=4',
+				bio: 'Hivey makes my document collaboration so easy!'
 			}
 		};
 		return mock_response.data as User;
@@ -155,9 +156,10 @@ export const putUserInfo = async (form: User): Promise<User> => {
 			code: 200,
 			msg: "success update user info",
 			data: {
-				email: 'test@qq.com',
-				username: 'test',
-				avatar: 'https://avatars.githubusercontent.com/u/100000000?v=4',
+				email: form.email || 'test@qq.com',
+				username: form.username || 'test',
+				avatar: form.avatar || 'https://avatars.githubusercontent.com/u/100000000?v=4',
+				bio: form.bio || 'Hivey makes my document collaboration so easy!',
 				is_active: true,
 				is_superuser: false
 			}

@@ -18,6 +18,7 @@
   "error_user_not_login":"用户未登录",
   "error_session_expired":"您的登录会话已过期，请重新登录",
   "error_logout_failed":"登出失败，请重试",
+  "error_empty_email":"邮箱不能为空",
   "features":"功能",
   "hello_world": "Hello, {name} from zh-cn!",
   "learn_more":"了解更多",
@@ -98,5 +99,15 @@
   "overview_of_hivey":"Hivey概述",
   "settings":"设置",
   "profile":"个人资料",
-  "logout":"登出"
+  "logout":"登出",
+  "save_changes":"保存更改",
+  "success_profile_update":"个人资料更新成功",
+  "personal_information":"个人信息",
+  "personal_information_description":"更新您的个人信息",
+  "avatar":"头像",
+  "upload_local_image":"上传",
+  "generate_new_avatar":"随机",
+  "bio":"个性签名",
+  "bio_description":"展示您的个性和风格",
+  "username":"用户名"
 }
