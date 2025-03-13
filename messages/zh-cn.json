@@ -27,7 +27,6 @@
   "remember_me":"记住我",
   "share":"分享",
   "sign_in":"登录",
-  "sign_out":"登出",
   "sign_up":"注册",
   "sign_up_for_free":"免费注册",
   "terms": "隐私和条款",
@@ -98,5 +97,11 @@
   "overview_of_hivey":"Hivey概述",
   "settings":"设置",
   "profile":"个人资料",
-  "logout":"登出"
+  "logout":"登出",
+  "contact_us":"联系我们",
+  "about_us":"关于我们",
+  "message":"消息",
+  "subject":"主题",
+  "send":"发送",
+  "contact_us_description":"在您有任何关于Hivey的问题或想要提供反馈时，请使用下面的联系表单。我们期待您的来信！"
 }

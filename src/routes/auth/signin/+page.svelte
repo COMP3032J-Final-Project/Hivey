@@ -93,7 +93,7 @@
 
 <Card.Root class="mx-auto w-full max-w-md">
 	  <Card.Header>
-		    <Card.Title class="text-3xl">{ m.sign_in() }</Card.Title>
+		    <Card.Title>{ m.sign_in() }</Card.Title>
 	  </Card.Header>
 	  <Card.Content>
 		    <form on:submit={handleSubmit} enctype="application/x-www-form-urlencoded">

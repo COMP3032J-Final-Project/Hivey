@@ -16,7 +16,7 @@
     async function handleLogout() {
       try {
         await postLogoutUserAuth();
-        success(m.sign_out());
+        success(m.logout());
         goto('/auth/signin');
       } catch (error) {
         failure(m.error_logout_failed());
@@ -80,7 +80,7 @@
 					          </DropdownMenu.Item>
                     <DropdownMenu.Item onclick={handleLogout}>
 					              <LogOut />
-					              {m.sign_out()}
+					              {m.logout()}
 					          </DropdownMenu.Item>
 				        </DropdownMenu.Group>
 			      </DropdownMenu.Content>
