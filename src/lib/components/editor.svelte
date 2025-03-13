@@ -24,7 +24,6 @@
                         "font-family": "monospace",
                         "font-size": "14px",
                         "line-height": 1.5,
-                        "background-color": "#f9f9f9",
                     },
                 }),
                 EditorView.updateListener.of((update) => {
@@ -42,4 +41,21 @@
     });
 </script>
 
-<div bind:this={editorAreaElem} class="w-full h-full"></div>
+<style>
+    .editor {
+        width: 100%;
+        height: 100%;
+        max-height: 88vh;
+        padding: 5px;
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        border: none;
+        outline: none;
+        resize: none;
+        background-color: var(--background);
+        overflow-y: auto;
+    }
+</style>
+
+<div bind:this={editorAreaElem} class="editor"></div>

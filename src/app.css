@@ -5,7 +5,7 @@
 @layer base {
     /* https://www.readyjs.dev/tools/shadcn-ui-theme-generator?primaryColor=%23ffd500&saturation=100&lightness=22&chartColor=%23eac923&radius=0.7&chartColorScheme=double-complementary */
     :root {
-        --background: 50.1 100% 92.2%;
+        --background: 53.8 100% 97.7%;
         --foreground: 50.1 5% 6.1%;
         --card: 50.1 50% 92.2%;
         --card-foreground: 50.1 5% 11.1%;

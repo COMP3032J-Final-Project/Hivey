@@ -27,9 +27,8 @@
     });
 </script>
 
-<div class="flex flex-col">
-    <h3 class="flex h-10">Preview</h3>
-    <div class="size-full prose lg:prose-xl overflow-y-auto shadow-inner {paddingClass}">
+<div class="flex flex-col h-full">
+    <div class="w-full h-full prose lg:prose-md max-w-none overflow-y-auto shadow-inner {paddingClass} break-words">
         {@html renenderedHTML}
     </div>
 </div>

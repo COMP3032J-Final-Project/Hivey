@@ -6,6 +6,11 @@
     import * as AvatarGroup from '$lib/components/ui/avatar-group';
     import Editor from "$lib/components/editor.svelte";
     import Previewer from "$lib/components/previewer.svelte";
+    import Exportbutton from "$lib/components/edit-button/export-button.svelte";
+    import Watchbutton from "$lib/components/edit-button/watch-button.svelte";
+    import FullScreenbutton from "$lib/components/edit-button/full-screen-button.svelte";
+    import BoldButton from '$lib/components/edit-button/bold-button.svelte';
+    import ItalicButton from '$lib/components/edit-button/italic-button.svelte';
     
     let docContent = $state("");
 
@@ -100,9 +105,11 @@
         </Resizable.Pane>
         <Resizable.Handle />
         <Resizable.Pane  defaultSize={40}>
-            <div class="flex-1 flex flex-col">
-                <div class="p-2 border-b">
-                    <Button variant="secondary" size="sm" onclick={formatMarkdown}>Format</Button>
+            <div class="flex-1 flex flex-col h-full">
+                <div class="p-2 border-b flex space-x-2 items-end">
+                    <Button variant="secondary" size="sm" onclick={formatMarkdown}>Markdown</Button>
+                    <BoldButton/>
+                    <ItalicButton/>
                 </div>
                 <div class="flex-1 h-full">
                     <Editor bind:value={docContent}/>
@@ -111,7 +118,23 @@
         </Resizable.Pane>
         <Resizable.Handle />
         <Resizable.Pane defaultSize={40}>
-            <Previewer fileType="markdown" content={docContent} />
+            <div class="flex-1 flex flex-col h-full">
+                <div class="p-2 border-b">
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-2">
+                            <p class="p-3 h-9 flex items-center justify-center">Preview</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <Exportbutton/>
+                            <Watchbutton/>
+                            <FullScreenbutton/>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 h-full overflow-y-auto"> 
+                    <Previewer fileType="markdown" content={docContent} />
+                </div>
+            </div>
         </Resizable.Pane>
     </Resizable.PaneGroup>
 </div>
