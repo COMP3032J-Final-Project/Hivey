@@ -6,6 +6,7 @@
         top = 100,
         class: className = "",
         color = "black",
+        transitionDuration = 120, // user can change it to suit different network condition
         scale = 1,
         children,
     }: {
@@ -13,6 +14,7 @@
         top: number,
         class?: string,
         color?: string,
+        transitionDuration?: number, // in milliseconds
         scale?: number,
         children?: any
     } = $props();
@@ -22,7 +24,13 @@
     let bodySize = $derived(1.6 * scale);
 </script>
 
-<div class={cn("fixed pointer-events-none z-50", className)} style="left: {left}px; top: {top}px;">
+<div class={cn("fixed pointer-events-none z-50", className)}
+    style="
+    transform: translate({left}px, {top}px);
+    transition-duration: {transitionDuration}ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    "
+>
     <!-- Triangle pointer part -->
     <div 
         class="absolute border-solid border-l-transparent border-r-transparent -rotate-45"
