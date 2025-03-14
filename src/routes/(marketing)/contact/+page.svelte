@@ -1,10 +1,10 @@
 <script lang="ts">
-      import * as m from '$lib/paraglide/messages';
-      import * as Card from "$lib/components/ui/card/index.js";
+    import * as m from '$lib/paraglide/messages';
+    import { Textarea } from "$lib/components/ui/textarea/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
 	  import { Input } from "$lib/components/ui/input/index.js";
 	  import { Label } from "$lib/components/ui/label/index.js";
-      import { Button } from "$lib/components/ui/button/index.js";
-      import { Textarea } from "$lib/components/ui/textarea/index.js";
+    import { Button } from "$lib/components/ui/button/index.js";
 </script>
 
 <svelte:head>
@@ -41,4 +41,4 @@
         </form>
     </Card.Content>
 </Card.Root>
- 
+
