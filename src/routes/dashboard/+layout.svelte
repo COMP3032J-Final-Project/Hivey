@@ -80,13 +80,6 @@
 	import type { User } from '$lib/types/auth';
 
 	let { data, children } = $props<{ data: LayoutData; children: any }>();
-
-	// 从data中获取用户信息
-	$effect(() => {
-		if (data.user) {
-			console.log('用户信息已加载:', data.user);
-		}
-	});
 </script>
 
 <Sidebar.Provider>

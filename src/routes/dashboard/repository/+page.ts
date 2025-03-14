@@ -1,4 +1,4 @@
-import type { PageLoad } from '../$types';
+import type { PageLoad } from './$types';
 import type { User } from '$lib/types/auth';
 
 export const load: PageLoad = async ({ parent }) => {
