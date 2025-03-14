@@ -36,3 +36,48 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
+
+/**
+ * Reference: https://github.com/martinstark/throttle-ts
+ * 
+ * Creates a throttled function that limits how often the original function can be called.
+ * @param fn The function to throttle
+ * @param delay The minimum time (ms) between allowed function calls
+ * @returns [throttledFn, cancelFn, resetFn]
+ */
+export const throttle = <R, A extends any[]>(
+    fn: (...args: A) => R,
+    delay: number
+): [(...args: A) => R | undefined, () => void, () => void] => {
+    let isWaiting = false;
+    let timeoutId: number | undefined;
+    let isCancelled = false;
+    
+    const resetWaitingState = () => {
+        isWaiting = false;
+    };
+    
+    const throttledFn = (...args: A): R | undefined => {
+        if (isCancelled || isWaiting) return undefined;
+        
+        const result = fn(...args);
+        
+        isWaiting = true;
+        timeoutId = window.setTimeout(resetWaitingState, delay);
+        
+        return result;
+    };
+    
+    const cancelFn = () => {
+        isCancelled = true;
+        clearTimeout(timeoutId);
+    };
+    
+    const resetFn = () => {
+        clearTimeout(timeoutId);
+        resetWaitingState();
+    };
+    
+    return [throttledFn, cancelFn, resetFn];
+};
+
