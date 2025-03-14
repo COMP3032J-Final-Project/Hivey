@@ -5,12 +5,14 @@
         left = 100,
         top = 100,
         class: className = "",
+        color = "black",
         scale = 1,
         children,
     }: {
         left: number,
         top: number,
         class?: string,
+        color?: string,
         scale?: number,
         children?: any
     } = $props();
@@ -23,7 +25,7 @@
 <div class={cn("fixed pointer-events-none z-50", className)} style="left: {left}px; top: {top}px;">
     <!-- Triangle pointer part -->
     <div 
-        class="absolute border-solid border-l-transparent border-r-transparent border-b-black -rotate-45"
+        class="absolute border-solid border-l-transparent border-r-transparent -rotate-45"
         style="
         top: {pointerOffset}rem; 
         left: {pointerOffset}rem;
@@ -32,13 +34,18 @@
         border-bottom-width: {2 * triangleSize}rem;
         width: 0;
         height: 0;
+        border-bottom-color: {color};
         "
     ></div>
     
     <!-- Circle part with avatar -->
     <div 
-        class="relative bg-white rounded-full border-2 border-black overflow-hidden"
-        style="width: {bodySize}rem; height: {bodySize}rem;"
+        class="relative bg-white rounded-full border-2 overflow-hidden"
+        style="
+        width: {bodySize}rem;
+        height: {bodySize}rem;
+        border-color: {color};
+        "
     >
         {@render children?.()}
     </div>
