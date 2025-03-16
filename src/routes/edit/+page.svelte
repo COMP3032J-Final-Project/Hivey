@@ -4,6 +4,8 @@
     import { Button } from "$lib/components/ui/button";
     import * as Resizable from "$lib/components/ui/resizable/index.js";
     import * as AvatarGroup from '$lib/components/ui/avatar-group';
+    import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+    import { Separator } from "$lib/components/ui/separator/index.js";
     import Editor from "$lib/components/editor.svelte";
     import Previewer from "$lib/components/previewer.svelte";
     import Exportbutton from "$lib/components/edit-button/export-button.svelte";
@@ -97,16 +99,11 @@
     </header>
 
     <Resizable.PaneGroup direction="horizontal" autoSaveId="project">
-        <Resizable.Pane defaultSize={20}>
-            <div class="h-full p-4 overflow-y-auto">
-                <h3 class="text-sm font-semibold text-gray-500 mb-4">Files</h3>
-                <div class="text-gray-700">File Tree</div>
-            </div>
-        </Resizable.Pane>
-        <Resizable.Handle />
-        <Resizable.Pane  defaultSize={40}>
+        <Resizable.Pane  defaultSize={50}>
             <div class="flex-1 flex flex-col h-full">
-                <div class="p-2 border-b flex space-x-2 items-end">
+                <div class="p-2 border-b flex space-x-2 items-center">
+                    <Sidebar.Trigger class="-ml-1" />
+                    <Separator orientation="vertical" class="mr-2 h-4" />
                     <Button variant="secondary" size="sm" onclick={formatMarkdown}>Markdown</Button>
                     <BoldButton/>
                     <ItalicButton/>
@@ -117,7 +114,7 @@
             </div>
         </Resizable.Pane>
         <Resizable.Handle />
-        <Resizable.Pane defaultSize={40}>
+        <Resizable.Pane defaultSize={50}>
             <div class="flex-1 flex flex-col h-full">
                 <div class="p-2 border-b">
                     <div class="flex justify-between items-center">
