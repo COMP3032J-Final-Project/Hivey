@@ -26,29 +26,28 @@
 
 	const folders = writable(items);
 
-	function addNewFolder() {
-		// 检查是否有正在编辑的文件夹
-		const currentFolders = $folders;
-		const isEditing = currentFolders.some(item => item.isEditing);
-		if (isEditing) return; // 如果有正在编辑的文件夹，则不新建
+    function addNewFolder() {
+        const currentFolders = $folders;
+        const isEditing = currentFolders.some(item => item.isEditing);
+        if (isEditing) return;
 
-		folders.update(currentItems => [
-			...currentItems,
-			{ title: "", url: "#", isEditing: true, icon: Folder } // 初始文件夹名为空
-		]);
-	}
+        folders.update(currentItems => [
+            ...currentItems,
+            { title: "", url: "#", isEditing: true, icon: Folder }
+        ]);
+    }
 
-	function saveFolderName(index: number, event: Event) {
-		const input = event.target as HTMLInputElement;
-		const newTitle = input.value.trim();
+    function saveFolderName(index: number, event: Event) {
+        const input = event.target as HTMLInputElement;
+        const newTitle = input.value.trim();
 
-		// 接后端
-		folders.update(currentItems => {
-			currentItems[index].title = newTitle || "New Folder";
-			currentItems[index].isEditing = false; // 退出编辑状态
-			return [...currentItems];
-		});
-	}
+		//接后端
+        folders.update(currentItems => {
+            currentItems[index].title = newTitle || "New Folder";
+            currentItems[index].isEditing = false; // 结束编辑
+            return [...currentItems];
+        });
+    }
 </script>
 
 <Sidebar.Group>
@@ -71,7 +70,6 @@
 							<input
 								type="text"
 								bind:value={mainItem.title}
-								onblur={(e) => saveFolderName(i, e)}
 								onkeydown={(e) => {
 								if (e.key === 'Enter') {
 									saveFolderName(i, e);
