@@ -48,6 +48,7 @@
 		"codemirror": "^6.0.1",
 		"date-fns": "^4.1.0",
 		"jsrepo": "^1.44.2",
+		"loro-codemirror": "^0.1.6",
 		"loro-crdt": "^1.4.6",
 		"lucide-svelte": "^0.479.0",
 		"markdown-it": "^14.1.0",

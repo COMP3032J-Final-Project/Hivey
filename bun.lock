@@ -18,6 +18,7 @@
         "codemirror": "^6.0.1",
         "date-fns": "^4.1.0",
         "jsrepo": "^1.44.2",
+        "loro-codemirror": "^0.1.6",
         "loro-crdt": "^1.4.6",
         "lucide-svelte": "^0.479.0",
         "markdown-it": "^14.1.0",
@@ -871,6 +872,8 @@
     "lodash.merge": ["lodash.merge@4.6.2", "", {}, "sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ=="],
 
     "lodash.once": ["lodash.once@4.1.1", "https://registry.npmmirror.com/lodash.once/-/lodash.once-4.1.1.tgz", {}, "sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg=="],
+
+    "loro-codemirror": ["loro-codemirror@0.1.6", "", { "peerDependencies": { "@codemirror/state": "^6.0.0", "@codemirror/view": "^6.7.0", "loro-crdt": "^1.4.6" } }, "sha512-lVD+uD/I5owgmkPwyz98nZjtfvcR85XFxHGkS3C2M8RsKRRs+BIh+Y5Vay1Zx4Ppv5fybN97/WSk0ndI/+XOrQ=="],
 
     "loro-crdt": ["loro-crdt@1.4.6", "", {}, "sha512-9YvKzoNE1CpDR/DNSUMolaSkhXdHnChP8uVkfORE3iREKOILUc5OZNipMMMhsnHQesL8HxM8D+2Z3vdXlV48Ew=="],
 

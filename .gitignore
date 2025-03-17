@@ -1,3 +1,4 @@
+.dir-locals.el
 node_modules
 
 # Output
