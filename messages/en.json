@@ -1,9 +1,8 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "about": "About",
+  "about": "About Hivey",
   "app_name": "Hivey",
   "confirm_password":"Confirm Password",
-  "contact": "Contact",
   "download":"Download",
   "email":"Email",
   "error_empty_password":"Password cannot be empty",
@@ -114,5 +113,24 @@
   "generate_new_avatar":"Roll",
   "bio":"Bio",
   "bio_description":"Showcase Your Personality and Style",
-  "username":"Username"
+  "username":"Username",
+  "team_members":"Team Members",
+  "company_vision":"Company Vision",
+  "company_vision_description":"The founding purpose of MGGA is to create customized office software for businesses and individuals. We aim to deliver more sustainable software products, lower the barriers to use for our users, and enhance productivity for both individuals and enterprises through our efforts.",
+  "business_cooperation":"Business Cooperation",
+  "business_cooperation_description":"Alibaba has commissioned MGGA to develop an online collaborative editor called Hivey. Once the product is delivered, it will initially serve as the designated editing tool for Alibaba's internal employees and may later be made available to the public as appropriate.",
+  "yang":"Ziqi Yang",
+  "yang_description":"Lead Developer",
+  "chen":"Jinpeng Chen",
+  "chen_description":"Technical Research",
+  "zhai":"Jinpeng Zhai",
+  "zhai_description":"Database, Back-end Development",
+  "zhao": "Yiran Zhao",
+  "zhao_description":"UI/UX Designer, Front-end Development",
+  "tao": "Liyan Tao",
+  "tao_description":"Responsive Design, Front-end Development",
+  "rao": "Hanshu Rao",
+  "rao_description":"API Design, Back-end Development",
+  "ucd_number":"UCD Number"
+
 }

@@ -7,11 +7,7 @@
 <Header />
 
 <main class="flex-grow">
-    <div class="max-w-6xl mx-auto px-6 md:px-8">
-        <!-- <h2 class="text-3xl font-semibold leading-none tracking-tight mb-6">{m.about_us()}</h2> -->
-        
-    </div>
     <div class="max-w-4xl mx-auto px-6 md:px-8">
-        {@render children()}
+    {@render children()}
     </div>
 </main>

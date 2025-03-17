@@ -1,0 +1,115 @@
+<script lang="ts">
+    import * as m from '$lib/paraglide/messages';
+</script>
+
+<svelte:head>
+    <title>{m.about_us()} | {m.app_name()}</title>
+    <meta name="description" content={`${m.about_us()} for ${m.app_name()}`} />
+</svelte:head>
+
+<section id="team-members" class="mb-8">
+    <h3 class="text-3xl mb-6 text-center">{m.team_members()}</h3>
+    
+    <ul class="grid grid-cols-1 md:grid-cols-3 gap-8 list-none p-0">
+        <!-- Team Member 1 -->
+        <li class="flex flex-col items-center">
+            <img src="/src/lib/images/team/yang.jpg" alt="{m.yang()}" width="200" height="200" class="rounded-full">
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <h2 class="text-xl font-medium mb-0">{m.yang()}</h2>
+                <div class="flex gap-2">
+                    <a href="https://github.com/Ziqi-Yang" aria-label="{m.yang()}'s GitHub" class="text-muted-foreground hover:text-primary">
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="text-muted-foreground">{m.yang_description()}</div>
+            <div class="text-sm mb-4">{m.ucd_number()}: 21207440</div>
+        </li>
+        <!-- Team Member 2 -->
+        <li class="flex flex-col items-center">
+            <img src="/src/lib/images/team/tao.jpg" alt="{m.tao()}" width="200" height="200" class="rounded-full">
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <h2 class="text-xl font-medium mb-0">{m.tao()}</h2>
+                <div class="flex gap-2">
+                    <a href="https://github.com/641217688tly" aria-label="Liyan Tao's GitHub" class="text-muted-foreground hover:text-primary">
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="text-muted-foreground">{m.tao_description()}</div>
+            <div class="text-sm mb-4">{m.ucd_number()}: 21207500</div>
+        </li>
+        
+        <!-- Team Member 3 -->
+        <li class="flex flex-col items-center">
+            <img src="/src/lib/images/team/zhao.jpg" alt="{m.zhao()}" width="200" height="200" class="rounded-full">
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <h2 class="text-xl font-medium mb-0">{m.zhao()}</h2>
+                <div class="flex gap-2">
+                    <a href="https://github.com/AuroraZoer" aria-label="{m.zhao()}'s GitHub" class="text-muted-foreground hover:text-primary">
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="text-muted-foreground">{m.zhao_description()}</div>
+            <div class="text-sm mb-4">{m.ucd_number()}: 21207295</div>
+        </li>
+        
+        <!-- Team Member 4 -->
+        <li class="flex flex-col items-center">
+            <img src="/src/lib/images/team/chen.jpg" alt="{m.chen()}" width="200" height="200" class="rounded-full">
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <h2 class="text-xl font-medium mb-0">{m.chen()}</h2>
+                <div class="flex gap-2">
+                    <a href="https://github.com/cnapop" aria-label="{m.chen()}'s GitHub" class="text-muted-foreground hover:text-primary">
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="text-muted-foreground">{m.chen_description()}</div>
+            <div class="text-sm mb-4">{m.ucd_number()}: 21207327</div>
+        </li>
+        
+        <!-- Team Member 5 -->
+        <li class="flex flex-col items-center">
+            <img src="/src/lib/images/team/rao.jpg" alt="{m.rao()}" width="200" height="200" class="rounded-full">
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <h2 class="text-xl font-medium mb-0">{m.rao()}</h2>
+                <div class="flex gap-2">
+                    <a href="https://github.com/LegendBug" aria-label="{m.rao()}'s GitHub" class="text-muted-foreground hover:text-primary">
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="text-muted-foreground">{m.rao_description()}</div>
+            <div class="text-sm mb-4">{m.ucd_number()}: 21207497</div>
+        </li>
+        
+        <!-- Team Member 6 -->
+        <li class="flex flex-col items-center">
+            <img src="/src/lib/images/team/zhai.jpg" alt="{m.zhai()}" width="200" height="200" class="rounded-full">
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <h2 class="text-xl font-medium mb-0">{m.zhai()}</h2>
+                <div class="flex gap-2">
+                    <a href="https://github.com/Prethea-Phoenixia" aria-label="{m.zhai()}'s GitHub" class="text-muted-foreground hover:text-primary">
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="text-muted-foreground">{m.zhai_description()}</div>
+            <div class="text-sm mb-4">{m.ucd_number()}: 21207331</div>
+        </li>
+    </ul>
+</section>

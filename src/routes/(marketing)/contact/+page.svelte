@@ -2,17 +2,17 @@
     import * as m from '$lib/paraglide/messages';
     import { Textarea } from "$lib/components/ui/textarea/index.js";
     import * as Card from "$lib/components/ui/card/index.js";
-	  import { Input } from "$lib/components/ui/input/index.js";
-	  import { Label } from "$lib/components/ui/label/index.js";
+	import { Input } from "$lib/components/ui/input/index.js";
+	import { Label } from "$lib/components/ui/label/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
 </script>
 
 <svelte:head>
-    <title>{m.contact()} | {m.app_name()}</title>
-    <meta name="description" content={`${m.contact()} for ${m.app_name()}`} />
+    <title>{m.contact_us()} | {m.app_name()}</title>
+    <meta name="description" content={`${m.contact_us()} for ${m.app_name()}`} />
 </svelte:head>
 
-<Card.Root>
+<Card.Root class="my-10">
     <Card.Header>
         <Card.Title>{m.contact_us()}</Card.Title>
         <Card.Description>{m.contact_us_description()}</Card.Description>
