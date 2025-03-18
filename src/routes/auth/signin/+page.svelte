@@ -79,7 +79,7 @@
 			      // 延迟跳转到首页
 			      setTimeout(() => {
 				        goto('/dashboard/repository');
-			      }, 1500);
+			      }, 500);
 		    } catch (error) {
 			      // 直接使用错误消息
 			      const errorMessage = (error as Error).message;

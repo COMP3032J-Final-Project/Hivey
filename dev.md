@@ -96,3 +96,92 @@ Reference:
   (We do this style since `shadcn-svelte` do this style and affects our repo.)
 - `components` directory under the same directory of your page if your component is
   specific to that page.  
+
+
+## How to Control User Authorization
+
+Hivey uses a JWT-based authentication system to manage user access permissions. A series of functions are provided in `src/lib/api/auth.ts` to help control the user's authentication status and access permissions:
+
+### Main Functions
+
+1. **User Registration and Login**
+   - `postUserRegister(form: RegisterForm)`: Register a new user
+   - `postUserLogin(form: LoginForm)`: User login and obtain JWT access and refresh tokens
+   - `postLogoutUserAuth()`: User logout, simultaneously deregistering user authentication information in localStorage and the backend server
+
+2. **Token Management**
+   - `saveUserAuth(userAuth: UserAuth)`: Store user authentication information in localStorage
+   - `getUserAuth()`: Retrieve stored user authentication information from localStorage
+   - `removeUserAuth()`: Remove user authentication information from localStorage
+   - `isUserAuthExpired()`: Check if the access token has expired
+   - `postRefreshUserAuth(form: RefreshUserAuthForm)`: Use the refresh token to obtain a new access token
+
+3. **User Information Management**
+   - `getUserInfo()`: Get detailed information about the currently logged-in user
+   - `putUserInfo(form: User)`: Update user information
+
+### How to Use
+
+#### 1. Route Protection
+
+In SvelteKit, route protection can be implemented in the `load` function of `+layout.ts` or `+page.ts` files:
+
+```typescript
+import { getUserAuth, isUserAuthExpired } from '$lib/api/auth';
+import { redirect } from '@sveltejs/kit';
+
+export const load = async () => {
+  // Check if the user is logged in
+  const userAuth = getUserAuth();
+  
+  // Redirect to the login page if not logged in or token has expired
+  if (!userAuth || isUserAuthExpired()) {
+    throw redirect(302, '/auth/signin');
+  }
+  
+  return {};
+};
+```
+
+#### 2. Conditional Rendering in Components
+
+In components, content can be conditionally rendered based on the user's login status or permission level:
+
+```svelte
+<script>
+  import { getUserAuth, getUserInfo } from '$lib/api/auth';
+  import { onMount } from 'svelte';
+  
+  let userAuth = getUserAuth();
+  let userInfo;
+  let isAdmin = false;
+  
+  onMount(async () => {
+    if (userAuth) {
+      userInfo = await getUserInfo();
+      isAdmin = userInfo.is_superuser;
+    }
+  });
+</script>
+
+{#if userAuth}
+  <!-- Content visible to logged-in users -->
+  <p>Welcome back, {userInfo?.username}</p>
+  
+  {#if isAdmin}
+    <!-- Content visible to administrators -->
+    <AdminPanel />
+  {/if}
+{:else}
+  <!-- Content visible to non-logged-in users -->
+  <p>Please <a href="/auth/signin">log in</a> to access more features</p>
+{/if}
+```
+
+#### 3. Authentication in API Requests
+All API requests that require authentication will automatically have authentication headers added by the `axiosClient` interceptor, handling token refresh and expiration situations. Frontend developers do not need to manually manage these details when using `axiosClient` to request backend APIs.
+
+### Notes
+1. The JWT access token is considered expired 5 minutes before its actual expiration to ensure there is enough time to refresh it.
+2. If both the JWT access token and refresh token expire, the user will be automatically redirected to the login page.
+3. All protected routes should implement appropriate permission checks.
