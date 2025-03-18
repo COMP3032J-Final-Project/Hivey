@@ -131,6 +131,7 @@
   "tao_description":"Responsive Design, Front-end Development",
   "rao": "Hanshu Rao",
   "rao_description":"API Design, Back-end Development",
-  "ucd_number":"UCD Number"
+  "ucd_number":"UCD Number",
+  "send_chat_message":"Enter message..."
 
 }

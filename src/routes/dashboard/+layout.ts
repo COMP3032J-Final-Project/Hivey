@@ -7,7 +7,6 @@ import * as m from '$lib/paraglide/messages';
 import { failure } from '$lib/components/ui/toast';
 import type { User } from '$lib/types/auth';
 
-// 设置页面需要登录
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
 export const prerender = false; // 禁用预渲染
 

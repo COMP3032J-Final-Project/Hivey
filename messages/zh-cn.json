@@ -131,5 +131,7 @@
   "tao_description":"响应式设计，前端开发",
   "rao": "饶瀚书",
   "rao_description":"API设计，后端开发",
-  "ucd_number":"UCD学号"
+  "ucd_number":"UCD学号",
+  "send_chat_message":"输入消息..."
+  
 }
