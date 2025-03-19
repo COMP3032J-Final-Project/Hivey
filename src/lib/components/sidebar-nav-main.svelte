@@ -2,6 +2,9 @@
 	  import * as Collapsible from "$lib/components/ui/collapsible/index.js";
 	  import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	  import { ChevronRight } from "lucide-svelte";
+	  import { createEventDispatcher } from 'svelte';
+
+	  const dispatch = createEventDispatcher();
 
 	  let {
         groupName,
@@ -21,13 +24,17 @@
 			      }[];
 		    }[];
 	  } = $props();
+
+	  function handleNavSelect(group: string, item: string) {
+		  dispatch('navSelect', { group, item });
+	  }
 </script>
 
 <Sidebar.Group>
 	  <Sidebar.GroupLabel>{groupName}</Sidebar.GroupLabel>
 	  <Sidebar.Menu>
 		    {#each items as mainItem (mainItem.title)}
-			      <Collapsible.Root open={mainItem.isActive} class="group/collapsible">
+			      <Collapsible.Root>
 				        {#snippet child({ props })}
 					          <Sidebar.MenuItem {...props}>
 						            <Collapsible.Trigger>
@@ -53,7 +60,11 @@
 										                    <Sidebar.MenuSubItem>
 											                      <Sidebar.MenuSubButton>
 												                        {#snippet child({ props })}
-													                          <a href={subItem.url} {...props}>
+													                          <a 
+														                            href={subItem.url} 
+														                            {...props}
+														                            onclick={() => handleNavSelect(mainItem.title, subItem.title)}
+													                          >
 														                            <span>{subItem.title}</span>
 													                          </a>
 												                        {/snippet}
