@@ -4,16 +4,6 @@
 
 	// 导航和资源数据
 	const navData = {
-		recentProjects: [
-			{
-				title: 'project 0',
-				url: '#'
-			},
-			{
-				title: 'Project 1',
-				url: '#'
-			}
-		],
 		resources: [
 			{
 				title: 'Template Universe',
@@ -32,11 +22,11 @@
 				isActive: true,
 				items: [
 					{
-						title: 'All',
+						title: 'All Projects',
 						url: '#'
 					},
 					{
-						title: 'Mine',
+						title: 'My Projects',
 						url: '#'
 					},
 					{
@@ -86,8 +76,6 @@
 	<Sidebar.Root collapsible="icon" variant="inset">
 		<Sidebar.Content>
 			<NavMain groupName="Project" items={navData.navMain} />
-
-			<FlatGroup groupName="Recent Projects" items={navData.recentProjects} />
 			<FlatGroup groupName="Resources" items={navData.resources} />
 		</Sidebar.Content>
 
