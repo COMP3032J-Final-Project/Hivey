@@ -15,6 +15,7 @@ This behavior is defined in `/src/params/expr.ts`.
   shadcn-svelte haven't support v4 yet.
 - [paraglide-sveltekit](https://inlang.com/m/dxnzrydw/paraglide-sveltekit-i18n/getting-started)
   i18n/translation
+- [valibot](https://valibot.dev/) type validation
 
 # Image Assets
 
@@ -85,6 +86,9 @@ Reference:
 [official docs](https://inlang.com/m/dxnzrydw/paraglide-sveltekit-i18n/getting-started)  
 [tutorial](https://lokalise.com/blog/svelte-i18n/)
 
+## Valibot
+
+See [Introduction](https://valibot.dev/guides/introduction/) and [QuickStart](https://valibot.dev/guides/quick-start/)
 
 # Tips
 

@@ -2,81 +2,88 @@ import axios from 'axios';
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
 import type {
-	UserInfo,
-	UserAuth,
-	User,
-	RegisterForm,
-	LoginForm,
-	RefreshUserAuthForm
 } from '$lib/types/auth';
+
+import {
+	  UserAuth,
+	  User,
+    RegisterForm,
+    LoginForm,
+	  RefreshUserAuthForm
+} from '$lib/types/auth';
+
 import * as m from '$lib/paraglide/messages';
 import { browser } from '$app/environment';
 
+import * as v from 'valibot';
+
 // 注册新用户
-export const postUserRegister = async (form: RegisterForm): Promise<UserInfo> => {
-	try {
-		const response = await axiosClient.post<APIResponse<UserInfo>>(`/user/register`, form);
-		switch (response.data.code) {
-			case 200:
-				if (response.data.data) {
-					return response.data.data;
-				}
-				throw new Error(m.error_unknown());
-			case 409:
-				throw new Error(m.error_user_exists());
-			default:
-				throw new Error(response.data.msg || m.error_unknown());
-		}
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			throw new Error(error.response?.data?.msg || m.error_network());
-		}
-		throw error;
-	}
+export const postUserRegister = async (formData: any): Promise<User> => {
+    const form = v.parse(RegisterForm, formData);
+	  try {
+		    const response = await axiosClient.post<APIResponse<User>>(`/user/register`, form);
+		    switch (response.data.code) {
+			      case 200:
+				        if (response.data.data) {
+					          return response.data.data;
+				        }
+				        throw new Error(m.error_unknown());
+			      case 409:
+				        throw new Error(m.error_user_exists());
+			      default:
+				        throw new Error(response.data.msg || m.error_unknown());
+		    }
+	  } catch (error) {
+		    if (axios.isAxiosError(error)) {
+			      throw new Error(error.response?.data?.msg || m.error_network());
+		    }
+		    throw error;
+	  }
 };
 
 // 用户登录
-export const postUserLogin = async (form: LoginForm): Promise<UserAuth> => {
-	try {
-		// 将form中的email字段的键名改为username
-		const formWithUsername = {
-			password: form.password,
-			username: form.email
-		};
+export const postUserLogin = async (formData: any): Promise<UserAuth> => {
+    const form: LoginForm = v.parse(LoginForm, formData);
+	  try {
+		    // 将form中的email字段的键名改为username
+		    const formWithUsername = {
+			      password: form.password,
+			      username: form.email
+		    };
 		
-		// 创建 URLSearchParams 对象，用于 x-www-form-urlencoded 格式
-		const formData = new URLSearchParams();
-		formData.append('username', form.email);
-		formData.append('password', form.password);
+		    // 创建 URLSearchParams 对象，用于 x-www-form-urlencoded 格式
+		    const formData = new URLSearchParams();
+		    formData.append('username', form.email);
+		    formData.append('password', form.password);
 		
-		console.log(formWithUsername);
-		const response = await axiosClient.post<APIResponse<UserAuth>>(
-			`/auth/login`,
-			formData,
-			{
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				}
-			}
-		);
+		    console.log(formWithUsername);
+		    const response = await axiosClient.post<APIResponse<UserAuth>>(
+			      `/auth/login`,
+			      formData,
+			      {
+				        headers: {
+					          'Content-Type': 'application/x-www-form-urlencoded'
+				        }
+			      }
+		    );
 
-		switch (response.data.code) {
-			case 200:
-				if (response.data.data) {
-					return response.data.data;
-				}
-				throw new Error(m.error_unknown());
-			case 400:
-				throw new Error(m.error_invalid_user());
-			default:
-				throw new Error(response.data.msg || m.error_unknown());
-		}
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			throw new Error(error.response?.data?.msg || m.error_network());
-		}
-		throw error;
-	}
+		    switch (response.data.code) {
+			      case 200:
+				        if (response.data.data) {
+					          return response.data.data;
+				        }
+				        throw new Error(m.error_unknown());
+			      case 400:
+				        throw new Error(m.error_invalid_user());
+			      default:
+				        throw new Error(response.data.msg || m.error_unknown());
+		    }
+	  } catch (error) {
+		    if (axios.isAxiosError(error)) {
+			      throw new Error(error.response?.data?.msg || m.error_network());
+		    }
+		    throw error;
+	  }
 };
 
 // 获取用户信息

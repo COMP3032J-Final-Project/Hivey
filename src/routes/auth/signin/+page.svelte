@@ -7,11 +7,11 @@
 	  import { page } from '$app/stores';
 	  import { onMount } from 'svelte';
     
-      import { Button } from "$lib/components/ui/button/index.js";
+    import { Button } from "$lib/components/ui/button/index.js";
 	  import * as Card from "$lib/components/ui/card/index.js";
 	  import { Input } from "$lib/components/ui/input/index.js";
 	  import { Label } from "$lib/components/ui/label/index.js";
-      import { Checkbox } from "$lib/components/ui/checkbox/index.js";
+    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
 
 	  // 表单数据
 	  let formData: LoginForm = {
@@ -101,12 +101,11 @@
 		        <div>
                 <Label for="email">{m.email()}</Label>
 				        <Input 
-							
 				            id="email"
 				            type="email"
 				            name="username"
 				            autocomplete="email"
-                    		bind:value={formData.email}
+                    bind:value={formData.email}
 				            disabled={isLoading}
 				            required
                 />
