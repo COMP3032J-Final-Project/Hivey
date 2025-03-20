@@ -5,7 +5,12 @@
 ## Specification
 
 - tab, space, indentation, etc: [editorconfig](https://editorconfig.org/)
-- (Optional) git commit message: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- (Optional) git commit message: [Conventional - Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+
+## Requirement
+
+Copy [.env.example](.env.example) to a file named `.env` at project root. Modify
+settings if you need.
 
 ## Developing
 

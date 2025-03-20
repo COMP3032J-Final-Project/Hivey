@@ -56,7 +56,6 @@ export const postUserLogin = async (formData: any): Promise<UserAuth> => {
 		    formData.append('username', form.email);
 		    formData.append('password', form.password);
 		
-		    console.log(formWithUsername);
 		    const response = await axiosClient.post<APIResponse<UserAuth>>(
 			      `/auth/login`,
 			      formData,
