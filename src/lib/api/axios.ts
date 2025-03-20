@@ -113,6 +113,7 @@ axiosClient.interceptors.response.use(
 	  (response: AxiosResponse) => {
 		    return response;
 	  },
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
 	  async (error: AxiosError) => {
         if (!browser || error.response == null || error.response.status !== 401){
             return Promise.reject(error);

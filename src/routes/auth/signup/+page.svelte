@@ -1,14 +1,17 @@
 <script lang="ts">
 	  import * as m from '$lib/paraglide/messages';
 	  import { postUserRegister } from '$lib/api/auth';
-	  import { type RegisterForm, type UserInfo } from '$lib/types/auth';
+	  import { type RegisterForm } from '$lib/types/auth';
 	  import { goto } from '$app/navigation';
 	  import { success, failure } from '$lib/components/ui/toast';
 
-      import { Button } from "$lib/components/ui/button/index.js";
+    import { Button } from "$lib/components/ui/button/index.js";
 	  import * as Card from "$lib/components/ui/card/index.js";
 	  import { Input } from "$lib/components/ui/input/index.js";
 	  import { Label } from "$lib/components/ui/label/index.js";
+
+    import * as v from 'valibot';
+    import { RawRegisterForm } from '$lib/types/auth';
 
 	  let formData = {
 		    username: '',
@@ -20,12 +23,7 @@
 	  const handleSubmit = async (e: Event) => {
 		    e.preventDefault();
 		    try {
-			      // 前端验证
-			      if (!formData.username.trim()) throw new Error(m.error_empty_username());
-			      if (!/^\S+@\S+\.\S+$/.test(formData.email)) throw new Error(m.error_invalid_email());
-			      if (formData.password.length < 6) throw new Error(m.error_weak_password());
-			      if (formData.password !== formData.confirm_password)
-				        throw new Error(m.error_password_mismatch());
+            formData = v.parse(RawRegisterForm, formData);
 
 			      const registerForm: RegisterForm = {
 				        username: formData.username,
@@ -33,8 +31,7 @@
 				        password: formData.password
 			      };
 
-			      // 调用注册接口
-			      const userInfo: UserInfo = await postUserRegister(registerForm);
+			      await postUserRegister(registerForm);
 
 			      // 注册成功处理
 			      success(m.success_sign_up());
@@ -107,7 +104,7 @@
 				            autocomplete="new-password"
 				            bind:value={formData.confirm_password}
 			          />
-					  {#if formData.confirm_password && formData.password !== formData.confirm_password}
+					      {#if formData.confirm_password && formData.password !== formData.confirm_password}
 				            <div class="mt-1 text-red-500">
 					              {m.error_password_mismatch()}
 				            </div>
