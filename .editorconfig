@@ -19,3 +19,10 @@ indent_style = tab
 
 [*.{nix,json,el}]
 indent_size = 2
+
+
+[*.{ts,js}]
+indent_size = 2
+
+[*.svelte]
+indent_size = 2
