@@ -46,7 +46,8 @@ const exludePaths = ['/auth/refresh', '/auth/login', '/user/register'];
 // 请求拦截器
 axiosClient.interceptors.request.use(
 	  async (config: InternalAxiosRequestConfig) => {
-        if (!browser || (config.url && exludePaths.some(path => config.url === path))) {
+        // localized path has prefix so we use `includes`
+        if (!browser || (config.url && exludePaths.some(path => config.url?.includes(path)))) {
             return config;
         }
 

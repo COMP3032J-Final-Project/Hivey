@@ -13,7 +13,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "npm run test:unit -- --run",
+		"machine-translate": "inlang machine translate --project project.inlang"
 	},
 	"devDependencies": {
 		"@sveltejs/kit": "^2.19.0",
@@ -31,11 +32,13 @@
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "^5.8.2",
 		"vite": "^6.2.1",
-		"vitest": "^3.0.8"
+		"vitest": "^3.0.8",
+		"@inlang/paraglide-js": "2.0.1",
+		"@inlang/cli": "^3.0.0"
 	},
 	"dependencies": {
 		"@codemirror/lang-markdown": "^6.3.2",
-		"@inlang/paraglide-sveltekit": "^0.15.5",
+		"@inlang/paraglide-js": "^2.0.1",
 		"@lucide/svelte": "^0.479.0",
 		"@prgm/sveltekit-progress-bar": "^3.0.2",
 		"@sveltejs/enhanced-img": "^0.4.4",
