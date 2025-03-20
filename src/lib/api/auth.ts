@@ -12,24 +12,8 @@ import type {
 import * as m from '$lib/paraglide/messages';
 import { browser } from '$app/environment';
 
-const is_mock = true; // 在没有启动后端服务时, 设置为true可以提供mock假数据
-
 // 注册新用户
 export const postUserRegister = async (form: RegisterForm): Promise<UserInfo> => {
-	// Mock Response
-	if (is_mock) {
-		const mock_response: APIResponse<UserInfo> = {
-			code: 200,
-			msg: m.success_sign_up(),
-			data: {
-				email: form.email,
-				username: form.username,
-				password: form.password
-			}
-		};
-		return mock_response.data as User;
-	}
-
 	try {
 		const response = await axiosClient.post<APIResponse<UserInfo>>(`/user/register`, form);
 		switch (response.data.code) {
@@ -53,21 +37,6 @@ export const postUserRegister = async (form: RegisterForm): Promise<UserInfo> =>
 
 // 用户登录
 export const postUserLogin = async (form: LoginForm): Promise<UserAuth> => {
-	// Mock Response
-	if (is_mock) {
-		const mock_response: APIResponse<UserAuth> = {
-			code: 200,
-			msg: m.success_sign_in(),
-			data: {
-				access_token: '1234567890',
-				refresh_token: '1234567890',
-				token_type: 'Bearer',
-				expires_in: 60000
-			}
-		};
-		return mock_response.data as UserAuth;
-	}
-
 	try {
 		// 将form中的email字段的键名改为username
 		const formWithUsername = {
@@ -112,23 +81,6 @@ export const postUserLogin = async (form: LoginForm): Promise<UserAuth> => {
 
 // 获取用户信息
 export const getUserInfo = async (): Promise<User> => {
-	// Mock Response
-	if (is_mock) {
-		const mock_response: APIResponse<User> = {
-			code: 200,
-			msg: "success get user info",
-			data: {
-				email: 'test@qq.com',
-				username: 'test',
-				is_active: true,
-				is_superuser: false,
-				avatar: 'https://avatars.githubusercontent.com/u/100000000?v=4',
-				bio: 'Hivey makes my document collaboration so easy!'
-			}
-		};
-		return mock_response.data as User;
-	}
-
 	try {
 		const response = await axiosClient.get<APIResponse<User>>(`/user/me`);
 		switch (response.data.code) {
@@ -150,23 +102,6 @@ export const getUserInfo = async (): Promise<User> => {
 
 // 更新用户信息
 export const putUserInfo = async (form: User): Promise<User> => {
-	// Mock Response
-	if (is_mock) {
-		const mock_response: APIResponse<User> = {
-			code: 200,
-			msg: "success update user info",
-			data: {
-				email: form.email || 'test@qq.com',
-				username: form.username || 'test',
-				avatar: form.avatar || 'https://avatars.githubusercontent.com/u/100000000?v=4',
-				bio: form.bio || 'Hivey makes my document collaboration so easy!',
-				is_active: true,
-				is_superuser: false
-			}
-		};
-		return mock_response.data as User;
-	}
-
 	try {
 		const response = await axiosClient.put<APIResponse<User>>(`/user/me`, form);
 		switch (response.data.code) {
@@ -191,21 +126,6 @@ export const putUserInfo = async (form: User): Promise<User> => {
 
 // 刷新用户token
 export const postRefreshUserAuth = async (form: RefreshUserAuthForm): Promise<UserAuth> => {
-	// Mock Response
-	if (is_mock) {
-		const mock_response: APIResponse<UserAuth> = {
-			code: 200,
-			msg: 'success refresh token',
-			data: {
-				access_token: '1234567890',
-				refresh_token: '1234567890',
-				token_type: 'Bearer',
-				expires_in: 360000
-			}
-		};
-		return mock_response.data as UserAuth;
-	}
-
 	try {
 		// 注意：刷新 Token 时不使用拦截器，避免循环调用
 		const response = await axiosClient.post<APIResponse<UserAuth>>(`/auth/refresh`, form);
@@ -228,12 +148,6 @@ export const postRefreshUserAuth = async (form: RefreshUserAuthForm): Promise<Us
 
 // 在客户端和服务器端同时登出
 export const postLogoutUserAuth = async (): Promise<void> => {
-	// Mock Response
-	if (is_mock) {
-		removeUserAuth(); // 清除本地存储的 Token
-		return;
-	}
-
 	try {
 		// Body需要传入refresh_token, Header需要传入Authorization, 值为Bearer+空格+accees_token
 		const userAuth = getUserAuth();
