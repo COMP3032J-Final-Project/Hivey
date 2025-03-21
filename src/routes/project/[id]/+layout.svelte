@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Folder, File, FolderPlus, MessageSquare } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
+	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
 	import type { SidebarFolder } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/sidebar-chatroom.svelte';
@@ -22,14 +23,7 @@
 	let showChat = $state(false); // 聊天室的显示状态
 
 	function addNewFolder() {
-		const currentFolders = $folders;
-		const isEditing = currentFolders.some((item) => item.isEditing);
-		if (isEditing) return;
-
-		folders.update((currentItems) => [
-			...currentItems,
-			{ title: '', url: '#', isEditing: true, icon: Folder }
-		]);
+		console.log('Add new folder');
 	}
 </script>
 
@@ -53,9 +47,7 @@
 						</button>
 
 						<!-- 添加文件夹按钮 -->
-						<button onclick={() => addNewFolder()}>
-							<FolderPlus />
-						</button>
+						<CreateFolderDialog />
 					</div>
 				</Sidebar.GroupLabel>
 

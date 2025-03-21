@@ -5,7 +5,6 @@ export interface SidebarFolder {
 	url: string;
 	icon?: any;
 	isActive?: boolean;
-	isEditing?: boolean;
 	items?: {
 		title: string;
 		url: string;
@@ -21,7 +20,12 @@ export interface ChatMessage {
 
 // 新建文件接口
 export interface NewFile {
-  title: string;      // 文件标题
-  suffix: string;     // 文件后缀
-  path: string;       // 文件路径
+  	title: string;      // 文件标题
+  	suffix: string;     // 文件后缀
+  	path: string;       // 文件路径
+}
+
+// 新建文件夹接口
+export interface NewFolder {
+	title: string;      // 文件夹名字
 }
