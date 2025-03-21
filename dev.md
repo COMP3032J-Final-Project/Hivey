@@ -88,6 +88,22 @@ To use translation, you should import specific constant from
 When you start dev server, it will automatically compile translation file into
 `/src/lib/paraglide` directory, which is not included in git repository/index.
 
+For link, we shouldn't write code like this:
+
+```svelte
+<a href="/auth/signin">
+```
+
+instead, we should  write code like this:
+
+```ts
+import { localizeHref } from '$lib/paraglide/runtime';
+```
+
+```svelte
+<a href={localizeHref("/auth/signup")}>
+```
+
 
 Reference:   
 [Translation file format](https://inlang.com/m/reootnfj/plugin-inlang-messageFormat)
