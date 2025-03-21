@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { putUserInfo } from '$lib/api/auth';
-	import * as m from '$lib/paraglide/messages';
 	import { success, failure } from '$lib/components/ui/toast';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Input from '$lib/components/ui/input/index.js';
@@ -9,6 +8,7 @@
 	import * as Textarea from '$lib/components/ui/textarea/index.js';
 	import type { PageData } from './$types';
 	import type { User } from '$lib/types/auth';
+  import { m, me, mpd } from '$lib/trans';
 
 	// 获取页面数据
 	let { data } = $props<{ data: PageData }>();
@@ -51,10 +51,10 @@
 			formData.bio = updatedUser.bio || '';
 
 			// 显示成功消息
-			success(m.success_profile_update());
+			success(mpd.success_profile_update());
 		} catch (error) {
 			// 显示错误消息
-			failure(error instanceof Error ? error.message : m.error_unknown());
+			failure(error instanceof Error ? error.message : me.unknown());
 		} finally {
 			isSubmitting = false;
 		}
@@ -93,7 +93,7 @@
 </script>
 
 <div class="container mx-auto px-4 py-4">
-	<h1 class="mb-4 text-xl font-bold">{m.profile()}</h1>
+	<h1 class="mb-4 text-xl font-bold">{mpd.profile()}</h1>
 
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 		<!-- 头像和个性签名 -->
@@ -133,7 +133,7 @@
 								onclick={generateNewAvatar}
 								disabled={isSubmitting}
 							>
-								{m.generate_new_avatar()}
+								{mpd.generate_new_avatar()}
 							</Button.Root>
 
 							<Button.Root
@@ -142,7 +142,7 @@
 								onclick={triggerFileInput}
 								disabled={isSubmitting}
 							>
-								{m.upload_local_image()}
+								{mpd.upload_local_image()}
 							</Button.Root>
 
 							<input
@@ -161,9 +161,9 @@
 					class="flex-1 overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-lg"
 				>
 					<Card.Header class="p-3">
-						<Card.Title class="text-center text-base">{m.bio()}</Card.Title>
+						<Card.Title class="text-center text-base">{mpd.bio()}</Card.Title>
 						<Card.Description class="text-center text-xs"
-							>{m.bio_description()}</Card.Description
+							>{mpd.bio_description()}</Card.Description
 						>
 					</Card.Header>
 					<Card.Content class="p-3">
@@ -184,10 +184,10 @@
 				class="flex h-full flex-col shadow-md transition-shadow duration-300 hover:shadow-lg"
 			>
 				<Card.Header class="p-3">
-					<Card.Title class="text-center text-base">{m.personal_information()}</Card.Title
+					<Card.Title class="text-center text-base">{mpd.personal_information()}</Card.Title
 					>
 					<Card.Description class="text-center text-xs"
-						>{m.personal_information_description()}</Card.Description
+						>{mpd.personal_information_description()}</Card.Description
 					>
 				</Card.Header>
 				<Card.Content class="flex flex-1 flex-col p-3">
@@ -223,7 +223,7 @@
 								disabled={isSubmitting}
 								class="bg-primary px-6 py-1.5 text-sm transition-colors hover:bg-primary/90"
 							>
-								{isSubmitting ? m.loading() : m.save_changes()}
+								{isSubmitting ? m.loading() : mpd.save_changes()}
 							</Button.Root>
 						</div>
 					</form>

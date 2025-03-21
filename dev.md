@@ -77,13 +77,21 @@ bunx jsrepo add ui/chat  # if you installed bun
 
 Translation files are in `/messages` directory.
 
+Specification:
+
+- page starts with a single underscore, e.g. `_page0`
+- other category starts with two or more underscore, e.g. `__error`
+
+To use translation, you should import specific constant from
+[/src/lib/trans.ts](./src/lib/trans.ts)
+
 When you start dev server, it will automatically compile translation file into
 `/src/lib/paraglide` directory, which is not included in git repository/index.
 
-The demo of how to use it can be found in `/src/routes/[page=expr]/paraglide`
 
 Reference:   
-[official docs](https://inlang.com/m/dxnzrydw/paraglide-sveltekit-i18n/getting-started)  
+[Translation file format](https://inlang.com/m/reootnfj/plugin-inlang-messageFormat)
+[official docs](https://inlang.com/m/gerre34r/library-inlang-paraglideJs/sveltekit)  
 [tutorial](https://lokalise.com/blog/svelte-i18n/)
 
 ## Valibot

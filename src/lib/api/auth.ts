@@ -12,8 +12,8 @@ import {
 	  RefreshUserAuthForm
 } from '$lib/types/auth';
 
-import * as m from '$lib/paraglide/messages';
 import { browser } from '$app/environment';
+import { me } from '$lib/trans';
 
 import * as v from 'valibot';
 
@@ -64,13 +64,13 @@ export const postRefreshUserAuth = async (form: RefreshUserAuthForm): Promise<Us
 				if (response.data.data) {
 					return response.data.data;
 				}
-				throw new Error(m.error_unknown());
+				throw new Error(me.unknown());
 			default:
-				throw new Error(response.data.msg || m.error_unknown());
+				throw new Error(response.data.msg || me.unknown());
 		}
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(error.response?.data?.msg || m.error_network());
+			throw new Error(error.response?.data?.msg || me.network());
 		}
 		throw error;
 	}
@@ -82,7 +82,7 @@ export const postLogoutUserAuth = async (): Promise<void> => {
 		// Body需要传入refresh_token, Header需要传入Authorization, 值为Bearer+空格+accees_token
 		const userAuth = getUserAuth();
 		if (!userAuth) {
-			throw new Error(m.error_user_not_login());
+			throw new Error(me.user_not_login());
 		}
 
 		const response = await axiosClient.post<APIResponse<void>>(`/auth/logout`, {
@@ -94,7 +94,7 @@ export const postLogoutUserAuth = async (): Promise<void> => {
 				removeUserAuth(); // 清除本地存储的 Token
 				return;
 			default:
-				throw new Error(response.data.msg || m.error_unknown());
+				throw new Error(response.data.msg || me.unknown());
 		}
 	} catch (error) {
 		throw error;

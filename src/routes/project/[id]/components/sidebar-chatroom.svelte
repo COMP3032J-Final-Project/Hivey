@@ -1,13 +1,13 @@
 <script lang="ts">
-    import * as m from '$lib/paraglide/messages';
 	import { writable } from 'svelte/store';
 	import { Send } from 'lucide-svelte';
 	import ChatMessage from './chat-message.svelte';
 	import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
 	import type { User } from '$lib/types/auth';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+  import { mpp } from '$lib/trans';
 
-	// 接收从Layout传入的props
+  // 接收从Layout传入的props
 	let { chatMessages, currentUser }: { chatMessages: ChatMessageType[]; currentUser: User } =$props();
 	const messages = writable<ChatMessageType[]>(chatMessages); // 创建一个可写的store来存储聊天消息
 	let input = $state(''); // 新消息内容
@@ -59,7 +59,7 @@
 				type="text"
 				bind:value={input}
 				onkeydown={handleKeydown}
-				placeholder={m.send_chat_message()}
+				placeholder={mpp.send_chat_message()}
 				class="h-9 min-w-0 flex-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm shadow-sm placeholder:text-amber-500/70 focus:outline-none focus:ring-1 focus:ring-amber-400"
 			/>
 			<button

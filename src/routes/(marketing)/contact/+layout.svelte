@@ -1,6 +1,5 @@
 <script lang="ts">
     import Header from '../components/Header.svelte';
-    import * as m from '$lib/paraglide/messages';
     let { children } = $props();
 </script>
 

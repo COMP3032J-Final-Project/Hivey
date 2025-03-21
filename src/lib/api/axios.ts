@@ -14,7 +14,7 @@ import {
 	  removeUserAuth
 } from './auth';
 import type { RefreshUserAuthForm } from '$lib/types/auth';
-import * as m from '$lib/paraglide/messages';
+import { me } from '$lib/trans';
 import { browser } from '$app/environment';
 import { notification } from '$lib/components/ui/toast';
 
@@ -93,7 +93,7 @@ axiosClient.interceptors.request.use(
 			      isRefreshing = false;
 			      removeUserAuth();
 
-			      notification(m.error_session_expired());
+			      notification(me.session_expired());
 
 			      // 如果不是登录页，跳转到登录页
 			      if (browser && !window.location.pathname.includes('/auth/signin')) {
@@ -171,7 +171,7 @@ axiosClient.interceptors.response.use(
 				    isRefreshing = false;
 				    removeUserAuth();
 
-				    notification(m.error_session_expired());
+				    notification(me.session_expired());
 
 				    // 如果不是登录页，跳转到登录页
 				    if (browser && !window.location.pathname.includes('/auth/signin')) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as m from '$lib/paraglide/messages';
+  import { m, mpm } from '$lib/trans';
 </script>
 
 <footer class="py-12">
@@ -12,21 +12,21 @@
                     </svg>
                     { m.app_name() }
                 </a>
-                <p class="mt-2 text-sm text-muted-foreground">{m.the_collaborative_editor_for_all_your_document_formats()}</p>
+                <p class="mt-2 text-sm text-muted-foreground">{mpm.the_collaborative_editor_for_all_your_document_formats()}</p>
             </div>
             
             <div class="flex gap-6">
-                <a href="https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.about()}</a>
-                <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.features()}</a>
-                <a href="/aboutus" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.about_us()}</a>
-                <a href="/contact" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{m.contact_us()}</a>
+                <a href="https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{mpm.about()}</a>
+                <a href="/features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{mpm.features()}</a>
+                <a href="/aboutus" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{mpm.about_us()}</a>
+                <a href="/contact" class="text-sm text-muted-foreground hover:text-foreground transition-colors">{mpm.contact_us()}</a>
             </div>
         </div>
         
         <div class="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
-            <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} { m.app_name() }. {m.all_rights_reserved()}</p>
+            <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} {m.app_name() }. {mpm.all_rights_reserved()}</p>
             <div class="flex gap-4 mt-4 md:mt-0">
-                <a href="/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">{m.terms()}</a>
+                <a href="/terms" class="text-xs text-muted-foreground hover:text-foreground transition-colors">{mpm.terms()}</a>
             </div>
         </div>
     </div>
