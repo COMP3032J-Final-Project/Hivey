@@ -29,7 +29,7 @@
         </div>
 
         <!-- Mobile Menu Button -->
-        <button class="md:hidden focus:outline-none" on:click={toggleMobileMenu}>
+        <button class="md:hidden focus:outline-none" onclick={toggleMobileMenu}>
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-16 6h16"}/>
             </svg>
