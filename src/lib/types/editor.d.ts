@@ -18,3 +18,10 @@ export interface ChatMessage {
 	message: string; // 消息内容
 	timestamp: Date; // 消息发送时间
 }
+
+// 新建文件接口
+export interface NewFile {
+  title: string;      // 文件标题
+  suffix: string;     // 文件后缀
+  path: string;       // 文件路径
+}
