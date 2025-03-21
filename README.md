@@ -9,8 +9,7 @@
 
 ## Requirement
 
-Copy [.env.example](.env.example) to a file named `.env` at project root. Modify
-settings if you need.
+Copy [.env.example](.env.example) to a file named `.env` at project root. Modify settings if you need.
 
 ## Developing
 
@@ -55,5 +54,3 @@ Finally you can run `bun ./index.js` in that build directory to server up.
 ## Unit Test
 
 https://svelte.dev/docs/svelte/testing
-
-
