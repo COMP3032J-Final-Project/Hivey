@@ -33,6 +33,8 @@ Run other commands:
 
 first check the `scripts` entry in `package.json`, then run command like `bun run test`
 
+**Before Committing Code**, run `bun run check` command.
+
 ## Building
 
 You can preview the production build with `bun run preview`.
