@@ -1,11 +1,11 @@
 import { Folder } from 'lucide-svelte';
 import type { SidebarFolder, ChatMessage } from '$lib/types/editor';
-import type { User } from '$lib/types/auth';
 import { failure } from '$lib/components/ui/toast';
-import * as m from '$lib/paraglide/messages';
-import { getUserInfo, getUserAuth } from '$lib/api/auth';
+import { getUserSession } from '$lib/auth';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
+import { me } from '$lib/trans';
+
 // 创建模拟聊天数据
 const mockMessages: ChatMessage[] = [
 	{
@@ -122,12 +122,12 @@ export const prerender = false; // 禁用预渲染
 
 export const load: LayoutLoad = async ({ url }) => {
 	// 检查用户是否已登录
-	const userAuth = getUserAuth();
+	const userAuth = getUserSession();
 
 	// 如果未登录，立即重定向到登录页面
 	if (!userAuth) {
 		// 显示错误提示
-		failure(m.error_user_not_login());
+		failure(me.user_not_login());
 
 		// 将当前URL路径添加到重定向URL中，以便登录后可以返回
 		const returnUrl = encodeURIComponent(url.pathname + url.search);

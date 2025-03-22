@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
-import { getUserInfo, getUserAuth } from '$lib/api/auth';
+import { getUserInfo } from '$lib/api/auth';
+import { getUserSession } from '$lib/auth';
 import type { LayoutLoad } from './$types';
 import type { DashboardLayoutData } from '$lib/types/dashboard';
 import { failure } from '$lib/components/ui/toast';
@@ -12,7 +13,7 @@ export const prerender = false; // 禁用预渲染
 
 export const load: LayoutLoad = async ({ url }): Promise<DashboardLayoutData> => {
 	// 检查用户是否已登录
-	const userAuth = getUserAuth();
+	const userAuth = getUserSession();
 	
 	// 如果未登录，立即重定向到登录页面
 	if (!userAuth) {

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { postUserLogin, saveUserAuth } from '$lib/api/auth';
+	import { postUserLogin } from '$lib/api/auth';
+  import { saveUserSession } from '$lib/auth';
 	import type { LoginForm, UserAuth } from '$lib/types/auth';
 	import { goto } from '$app/navigation';
 	import { success, failure } from '$lib/components/ui/toast';
@@ -72,7 +73,7 @@
 			  }
 
 			  // 使用 Token 管理功能保存 Token
-			  saveUserAuth(userAuth);
+			  saveUserSession(userAuth);
 
 			  success(mpa.success_sign_in());
 

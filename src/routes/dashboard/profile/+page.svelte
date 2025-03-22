@@ -7,88 +7,91 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Textarea from '$lib/components/ui/textarea/index.js';
 	import type { PageData } from './$types';
-	import type { User } from '$lib/types/auth';
   import { m, me, mpd } from '$lib/trans';
+	import { User } from '$lib/types/auth';
 
 	// 获取页面数据
 	let { data } = $props<{ data: PageData }>();
 
 	// 表单数据
-	let formData: User = $state({
-		username: data.userInfo?.username || '',
-		email: data.userInfo?.email || '',
-		avatar: data.userInfo?.avatar || '',
-		bio: data.userInfo?.bio || 'Hivey makes my document collaboration so easy!'
+	let formData = $state({
+		  username: data.userInfo?.username || '',
+		  email: data.userInfo?.email || '',
+		  avatar: data.userInfo?.avatar || '',
+		  bio: data.userInfo?.bio || 'Hivey makes my document collaboration so easy!'
 	});
 
 	let isSubmitting = $state(false); // 表单提交状态
 	let fileInput: HTMLInputElement; // 文件输入引用
 
 	// 表单提交处理
-	async function handleSubmit() {
-		isSubmitting = true;
-		try {
-			if (!formData.username.trim()) throw new Error('Username cannot be empty'); // 验证表单
-			if (!formData.email.trim()) throw new Error('Email cannot be empty');
-			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-			if (!emailRegex.test(formData.email)) throw new Error('Invalid email'); // 验证邮箱格式
+	async function handleSubmit(event: SubmitEvent) {
+      event.preventDefault();
+      
+		  isSubmitting = true;
+		  try {
+			    if (!formData.username.trim()) throw new Error('Username cannot be empty'); // 验证表单
+			    if (!formData.email.trim()) throw new Error('Email cannot be empty');
+			    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			    if (!emailRegex.test(formData.email)) throw new Error('Invalid email'); // 验证邮箱格式
 
-			// 构建更新数据
-			const updateData: User = {
-				username: formData.username,
-				email: formData.email,
-				avatar: formData.avatar,
-				bio: formData.bio
-			};
+			    // 构建更新数据
+			    const updateData = {
+				      username: formData.username,
+				      email: formData.email,
+				      avatar: formData.avatar,
+				      bio: formData.bio
+			    };
 
-			// 调用API更新用户信息
-			const updatedUser = await putUserInfo(updateData as User);
+			    // 调用API更新用户信息
+			    const updatedUser = await putUserInfo(updateData);
 
-			// 更新表单数据
-			formData.username = updatedUser.username;
-			formData.email = updatedUser.email;
-			formData.avatar = updatedUser.avatar || '';
-			formData.bio = updatedUser.bio || '';
+			    // 更新表单数据
+			    formData.username = updatedUser.username;
+			    formData.email = updatedUser.email;
+          // FIXME update User type to contain `avatar` and `bio` type
+			    formData.avatar = (updatedUser as any).avatar || '';
+			    formData.bio = (updatedUser as any).bio || '';
 
-			// 显示成功消息
-			success(mpd.success_profile_update());
-		} catch (error) {
-			// 显示错误消息
-			failure(error instanceof Error ? error.message : me.unknown());
-		} finally {
-			isSubmitting = false;
-		}
+			    // 显示成功消息
+			    success(mpd.success_profile_update());
+		  } catch (error) {
+			    // 显示错误消息
+			    failure(error instanceof Error ? error.message : me.unknown());
+		  } finally {
+			    isSubmitting = false;
+		  }
 	}
 
 	// 处理文件上传
 	function handleFileUpload(event: Event) {
-		const target = event.target as HTMLInputElement;
-		if (!target.files || target.files.length === 0) return;
+		  const target = event.target as HTMLInputElement;
+		  if (!target.files || target.files.length === 0) return;
 
-		const file = target.files[0];
-		if (!file.type.startsWith('image/')) {
-			failure('File Type Error!');
-			return;
-		}
+		  const file = target.files[0];
+		  if (!file.type.startsWith('image/')) {
+			    failure('File Type Error!');
+			    return;
+		  }
 
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			if (e.target?.result) {
-				formData.avatar = e.target.result as string;
-			}
-		};
-		reader.readAsDataURL(file);
+		  const reader = new FileReader();
+		  reader.onload = (e) => {
+			    if (e.target?.result) {
+				      formData.avatar = e.target.result as string;
+			    }
+		  };
+		  reader.readAsDataURL(file);
 	}
 
 	// 随机生成新头像
 	function generateNewAvatar() {
-		const seed = Math.random().toString(36).substring(2, 8);
-		formData.avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+		  const seed = Math.random().toString(36).substring(2, 8);
+		  formData.avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
 	}
 
 	// 触发文件选择
 	function triggerFileInput() {
-		fileInput.click();
+		  fileInput.click();
 	}
 </script>
 
@@ -150,7 +153,7 @@
 								accept="image/*"
 								class="hidden"
 								bind:this={fileInput}
-								on:change={handleFileUpload}
+								onchange={handleFileUpload}
 							/>
 						</div>
 					</Card.Content>
@@ -163,7 +166,7 @@
 					<Card.Header class="p-3">
 						<Card.Title class="text-center text-base">{mpd.bio()}</Card.Title>
 						<Card.Description class="text-center text-xs"
-							>{mpd.bio_description()}</Card.Description
+						>{mpd.bio_description()}</Card.Description
 						>
 					</Card.Header>
 					<Card.Content class="p-3">
@@ -187,15 +190,15 @@
 					<Card.Title class="text-center text-base">{mpd.personal_information()}</Card.Title
 					>
 					<Card.Description class="text-center text-xs"
-						>{mpd.personal_information_description()}</Card.Description
+					>{mpd.personal_information_description()}</Card.Description
 					>
 				</Card.Header>
 				<Card.Content class="flex flex-1 flex-col p-3">
-					<form on:submit|preventDefault={handleSubmit} class="flex flex-1 flex-col">
+					<form onsubmit={handleSubmit} class="flex flex-1 flex-col">
 						<div class="space-y-4">
 							<div class="space-y-1">
 								<label for="username" class="text-xs font-medium"
-									>{m.username()}</label
+								>{m.username()}</label
 								>
 								<Input.Root
 									id="username"

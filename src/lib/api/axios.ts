@@ -6,13 +6,15 @@ import type {
 	  InternalAxiosRequestConfig
 } from 'axios';
 import { goto } from '$app/navigation';
+import { postRefreshUserAuth } from './auth';
 import {
-	  getUserAuth,
-	  isUserAuthExpired,
-	  postRefreshUserAuth,
-	  saveUserAuth,
-	  removeUserAuth
-} from './auth';
+	  getUserSession,
+	  isSessionExpired,
+	  saveUserSession,
+	  clearUserSession
+} from '$lib/auth';
+
+
 import type { RefreshUserAuthForm } from '$lib/types/auth';
 import { me } from '$lib/trans';
 import { browser } from '$app/environment';
@@ -51,13 +53,13 @@ axiosClient.interceptors.request.use(
             return config;
         }
 
-		    const userAuth = getUserAuth();
+		    const userAuth = getUserSession();
 
 		    if (!userAuth) {
 			      return config;
 		    }
 
-        if (!isUserAuthExpired()) {
+        if (!isSessionExpired()) {
 			      config.headers.Authorization = `Bearer ${userAuth.access_token}`;
             return config;
         }
@@ -83,7 +85,7 @@ axiosClient.interceptors.request.use(
 
 			      const newUserAuth = await postRefreshUserAuth(refreshForm);
 
-			      saveUserAuth(newUserAuth);
+			      saveUserSession(newUserAuth);
 
 			      config.headers.Authorization = `Bearer ${newUserAuth.access_token}`;
 
@@ -91,7 +93,7 @@ axiosClient.interceptors.request.use(
 			      processQueue(newUserAuth.access_token);
 		    } catch (error) {
 			      isRefreshing = false;
-			      removeUserAuth();
+			      clearUserSession();
 
 			      notification(me.session_expired());
 
@@ -142,7 +144,7 @@ axiosClient.interceptors.response.use(
 			  originalRequest._retry = true;
 
 			  try {
-				    const userAuth = getUserAuth();
+				    const userAuth = getUserSession();
 
 				    if (!userAuth) {
 					      return Promise.reject(error);
@@ -156,7 +158,7 @@ axiosClient.interceptors.response.use(
 
 				    const newUserAuth = await postRefreshUserAuth(refreshForm);
 
-				    saveUserAuth(newUserAuth);
+				    saveUserSession(newUserAuth);
 
 				    if (originalRequest.headers) {
 					      originalRequest.headers.Authorization = `Bearer ${newUserAuth.access_token}`;
@@ -169,7 +171,7 @@ axiosClient.interceptors.response.use(
 				    return axiosClient(originalRequest);
 			  } catch (refreshError) {
 				    isRefreshing = false;
-				    removeUserAuth();
+				    clearUserSession();
 
 				    notification(me.session_expired());
 

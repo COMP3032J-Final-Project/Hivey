@@ -3,12 +3,14 @@
 	import { Send } from 'lucide-svelte';
 	import ChatMessage from './chat-message.svelte';
 	import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
-	import type { User } from '$lib/types/auth';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { mpp } from '$lib/trans';
+	import { User } from '$lib/types/auth';
 
   // 接收从Layout传入的props
-	let { chatMessages, currentUser }: { chatMessages: ChatMessageType[]; currentUser: User } =$props();
+	let { chatMessages, currentUser }: {
+      chatMessages: ChatMessageType[];
+      currentUser: (User & { avatar: string })
+  } =$props();
 	const messages = writable<ChatMessageType[]>(chatMessages); // 创建一个可写的store来存储聊天消息
 	let input = $state(''); // 新消息内容
 	

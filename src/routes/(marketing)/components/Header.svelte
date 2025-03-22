@@ -2,7 +2,7 @@
   import { Button } from "$lib/components/ui/button/index";
   import { fade } from 'svelte/transition';
   import LanguageButton from "$lib/components/language-button.svelte";
-  import { m } from '$lib/trans';
+  import { m, mpm } from '$lib/trans';
     
   let mobileMenuOpen = $state(false);
     
@@ -29,7 +29,7 @@
     </div>
 
     <!-- Mobile Menu Button -->
-    <button class="md:hidden focus:outline-none" onclick={toggleMobileMenu}>
+    <button aria-label="{mpm.open_menu()}" class="md:hidden focus:outline-none" onclick={toggleMobileMenu}>
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-16 6h16"}/>
       </svg>

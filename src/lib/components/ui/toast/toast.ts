@@ -20,7 +20,6 @@ export function success(message: string): void {
       '--toastBoxShadow': '0 8px 16px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06)'
     },
     duration: 3000,
-    position: 'top-center'
   });
 }
 
@@ -45,7 +44,6 @@ export function failure(message: string): void {
       '--toastBoxShadow': '0 8px 16px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06)'
     },
     duration: 3000,
-    position: 'top-center'
   });
 }
 
@@ -69,6 +67,5 @@ export function notification(message: string): void {
       '--toastBoxShadow': '0 8px 16px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06)'
     },
     duration: 3000,
-    position: 'top-center'
   });
 } 

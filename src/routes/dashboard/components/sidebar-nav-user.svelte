@@ -8,9 +8,13 @@
   import { goto } from '$app/navigation';
   import { postLogoutUserAuth } from '$lib/api/auth';
   import { failure, success } from '$lib/components/ui/toast';
-	let { user }: { user: User | null } = $props();
-	const sidebar = useSidebar();
   import { m, me, mpd } from '$lib/trans';
+
+  let { user }: {
+      user: (User & {avatar: string}) | null
+  } = $props();
+	const sidebar = useSidebar();
+
     
   // 处理登出
   async function handleLogout() {

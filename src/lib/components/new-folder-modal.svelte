@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages';
 	import {Button, buttonVariants} from "$lib/components/ui/button/index.js";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
@@ -7,6 +6,7 @@
 	import { FolderPlus } from 'lucide-svelte';
 	import type { NewFolder } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
+  import { me } from '$lib/trans'
 
 	let formData: NewFolder = {
 		title: '',
@@ -38,7 +38,7 @@
 		} catch (error) {
 			// 直接使用错误消息
 			const errorMessage = (error as Error).message;
-			failure(errorMessage || m.error_unknown());
+			failure(errorMessage || me.error_unknown());
 		}
 	};
 </script>

@@ -147,13 +147,6 @@
         font-weight: 700;
     }
 
-    .header p {
-        font-size: 1.1rem;
-        color: #6b7280;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
     .editor-container {
         display: flex;
         gap: 32px;
@@ -201,15 +194,15 @@
         font-weight: 500;
     }
 
-    .user1 {
-        background-color: #ed4f47;
-        color: #e11d48;
-    }
+    /* .user1 { */
+    /*     background-color: #ed4f47; */
+    /*     color: #e11d48; */
+    /* } */
 
-    .user2 {
-        background-color: #32bf76;
-        color: #047857;
-    }
+    /* .user2 { */
+    /*     background-color: #32bf76; */
+    /*     color: #047857; */
+    /* } */
 
     @media (max-width: 768px) {
         .editor-container {

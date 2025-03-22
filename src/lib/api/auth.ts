@@ -1,8 +1,6 @@
 import axios from 'axios';
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type {
-} from '$lib/types/auth';
 
 import {
 	  UserAuth,
@@ -12,13 +10,17 @@ import {
 	  RefreshUserAuthForm
 } from '$lib/types/auth';
 
-import { browser } from '$app/environment';
+import {
+    getUserSession,
+    clearUserSession
+} from '$lib/auth';
+
 import { me } from '$lib/trans';
 
 import * as v from 'valibot';
 
 // 注册新用户
-export const postUserRegister = async (formData: any): Promise<User> => {
+export const postUserRegister = async (formData: RegisterForm): Promise<User> => {
     const form = v.parse(RegisterForm, formData);
     const response = await axiosClient.post<APIResponse<User>>(`/user/register`, form);
     const data = response.data.data;
@@ -26,7 +28,7 @@ export const postUserRegister = async (formData: any): Promise<User> => {
 };
 
 // 用户登录
-export const postUserLogin = async (formData: any): Promise<UserAuth> => {
+export const postUserLogin = async (formData: LoginForm): Promise<UserAuth> => {
     const form: LoginForm = v.parse(LoginForm, formData);
 		// 创建 URLSearchParams 对象，用于 x-www-form-urlencoded 格式
 		const reqFormData = new URLSearchParams();
@@ -47,7 +49,7 @@ export const getUserInfo = async (): Promise<User> => {
 
 // 更新用户信息
 // TODO only username and email is allowed to be updated according to backend
-export const putUserInfo = async (form: User): Promise<User> => {
+export const putUserInfo = async (form: any): Promise<User> => {
 		const response = await axiosClient.put<APIResponse<User>>(`/user/me`, form);
     const data = response.data.data;
     return v.parse(User, data);
@@ -80,7 +82,7 @@ export const postRefreshUserAuth = async (form: RefreshUserAuthForm): Promise<Us
 export const postLogoutUserAuth = async (): Promise<void> => {
 	try {
 		// Body需要传入refresh_token, Header需要传入Authorization, 值为Bearer+空格+accees_token
-		const userAuth = getUserAuth();
+		const userAuth = getUserSession();
 		if (!userAuth) {
 			throw new Error(me.user_not_login());
 		}
@@ -91,7 +93,7 @@ export const postLogoutUserAuth = async (): Promise<void> => {
 
 		switch (response.data.code) {
 			case 200:
-				removeUserAuth(); // 清除本地存储的 Token
+				clearUserSession();
 				return;
 			default:
 				throw new Error(response.data.msg || me.unknown());
@@ -100,43 +102,3 @@ export const postLogoutUserAuth = async (): Promise<void> => {
 		throw error;
 	}
 };
-
-// 保存用户token到客户端
-export function saveUserAuth(userAuth: UserAuth): void {
-	if (!browser) return; // 确保只在浏览器环境中运行
-
-	// 计算过期时间戳 (提前5分钟过期，以确保有足够时间刷新)
-	const expiresAt = Date.now() + userAuth.expires_in * 1000 - 5 * 60 * 1000;
-	localStorage.setItem('userAuth', JSON.stringify(userAuth));
-	localStorage.setItem('expiresAt', expiresAt.toString());
-}
-
-// 检查客户端存储的用户token是否过期
-export function isUserAuthExpired(): boolean {
-	if (!browser) return true;
-
-	const expiresAtStr = localStorage.getItem('expiresAt');
-	if (!expiresAtStr) return true;
-
-	const expiresAt = parseInt(expiresAtStr);
-	return Date.now() > expiresAt;
-}
-
-// 清除客户端存储的用户token
-export function removeUserAuth(): void {
-	if (!browser) return;
-	localStorage.removeItem('userAuth');
-	localStorage.removeItem('expiresAt');
-}
-
-// 获取客户端存储的用户token
-export function getUserAuth(): UserAuth | null {
-	if (!browser) return null; // 确保只在浏览器环境中运行
-	// 检查是否过期
-	if (isUserAuthExpired()) {
-		return null;
-	}
-	const userAuthString = localStorage.getItem('userAuth');
-	const userAuth: UserAuth = userAuthString ? JSON.parse(userAuthString) : null;
-	return userAuth;
-}

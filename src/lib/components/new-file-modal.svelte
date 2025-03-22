@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages';
 	import {Button, buttonVariants} from "$lib/components/ui/button/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
@@ -10,6 +9,7 @@
 	import type { NewFile } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus, Folder } from 'lucide-svelte';
+  import { me } from '$lib/trans';
 
 	interface NavItem {
 	title: string;
@@ -127,7 +127,7 @@
 		} catch (error) {
 			// 直接使用错误消息
 			const errorMessage = (error as Error).message;
-			failure(errorMessage || m.error_unknown());
+			failure(errorMessage || me.unknown());
 		}
 	};
 
