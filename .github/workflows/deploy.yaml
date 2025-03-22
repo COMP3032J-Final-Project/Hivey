@@ -22,7 +22,7 @@ jobs:
         run: bun install
           
       - name: Build
-        run: bun run build
+        run: env PUBLIC_BACKEND_ADDR="${{ secrets.PUBLIC_BACKEND_ADDR }}" bun run build
 
       - name: Add additional files to build directory
         run: cp -rT ./misc ./build/__misc
