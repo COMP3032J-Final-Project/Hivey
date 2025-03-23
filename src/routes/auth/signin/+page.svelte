@@ -20,13 +20,13 @@
 		 password: ''
 	};
 
-	// 记住我选项
-	let rememberMe = true;
-	// 加载状态
-	let isLoading = false;
+	
+	let rememberMe = true; // 记住我选项
+	let isLoading = false; // 加载状态
 
-	// 从注册页面跳转过来时自动填充表单
-	onMount(() => {
+	
+	onMount(() => { 
+    // 从注册页面跳转过来时自动填充表单
 		 const state = $page.state as { email?: string; password?: string };
 		 if (state && state.email && state.password) {
 			  formData = {
@@ -79,7 +79,7 @@
 
 			  // 延迟跳转到首页
 			  setTimeout(() => {
-				   goto('/dashboard/repository');
+				   goto('/dashboard/repository/project/all');
 			  }, 500);
 		 } catch (error) {
 			  // 直接使用错误消息

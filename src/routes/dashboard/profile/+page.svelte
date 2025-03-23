@@ -9,9 +9,16 @@
 	import type { PageData } from './$types';
   import { m, me, mpd } from '$lib/trans';
 	import { User } from '$lib/types/auth';
+	import { onMount } from 'svelte';
+	import { updateNav } from '../store.svelte';
 
 	// 获取页面数据
 	let { data } = $props<{ data: PageData }>();
+
+	// 页面加载时更新导航状态
+	onMount(() => {
+		updateNav('Profile', '');
+	});
 
 	// 表单数据
 	let formData = $state({

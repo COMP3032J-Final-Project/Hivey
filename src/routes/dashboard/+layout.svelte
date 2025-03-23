@@ -3,7 +3,7 @@
 	import { Files, File } from 'lucide-svelte';
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
-	import { writable } from 'svelte/store';
+	import { currentNav, updateNav } from './store.svelte';
 
 	// 导航和资源数据
 	const navData = {
@@ -26,15 +26,15 @@
 				items: [
 					{
 						title: 'All Projects',
-						url: '#'
+						url: '/dashboard/repository/project/all'
 					},
 					{
 						title: 'My Projects',
-						url: '#'
+						url: '/dashboard/repository/project/mine'
 					},
 					{
 						title: 'Shared with Me',
-						url: '#'
+						url: '/dashboard/repository/project/shared'
 					}
 				]
 			},
@@ -44,36 +44,21 @@
 				icon: File,
 				items: [
 					{
-						title: 'All',
-						url: '#'
+						title: 'All Templates',
+						url: '/dashboard/repository/template/all'
 					},
 					{
-						title: 'Mine',
-						url: '#'
+						title: 'Favourite Templates',
+						url: '/dashboard/repository/template/favourite'
 					},
 					{
-						title: 'Shared with Me',
-						url: '#'
-					},
-					{
-						title: 'Favourite',
-						url: '#'
+						title: 'My Templates',
+						url: '/dashboard/repository/template/mine'
 					}
 				]
 			}
 		]
 	};
-
-	// 创建导航状态store
-	const currentNav = writable({
-		group: '',
-		item: ''
-	});
-
-	// 更新导航状态的函数
-	function updateNav(group: string, item: string) {
-		currentNav.set({ group, item });
-	}
 </script>
 
 <script lang="ts">

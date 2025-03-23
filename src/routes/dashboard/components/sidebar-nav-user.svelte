@@ -9,6 +9,7 @@
   import { postLogoutUserAuth } from '$lib/api/auth';
   import { failure, success } from '$lib/components/ui/toast';
   import { m, me, mpd } from '$lib/trans';
+  import { updateNav } from '../store.svelte';
 
   let { user }: {
       user: (User & {avatar: string}) | null
@@ -25,6 +26,12 @@
       } catch (error) {
           failure(me.error_logout_failed());
       }
+  }
+
+  // 处理个人资料点击
+  function handleProfileClick() {
+      updateNav('Profile', '');
+      goto('/dashboard/profile');
   }
 </script>
 
@@ -90,7 +97,7 @@
 				</DropdownMenu.Label>
 
 				<DropdownMenu.Group>
-					<DropdownMenu.Item onclick={() => goto('/dashboard/profile')}>
+					<DropdownMenu.Item onclick={handleProfileClick}>
 						<Settings />
 						{mpd.profile()}
 					</DropdownMenu.Item>

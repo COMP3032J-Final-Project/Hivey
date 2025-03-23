@@ -13,8 +13,8 @@ export type UserAuth = v.InferOutput<typeof UserAuth>;
 export const User = v.object({
     username: v.string(),
     email: v.pipe(v.string(), v.email()),
-    is_active: v.boolean(),
-    is_superuser: v.boolean(),
+    is_active: v.optional(v.boolean()),
+    is_superuser: v.optional(v.boolean()),
 });
 
 export type User = v.InferOutput<typeof User>;

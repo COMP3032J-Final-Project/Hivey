@@ -8,7 +8,7 @@
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-
+  import { m, me, mpa, mpae } from '$lib/trans';
   import * as v from 'valibot';
   import { RawRegisterForm } from '$lib/types/auth';
 
@@ -18,8 +18,6 @@
 		  password: '',
 		  confirm_password: ''
 	};
-
-  import { m, me, mpa, mpae } from '$lib/trans';
 
 	const handleSubmit = async (e: Event) => {
 		  e.preventDefault();
