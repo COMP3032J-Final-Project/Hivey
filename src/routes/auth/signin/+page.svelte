@@ -6,7 +6,8 @@
 	import { success, failure } from '$lib/components/ui/toast';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-    
+    import { localizeHref } from '$lib/paraglide/runtime';
+
   import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
@@ -147,7 +148,7 @@
 
 		  <div class="mt-4 flex justify-center">
 			  <a
-				  href="/auth/signup"
+				  href={localizeHref("/auth/signup")}
 				  class="text-foreground/50 underline hover:text-foreground"
 				>{mpa.to_sign_up()}</a>
 		  </div>

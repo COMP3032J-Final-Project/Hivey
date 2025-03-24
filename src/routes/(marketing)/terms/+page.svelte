@@ -1,6 +1,6 @@
 <script lang="ts">
   import { m, mpm, mpmt }  from '$lib/trans';
-    
+  import { localizeHref } from '$lib/paraglide/runtime';
   const today = new Date().toLocaleDateString();
 </script>
 
@@ -20,7 +20,7 @@
       {mpmt.thank_you_for_using()} {m.app_name()}! 
     </p>
     <p class="text-lg text-muted-foreground mb-6">
-      {mpmt.below()}<a href="/contact" class="underline">{mpmt.get_in_touch_with_us()}</a>.
+      {mpmt.below()}<a href={localizeHref("/contact")} class="underline">{mpmt.get_in_touch_with_us()}</a>.
     </p>
   </div>
 

@@ -2,7 +2,8 @@
   import { Button } from '$lib/components/ui/button';
   import { fade } from 'svelte/transition';
   import { m, mpm, mpmf } from '$lib/trans';
-    
+  import { localizeHref } from '$lib/paraglide/runtime';
+
   import image1 from '$lib/images/demoslide/1.png';
   import image2 from '$lib/images/demoslide/2.png';
   import image3 from '$lib/images/demoslide/3.png';
@@ -199,7 +200,7 @@
       </p>
             
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" variant="outline" href="/auth/signup">
+        <Button size="lg" variant="outline" href={localizeHref("/auth/signup")}>
           {mpmf.try_it_now_button()}
         </Button>
         <Button size="lg" href="https://github.com/COMP3032J-Final-Project/Hivey">

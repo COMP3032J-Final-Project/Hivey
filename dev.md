@@ -202,7 +202,7 @@ In components, content can be conditionally rendered based on the user's login s
   {/if}
 {:else}
   <!-- Content visible to non-logged-in users -->
-  <p>Please <a href="/auth/signin">log in</a> to access more features</p>
+  <p>Please <a href={localizeHref("/auth/signin")}>log in</a> to access more features</p>
 {/if}
 ```
 

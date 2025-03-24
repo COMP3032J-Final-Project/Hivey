@@ -2,6 +2,7 @@
   import { Button } from "$lib/components/ui/button/index";
   import Header from '../components/Header.svelte';
   import { mpm, mpml } from '$lib/trans';
+  import { localizeHref } from '$lib/paraglide/runtime';
     
   let { children } = $props();
 </script>
@@ -27,13 +28,13 @@
         </p>
                 
         <div class="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 justify-center">
-          <Button size="lg" href="/auth/signup" class="font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8">
+          <Button size="lg" href={localizeHref("/auth/signup")} class="font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8">
             {mpml.sign_up_for_free()}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
           </Button>
-          <Button size="lg" variant="outline" class="bg-transparent hover:bg-accent" href="/features">
+          <Button size="lg" variant="outline" class="bg-transparent hover:bg-accent" href={localizeHref("/features")}>
             {mpml.learn_more()}
           </Button>
         </div>
@@ -63,7 +64,7 @@
   <div class="max-w-5xl mx-auto px-6 md:px-8 text-center">
     <h2 class="text-3xl md:text-4xl font-bold mb-6">{mpml.ready_to_streamline_your_document_workflow()}</h2>   
     <p class="text-lg mb-8 max-w-2xl mx-auto text-muted-foreground">{mpml.join_thousands_of_researchers_students_and_professionals()}</p>
-    <Button size="lg" href="/auth/signup" class="font-medium shadow-lg text-lg px-8">
+    <Button size="lg" href={localizeHref("/auth/signup")} class="font-medium shadow-lg text-lg px-8">
       {mpml.get_started_for_free()}
     </Button>
   </div>
