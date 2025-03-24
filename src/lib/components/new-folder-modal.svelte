@@ -6,7 +6,7 @@
 	import { FolderPlus } from 'lucide-svelte';
 	import type { NewFolder } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
-  import { me } from '$lib/trans'
+    import { me, mpp } from '$lib/trans'
 
 	let formData: NewFolder = {
 		title: '',
@@ -49,7 +49,7 @@
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>
-			<Dialog.Title>New folder</Dialog.Title>
+			<Dialog.Title>{mpp.create_new_folder()}</Dialog.Title>
 			<Dialog.Description>
 			Input your new folder info here. Click save when you're done.
 			</Dialog.Description>
@@ -57,7 +57,7 @@
 		<form onsubmit={createFolder}>
 			<div class="grid gap-4 py-4">
 				<div class="flex items-center justify-center gap-4">
-					<Label for="foldername" class="text-right">输入名称：</Label>
+					<Label for="foldername" class="text-right">{mpp.enter_folder_name()}</Label>
 					<Input id="foldername" name="foldername" value="" class="w-[180px]" />
 				</div>
 			</div>

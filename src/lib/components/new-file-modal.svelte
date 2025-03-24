@@ -9,7 +9,7 @@
 	import type { NewFile } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus, Folder } from 'lucide-svelte';
-  import { me } from '$lib/trans';
+    import { me } from '$lib/trans';
 
 	interface NavItem {
 	title: string;
@@ -79,7 +79,7 @@
 	];
 
 	const triggerContent = $derived(
-		foldersData.find((folder) => folder.value === folderValue)?.label ?? "选择文件夹"
+		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
 	);
 
 	const fileTypes = [
@@ -89,7 +89,7 @@
 	];
  
 	const triggerContent1 = $derived(
-		fileTypes.find((f) => f.value === fileTypeValue)?.label ?? "选择文件类型"
+		fileTypes.find((f) => f.value === fileTypeValue)?.label ?? mpp.choose_file_type()
 	);
 
 	let formData: NewFile = {
@@ -136,7 +136,7 @@
 
 	async function handleUpload(uploadedFiles: File[]) {
 		files = uploadedFiles;
-		console.log('上传的文件:', files);
+		console.log('upload file:', files);
 	}
 </script>
 
@@ -148,14 +148,14 @@
     <Dialog.Content class="sm:max-w-[500px]">
 		<Tabs.Root value="createFile" class="w-[400px]">
 			<Tabs.List>
-			  	<Tabs.Trigger value="createFile">Create new file</Tabs.Trigger>
-			  	<Tabs.Trigger value="uploadFile">Upload file</Tabs.Trigger>
+			  	<Tabs.Trigger value="createFile">{mpp.create_new_file()}</Tabs.Trigger>
+			  	<Tabs.Trigger value="uploadFile">{mpp.upload_file()}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="createFile">
 				<form onsubmit={createFile}>
 					<div class="grid gap-4 py-4">
 						<div class="flex items-center justify-center gap-4">
-							<Label for="folder-select" class="text-right w-1/3">选择文件夹：</Label>
+							<Label for="folder-select" class="text-right w-1/3">{mpp.file_path()}</Label>
 							<Select.Root type="single" name="folder" bind:value={folderValue}>
 								<Select.Trigger id="folder-select" class="w-[180px]">
 									{triggerContent}
@@ -172,11 +172,11 @@
 							</Select.Root>
 						</div>
 						<div class="flex items-center justify-center gap-4">
-							<Label for="filename" class="text-right w-1/3">输入文件名：</Label>
-							<Input id="filename" name="filename" value="" class="w-[180px]" />
+							<Label for="filename" class="text-right w-1/3">{mpp.file_name()}</Label>
+							<Input id="filename" name="filename" value={mpp.enter_file_name()} class="w-[180px]" />
 						</div>
 						<div class="flex items-center justify-center gap-4">
-							<Label for="filetype" class="text-right w-1/3">选择文件类型：</Label>
+							<Label for="filetype" class="text-right w-1/3">{mpp.file_type()}</Label>
 							<Select.Root type="single" name="filetype" bind:value={fileTypeValue}>
 								<Select.Trigger id="filetype" class="w-[180px]">
 								{triggerContent1}
@@ -201,17 +201,17 @@
 			</Tabs.Content>
 			<Tabs.Content value="uploadFile">
 				<FileDropZone onUpload={handleUpload} maxFiles={5} maxFileSize={10 * 1024 * 1024}>
-					<p>拖拽文件到这里，或点击选择文件</p>
+					<p>{mpp.upload_file_hint()}</p>
 				</FileDropZone>
 				{#if files.length}
-					<h3>已选择文件：</h3>
+					<h3>{mpp.select_file()}</h3>
 					<ul>
 						{#each files as file}
 						<li>{file.name} - {(file.size / 1024).toFixed(2)} KB</li>
 						{/each}
 					</ul>
 					<Button onclick={() => handleUpload} disabled={uploading}>
-						{uploading ? '上传中...' : '上传文件'}
+						{uploading ? mpp.uploading_file() : mpp.upload_file()}
 					</Button>
 				{/if}
 			</Tabs.Content>

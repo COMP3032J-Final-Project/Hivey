@@ -142,7 +142,21 @@
     "bio_description":"展示您的个性和风格"
   },
   "_project": {
-    "send_chat_message": "输入消息..."
+    "send_chat_message": "输入消息...",
+    "create_new_file": "创建新文件",
+    "upload_file": "上传文件",
+    "file_path": "文件路径",
+    "file_name": "文件名",
+    "file_type": "文件类型",
+    "choose_file_path": "选择文件路径",
+    "enter_file_name": "输入文件名",
+    "choose_file_type": "选择文件类型",
+    "upload_file_hint": "拖拽文件到这里，或点击选择文件",
+    "select_file": "已选择文件：",
+    "uploading_file": "正在上传文件...",
+    "upload_file_success": "文件上传成功",
+    "create_new_folder": "创建新文件夹",
+    "enter_folder_name": "输入文件夹名"
   },
   
   "app_name": "Hivey",

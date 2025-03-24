@@ -139,7 +139,21 @@
     "bio_description":"Showcase Your Personality and Style"
   },
   "_project": {
-    "send_chat_message": "Enter message..."
+    "send_chat_message": "Enter message...",
+    "create_new_file": "Create New File",
+    "upload_file": "Upload File",
+    "file_path": "File Path",
+    "file_name": "File Name",
+    "file_type": "File Type",
+    "choose_file_path": "Choose parent directory",
+    "enter_file_name": "Enter filename",
+    "choose_file_type": "Choose file type",
+    "upload_file_hint": "Drag the file here, or click to Select File",
+    "select_file": "Selected File:",
+    "uploading_file": "Uploading file...",
+    "upload_file_success": "File uploaded successfully",
+    "create_new_folder": "Create New Folder",
+    "enter_folder_name": "Enter folder name"
   },
   
   "app_name": "Hivey",
