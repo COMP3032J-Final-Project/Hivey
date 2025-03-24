@@ -6,6 +6,9 @@
 	import { currentNav, updateNav } from './store.svelte';
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { ChevronDown } from 'lucide-svelte';
+	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+	
 	// 导航和资源数据
 	const navData = {
 		resources: [
@@ -88,12 +91,51 @@
                 {/snippet}
               </DropdownMenu.Trigger>
               <DropdownMenu.Content class="w-[--bits-dropdown-menu-anchor-width]">
-                <DropdownMenu.Item>
-                  <span>Blank Project</span>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item>
-                  <span>Example Project</span>
-                </DropdownMenu.Item>
+                <AlertDialog.Root>
+                  <DropdownMenu.Item>
+                    <button
+                      class="w-full text-left"  
+                      onclick={(e) => e.stopPropagation()}
+                    >
+                      <AlertDialog.Trigger>Blank Project</AlertDialog.Trigger>
+                    </button>
+                  </DropdownMenu.Item>
+                  <AlertDialog.Portal>
+                    <AlertDialog.Content>
+                      <AlertDialog.Header>
+                        <AlertDialog.Title>Create Blank Project</AlertDialog.Title>
+                      </AlertDialog.Header>
+                      <Input type="text" placeholder="Project Title" />
+                      <AlertDialog.Footer>
+                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                        <AlertDialog.Action>Create</AlertDialog.Action>
+                      </AlertDialog.Footer>
+                    </AlertDialog.Content>
+                  </AlertDialog.Portal>
+                </AlertDialog.Root>
+
+                <AlertDialog.Root>
+                  <DropdownMenu.Item>
+                    <button
+                      class="w-full text-left"  
+                      onclick={(e) => e.stopPropagation()}
+                    >
+                      <AlertDialog.Trigger>Example Project</AlertDialog.Trigger>
+                    </button>
+                  </DropdownMenu.Item>
+                  <AlertDialog.Portal>
+                    <AlertDialog.Content>
+                      <AlertDialog.Header>
+                        <AlertDialog.Title>Create Example Project</AlertDialog.Title>
+                      </AlertDialog.Header>
+                      <Input type="text" placeholder="Project Title" />
+                      <AlertDialog.Footer>
+                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                        <AlertDialog.Action>Create</AlertDialog.Action>
+                      </AlertDialog.Footer>
+                    </AlertDialog.Content>
+                  </AlertDialog.Portal>
+                </AlertDialog.Root>
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </Sidebar.MenuItem>
