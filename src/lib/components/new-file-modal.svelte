@@ -142,7 +142,7 @@
 
 
 <Dialog.Root>
-	<Dialog.Trigger class={buttonVariants({ variant: "outline", size: "icon" })} aria-label="New File">
+	<Dialog.Trigger class={buttonVariants({ variant: "ghost", size: "icon" })} aria-label="New File">
 		<FilePlus class="w-5 h-5" /> 
 	</Dialog.Trigger> 
     <Dialog.Content class="sm:max-w-[500px]">

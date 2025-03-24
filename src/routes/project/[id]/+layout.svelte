@@ -7,7 +7,7 @@
 	import ChatRoom from './components/sidebar-chatroom.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { writable } from 'svelte/store';
-
+	import { Button } from "$lib/components/ui/button/index.js";
 	let { data, children } = $props<{
 		data: {
 			groupName: string;
@@ -30,31 +30,23 @@
 <Sidebar.Provider>
 	<Sidebar.Root collapsible="icon" variant="inset">
 		<Sidebar.Content>
-			<!-- 头部组件 -->
 			<Sidebar.Group>
-				<Sidebar.GroupLabel class="flex items-center justify-between">
-					{groupName}
-					<div class="flex space-x-2">
-						<!-- 创建文件对话框 -->
+				<Sidebar.GroupLabel class="flex items-center justify-end">
+					<div class="flex">
 						<CreateFileDialog />
-
-						<!-- 消息按钮 -->
-						<button
-							class="hover:text-primary {showChat ? 'text-primary' : ''}"
+						<Button
+							variant="ghost"
+              size="icon"
 							onclick={() => (showChat = !showChat)}
 						>
 							<MessageSquare size={20} />
-						</button>
-
-						<!-- 添加文件夹按钮 -->
+						</Button>
 						<CreateFolderDialog />
 					</div>
 				</Sidebar.GroupLabel>
 
-				<!-- GroupLabel和Menu的分割线 -->
 				<div class="my-2 border-t border-gray-200 dark:border-gray-700"></div>
 
-				<!-- 根据showChat状态切换显示导航菜单或聊天室 -->
 				{#if showChat}
 					<ChatRoom chatMessages={data.chatMessages} currentUser={data.currentUser} />
 				{:else}

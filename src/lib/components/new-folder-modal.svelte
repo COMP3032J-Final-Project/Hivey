@@ -44,7 +44,7 @@
 </script>
    
 <Dialog.Root>
-	<Dialog.Trigger class={buttonVariants({ variant: "outline", size: "icon" })}>
+	<Dialog.Trigger class={buttonVariants({ variant: "ghost", size: "icon"})}>
 		<FolderPlus class="w-5 h-5" />
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">

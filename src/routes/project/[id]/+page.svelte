@@ -10,8 +10,6 @@
     import Editor from "$lib/components/editor.svelte";
     import Previewer from "$lib/components/previewer.svelte";
     import Exportbutton from "$lib/components/edit-button/export-button.svelte";
-    import Watchbutton from "$lib/components/edit-button/watch-button.svelte";
-    import FullScreenbutton from "$lib/components/edit-button/full-screen-button.svelte";
     import Bold from "@lucide/svelte/icons/bold";
     import Italic from "@lucide/svelte/icons/italic";
     import Underline from "@lucide/svelte/icons/underline";
@@ -134,8 +132,6 @@
                         </div>
                         <div class="flex space-x-2">
                             <Exportbutton/>
-                            <Watchbutton/>
-                            <FullScreenbutton/>
                         </div>
                     </div>
                 </div>
