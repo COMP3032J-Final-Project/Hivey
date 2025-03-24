@@ -9,7 +9,7 @@
 	import type { NewFile } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus, Folder } from 'lucide-svelte';
-    import { me } from '$lib/trans';
+    import { me, mpp } from '$lib/trans';
 
 	interface NavItem {
 	title: string;
