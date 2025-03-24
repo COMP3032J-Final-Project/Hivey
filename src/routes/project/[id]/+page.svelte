@@ -107,13 +107,13 @@
                     <Button variant="secondary" size="sm" onclick={formatMarkdown}>Markdown</Button>
                     <ToggleGroup.Root type="multiple">
                         <ToggleGroup.Item value="bold" aria-label="Toggle bold">
-                          <Bold class="size-4" />
+                          <Bold class="size-4 p-0" />
                         </ToggleGroup.Item>
                         <ToggleGroup.Item value="italic" aria-label="Toggle italic">
-                          <Italic class="size-4" />
+                          <Italic class="size-4 p-0" />
                         </ToggleGroup.Item>
                         <ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
-                          <Underline class="size-4" />
+                          <Underline class="size-4 p-0" />
                         </ToggleGroup.Item>
                     </ToggleGroup.Root>
                 </div>
