@@ -4,7 +4,8 @@
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
 	import { currentNav, updateNav } from './store.svelte';
-
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+	import { ChevronDown } from 'lucide-svelte';
 	// 导航和资源数据
 	const navData = {
 		resources: [
@@ -73,6 +74,32 @@
 
 <Sidebar.Provider>
 	<Sidebar.Root collapsible="icon" variant="inset">
+    <Sidebar.Header>
+      <Sidebar.Header>
+        <Sidebar.Menu>
+          <Sidebar.MenuItem>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                {#snippet child({ props })}
+                  <Sidebar.MenuButton {...props}>
+                    Create Project
+                    <ChevronDown class="ml-auto" />
+                  </Sidebar.MenuButton>
+                {/snippet}
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content class="w-[--bits-dropdown-menu-anchor-width]">
+                <DropdownMenu.Item>
+                  <span>Blank Project</span>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item>
+                  <span>Example Project</span>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </Sidebar.MenuItem>
+        </Sidebar.Menu>
+      </Sidebar.Header>
+    </Sidebar.Header>
 		<Sidebar.Content>
 			<NavMain groupName="Project" items={navData.navMain} on:navSelect={(e) => updateNav(e.detail.group, e.detail.item)} />
 			<FlatGroup groupName="Resources" items={navData.resources} />
