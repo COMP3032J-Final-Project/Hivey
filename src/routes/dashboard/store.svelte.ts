@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { NewProjectCategory } from './repository/[type]/[category]/components/alert-dialog.svelte';
+import { ProjectFormCategory } from '$lib/types/dashboard';
 import type { Project } from '$lib/types/dashboard';
 
 // 导航状态
@@ -19,8 +19,8 @@ export { currentNav };
 
 // 项目对话框状态
 const dialogOpen = writable<boolean>(false);
-const dialogCategory = writable<NewProjectCategory>('blank');
-export function openProjectDialog(category: NewProjectCategory) { // 打开项目对话框
+const dialogCategory = writable<ProjectFormCategory>(ProjectFormCategory.Blank);
+export function openProjectDialog(category: ProjectFormCategory) { // 打开项目对话框
     dialogCategory.set(category);
     dialogOpen.set(true);
 }

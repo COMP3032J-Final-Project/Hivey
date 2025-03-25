@@ -3,13 +3,10 @@
 	import { Files, File } from 'lucide-svelte';
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
-	import { currentNav, updateNav, dialogOpen, dialogCategory, openProjectDialog } from './store.svelte';
+	import { currentNav, updateNav, openProjectDialog } from './store.svelte';
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { ChevronDown } from 'lucide-svelte';
-	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-	import { Input } from "$lib/components/ui/input/index.js";
-	import NewProjectDialog from './repository/[type]/[category]/components/alert-dialog.svelte';
-	import type { NewProjectCategory } from './repository/[type]/[category]/components/alert-dialog.svelte';
+	import { ProjectFormCategory } from '$lib/types/dashboard';
 	
 	// 导航和资源数据
 	const navData = {
@@ -91,17 +88,17 @@
               <DropdownMenu.Content class="w-[--bits-dropdown-menu-anchor-width]">
                 
                 <!-- 创建空白项目 -->
-                <DropdownMenu.Item onclick={() => openProjectDialog('blank')}>
+                <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Blank)}>
                   Blank Project
                 </DropdownMenu.Item>
 
                 <!-- 创建示例项目 -->
-                <DropdownMenu.Item onclick={() => openProjectDialog('example')}>
+                <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Example)}>
                   Example Project
                 </DropdownMenu.Item>
 
                 <!-- 创建上传项目 -->
-                <DropdownMenu.Item onclick={() => openProjectDialog('upload')}>
+                <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Upload)}>
                   Upload Project
                 </DropdownMenu.Item>
 

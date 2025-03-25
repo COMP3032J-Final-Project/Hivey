@@ -1,18 +1,15 @@
-<script lang="ts" module>
-	export type NewProjectCategory = 'blank' | 'example' | 'upload';
-</script>
-
 <script lang="ts">
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { closeProjectDialog } from '../../../../store.svelte';
-	import type { CreateProjectForm } from '$lib/types/dashboard';
+	import type { CreateProjectForm, ProjectFormCategory } from '$lib/types/dashboard';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { mpd } from '$lib/trans';
+	import { goto } from '$app/navigation';
 
 	let {
 		open = $bindable(false),
-		category = 'blank' as NewProjectCategory,
+		category = 'blank' as ProjectFormCategory,
 		onSubmit = async (form: CreateProjectForm) => {}
 	} = $props();
 
@@ -84,7 +81,9 @@
 
 		try {
 			const project = await onSubmit(createProjectForm);
+      console.log(project);
 			success(mpd.success_project_create());
+      goto(`/project/${project.id}`);
 		} catch (error) {
 			failure(mpd.error_project_create());
 		} finally {

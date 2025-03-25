@@ -31,7 +31,7 @@ export type Project = v.InferOutput<typeof Project>;
 
 export const CreateProjectForm = v.object({
     name: v.string(),
-    category: v.enum(ProjectType),
-    file: v.optional(v.instanceof(File))
+    category: v.enum(ProjectFormCategory),
+    file: v.optional(v.instance(File))
 })
 export type CreateProjectForm = v.InferOutput<typeof CreateProjectForm>;

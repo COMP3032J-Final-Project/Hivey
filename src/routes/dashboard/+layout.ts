@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
-import { getUserInfo } from '$lib/api/auth';
+import { getUserInfo,  } from '$lib/api/auth';
 import { getUserSession } from '$lib/auth';
 import type { LayoutLoad } from './$types';
 import type { DashboardLayoutData } from '$lib/types/dashboard';

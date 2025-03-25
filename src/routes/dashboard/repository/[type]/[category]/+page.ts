@@ -4,7 +4,6 @@ import type { Project } from '$lib/types/dashboard';
 import {
     getUserProjects,
 } from '$lib/api/dashboard';
-import { browser } from '$app/environment';
 import { setProjects } from '../../../store.svelte';
 
 export const load: PageLoad = async ({ parent, params }) => {
