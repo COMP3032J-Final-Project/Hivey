@@ -2,7 +2,7 @@
 	import { Folder, File, FolderPlus, MessageSquare } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
-	import type { SidebarFolder } from '$lib/types/editor';
+	import type { SidebarFolder, SidebarFile } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/sidebar-chatroom.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -12,14 +12,17 @@
 		data: {
 			groupName: string;
 			folders: SidebarFolder[];
+			files: SidebarFile[];
 			chatMessages: any[];
 			currentUser: any;
 		};
 		children: any;
 	}>();
-    
+    console.log("Raw data:", data);
 	let groupName = data.groupName;
 	let folders = writable<SidebarFolder[]>(data.folders);
+	console.log("Raw data.files:", data.files);
+	let files = writable<SidebarFile[]>(data.files);
 	let showChat = $state(false); // 聊天室的显示状态
 
 	function addNewFolder() {
@@ -36,7 +39,7 @@
 						<CreateFileDialog />
 						<Button
 							variant="ghost"
-              size="icon"
+              				size="icon"
 							onclick={() => (showChat = !showChat)}
 						>
 							<MessageSquare size={20} />
@@ -50,7 +53,7 @@
 				{#if showChat}
 					<ChatRoom chatMessages={data.chatMessages} currentUser={data.currentUser} />
 				{:else}
-					<NavMain items={$folders} />
+					<NavMain folders_tmp={$folders} files_tmp={$files} />
 				{/if}
 			</Sidebar.Group>
 		</Sidebar.Content>

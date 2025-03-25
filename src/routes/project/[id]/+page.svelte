@@ -7,10 +7,9 @@
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
-    import Editor from "$lib/components/editor.svelte";
-    import Previewer from "$lib/components/previewer.svelte";
-    import ExportButton from "$lib/components/edit-button/export-button.svelte";
-    import InviteButton from "$lib/components/edit-button/invite-button.svelte";
+    import Editor_md from "$lib/components/editor-md.svelte";
+    import Previewer_md from "$lib/components/previewer-md.svelte";
+    import Exportbutton from "$lib/components/edit-button/export-button.svelte";
     import Bold from "@lucide/svelte/icons/bold";
     import Italic from "@lucide/svelte/icons/italic";
     import Underline from "@lucide/svelte/icons/underline";
@@ -102,7 +101,7 @@
                     </ToggleGroup.Root>
                 </div>
                 <div class="flex-1 h-full">
-                    <Editor bind:value={docContent}/>
+                    <Editor_md bind:value={docContent}/>
                 </div>
             </div>
         </Resizable.Pane>
@@ -115,13 +114,12 @@
                             <p class="p-3 h-10 flex items-center justify-center">Preview</p>
                         </div>
                         <div class="flex">
-                          <InviteButton />
-                          <ExportButton/>
+                          <Exportbutton />
                         </div>
                     </div>
                 </div>
                 <div class="flex-1 h-full overflow-y-auto"> 
-                    <Previewer fileType="markdown" content={docContent} />
+                    <Previewer_md fileType="markdown" content={docContent} />
                 </div>
             </div>
         </Resizable.Pane>

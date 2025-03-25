@@ -27,46 +27,25 @@
 	const SampleData = {
 		navMain: [
 		{
-			title: "Projects",
+			title: "Images",
 			url: "#",
 			icon: Folder,
 			isActive: true,
 			items: [
 			{
-				title: "All",
+				title: "Gantt Chart.png",
 				url: "#",
 			},
 			{
-				title: "Mine",
-				url: "#",
-			},
-			{
-				title: "Shared with Me",
+				title: "Apple.jpg",
 				url: "#",
 			},],
 		},
 		{
-			title: "Templates",
+			title: "test.md",
 			url: "#",
-			icon: Folder,
-			items: [
-			{
-				title: "All",
-				url: "#",
-			},
-			{
-				title: "Mine",
-				url: "#",
-			},
-			{
-				title: "Shared with Me",
-				url: "#",
-			},
-			{
-				title: "Favourite",
-				url: "#",
-			},],
-		}]
+			icon: File
+		},]
 	};
 
 	let folderValue = $state("");

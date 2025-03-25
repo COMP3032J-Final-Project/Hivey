@@ -9,6 +9,13 @@ export interface SidebarFolder {
 	  }[];
 }
 
+export interface SidebarFile {
+	title: string;
+	url: string;
+	icon?: any;
+}
+
+
 // 聊天消息接口
 export interface ChatMessage {
 	  user: {

@@ -1,5 +1,5 @@
-import { Folder } from 'lucide-svelte';
-import type { SidebarFolder, ChatMessage } from '$lib/types/editor';
+import { Folder, File } from 'lucide-svelte';
+import type { SidebarFolder, SidebarFile, ChatMessage } from '$lib/types/editor';
 import { failure } from '$lib/components/ui/toast';
 import { getUserSession } from '$lib/auth';
 import { redirect } from '@sveltejs/kit';
@@ -72,49 +72,27 @@ const data = {
 	groupName: 'Hivey Project',
 	folders: [
 		{
-			title: 'Projects',
-			url: '#',
+			title: "Images",
+			url: "#",
 			icon: Folder,
-			isActive: true,
 			items: [
-				{
-					title: 'All',
-					url: '#'
-				},
-				{
-					title: 'Mine',
-					url: '#'
-				},
-				{
-					title: 'Shared with Me',
-					url: '#'
-				}
-			]
+			{
+				title: "Gantt Chart.png",
+				url: "#",
+			},
+			{
+				title: "Apple.jpg",
+				url: "#",
+			},],
 		},
+	] as SidebarFolder[],
+	files: [
 		{
-			title: 'Templates',
-			url: '#',
-			icon: Folder,
-			items: [
-				{
-					title: 'All',
-					url: '#'
-				},
-				{
-					title: 'Mine',
-					url: '#'
-				},
-				{
-					title: 'Shared with Me',
-					url: '#'
-				},
-				{
-					title: 'Favourite',
-					url: '#'
-				}
-			]
+		  title: "test.md",
+		  url: "#",
+		  icon: File
 		}
-	] as SidebarFolder[]
+	] as SidebarFile[],
 };
 
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
@@ -137,6 +115,7 @@ export const load: LayoutLoad = async ({ url }) => {
 	return {
 		groupName: data.groupName,
 		folders: data.folders,
+		files: data.files,
 		chatMessages: mockMessages,
 		currentUser: {
 			username: 'Zhang San',
