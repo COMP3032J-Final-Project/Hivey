@@ -28,15 +28,15 @@
 				items: [
 					{
 						title: 'All Projects',
-						url: '/dashboard/repository/project/all'
+						url: '/dashboard/repository/projects/all'
 					},
 					{
 						title: 'My Projects',
-						url: '/dashboard/repository/project/mine'
+						url: '/dashboard/repository/projects/mine'
 					},
 					{
 						title: 'Shared with Me',
-						url: '/dashboard/repository/project/shared'
+						url: '/dashboard/repository/projects/shared'
 					}
 				]
 			},
@@ -47,15 +47,15 @@
 				items: [
 					{
 						title: 'All Templates',
-						url: '/dashboard/repository/template/all'
+						url: '/dashboard/repository/templates/all'
 					},
 					{
 						title: 'Favourite Templates',
-						url: '/dashboard/repository/template/favourite'
+						url: '/dashboard/repository/templates/favourite'
 					},
 					{
 						title: 'My Templates',
-						url: '/dashboard/repository/template/mine'
+						url: '/dashboard/repository/templates/mine'
 					}
 				]
 			}
@@ -112,7 +112,7 @@
       </Sidebar.Header>
     </Sidebar.Header>
 		<Sidebar.Content>
-			<NavMain groupName="Project" items={navData.navMain} on:navSelect={(e) => updateNav(e.detail.group, e.detail.item)} />
+			<NavMain groupName="Repository" items={navData.navMain} on:navSelect={(e) => updateNav(e.detail.group, e.detail.item)} />
 			<FlatGroup groupName="Resources" items={navData.resources} />
 		</Sidebar.Content>
 
@@ -132,7 +132,7 @@
 				<Breadcrumb.Root>
 					<Breadcrumb.List>
 						<Breadcrumb.Item class="hidden md:block">
-							<Breadcrumb.Link href="#">{$currentNav.group || 'Project'}</Breadcrumb.Link>
+							<Breadcrumb.Link href="#">{$currentNav.group || 'Projects'}</Breadcrumb.Link>
 						</Breadcrumb.Item>
 						{#if $currentNav.item}
 							<Breadcrumb.Separator class="hidden md:block" />

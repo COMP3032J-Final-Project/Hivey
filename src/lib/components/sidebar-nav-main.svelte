@@ -64,6 +64,7 @@
 														                            href={subItem.url} 
 														                            {...props}
 														                            onclick={() => handleNavSelect(mainItem.title, subItem.title)}
+                                                          data-sveltekit-preload-data="off"
 													                          >
 														                            <span>{subItem.title}</span>
 													                          </a>

@@ -80,7 +80,7 @@
 
 			  // 延迟跳转到首页
 			  setTimeout(() => {
-				   goto('/dashboard/repository/project/all');
+				   goto('/dashboard/repository/projects/all');
 			  }, 500);
 		 } catch (error) {
 			  // 直接使用错误消息

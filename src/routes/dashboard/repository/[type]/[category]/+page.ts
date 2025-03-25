@@ -4,7 +4,8 @@ import type { Project } from '$lib/types/dashboard';
 import {
     getUserProjects,
 } from '$lib/api/dashboard';
-import { error } from '@sveltejs/kit';
+import { browser } from '$app/environment';
+import { setProjects } from '../../../store.svelte';
 
 export const load: PageLoad = async ({ parent, params }) => {
     const { user } = await parent(); // 从父级layout中获取数据
@@ -13,9 +14,10 @@ export const load: PageLoad = async ({ parent, params }) => {
     let navGroup = type.charAt(0).toUpperCase() + type.slice(1);
     let navItem = "";
     let projects: Project[] = await getUserProjects();
+
     // 根据type和category过滤projects
-    if (type === 'project') {
-        projects = projects.filter(project => project.type === type);
+    if (type === 'projects') {
+        projects = projects.filter(project => project.type === "project");
         navItem = 'All Projects';
         if (category === 'mine') {
             projects = projects.filter(project => project.owner?.email === user?.email);
@@ -24,8 +26,8 @@ export const load: PageLoad = async ({ parent, params }) => {
             projects = projects.filter(project => project.owner?.email !== user?.email);
             navItem = 'Shared with Me';
         }
-    } else {
-        projects = projects.filter(project => project.type === type);
+    } else { // type === 'templates'
+        projects = projects.filter(project => project.type === "template");
         navItem = 'All Templates';
         if (category === 'mine') {
             projects = projects.filter(project => project.owner?.email === user?.email);
@@ -36,6 +38,8 @@ export const load: PageLoad = async ({ parent, params }) => {
         }
     }
 
+    setProjects(projects);
+    
     return {
         userInfo: user,
         projects,

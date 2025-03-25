@@ -59,7 +59,7 @@ export const postUpdateProject = async (project: Project): Promise<Project> => {
 
 export const postDeleteProject = async (id: string): Promise<void> => {
     const response = await axiosClient.post<APIResponse<void>>(`/project/${id}/delete`);
-    if (!response.data.data) {
+    if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }
 };
