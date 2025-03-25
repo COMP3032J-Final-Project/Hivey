@@ -9,6 +9,7 @@
     import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
     import Editor_md from "$lib/components/editor-md.svelte";
     import Previewer_md from "$lib/components/previewer-md.svelte";
+    import InviteButton from "$lib/components/edit-button/invite-button.svelte";
     import Exportbutton from "$lib/components/edit-button/export-button.svelte";
     import Bold from "@lucide/svelte/icons/bold";
     import Italic from "@lucide/svelte/icons/italic";
@@ -114,7 +115,8 @@
                             <p class="p-3 h-10 flex items-center justify-center">Preview</p>
                         </div>
                         <div class="flex">
-                          <Exportbutton />
+                            <InviteButton />
+                            <Exportbutton />
                         </div>
                     </div>
                 </div>
