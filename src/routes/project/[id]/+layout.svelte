@@ -37,14 +37,13 @@
 				<Sidebar.GroupLabel class="flex items-center justify-end">
 					<div class="flex">
 						<CreateFileDialog />
+						<CreateFolderDialog />
 						<Button
-							variant="ghost"
-              				size="icon"
+							variant="ghost" size="icon"
 							onclick={() => (showChat = !showChat)}
 						>
 							<MessageSquare size={20} />
 						</Button>
-						<CreateFolderDialog />
 					</div>
 				</Sidebar.GroupLabel>
 
