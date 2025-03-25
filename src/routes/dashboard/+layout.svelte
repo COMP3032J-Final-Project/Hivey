@@ -13,12 +13,8 @@
 	const navData = {
 		resources: [
 			{
-				title: 'Template Universe',
-				url: '#'
-			},
-			{
 				title: 'Documentation',
-				url: '#'
+				url: 'https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link'
 			}
 		],
 		navMain: [

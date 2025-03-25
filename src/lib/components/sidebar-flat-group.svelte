@@ -21,7 +21,7 @@
                 <Sidebar.MenuItem>
                     <Sidebar.MenuButton>
                         {#snippet child({ props })}
-						                <a href={item.url} {...props}>
+						                <a href={item.url} target="_blank" rel="noopener noreferrer" {...props}>
 							                  <span>{item.title}</span>
 						                </a>
 					              {/snippet}
