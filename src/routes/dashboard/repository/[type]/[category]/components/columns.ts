@@ -6,16 +6,9 @@ import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 import DataTableActions from './data-table-actions.svelte';
 import DataTableTimeButton from './data-table-time-button.svelte';
 import DataTableHeaderWithDelete from './data-table-header-with-delete.svelte';
+import type { Project } from '$lib/types/dashboard';
 
-export type Repository = {
-	id: string;
-	name: string;
-	owner_id: string;
-	created_at: Date;
-	updated_at: Date;
-};
-
-export const columns: ColumnDef<Repository>[] = [
+export const columns: ColumnDef<Project>[] = [
 	{
 		id: 'select',
 		header: ({ table }) =>
@@ -73,7 +66,7 @@ export const columns: ColumnDef<Repository>[] = [
 		}
 	},
 	{
-		accessorKey: 'owner_id',
+		accessorKey: 'owner',
 		header: () => {
 			const ownerHeaderSnippet = createRawSnippet(() => ({
 				render: () => `<div class="text-right">Owner</div>`
@@ -81,13 +74,16 @@ export const columns: ColumnDef<Repository>[] = [
 			return renderSnippet(ownerHeaderSnippet, '');
 		},
 		cell: ({ row }) => {
+			const owner = row.original.owner;
+			const ownerEmail = owner?.email || 'Unknown';
+			
 			const ownerCellSnippet = createRawSnippet<[string]>((getOwner) => {
 				const owner = getOwner();
 				return {
 					render: () => `<div class="text-right font-medium">${owner}</div>`
 				};
 			});
-			return renderSnippet(ownerCellSnippet, row.getValue('owner_id'));
+			return renderSnippet(ownerCellSnippet, ownerEmail);
 		},
 		enableHiding: false,
 		meta: {

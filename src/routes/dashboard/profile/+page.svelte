@@ -10,9 +10,13 @@
   import { m, me, mpd } from '$lib/trans';
 	import { User } from '$lib/types/auth';
 	import { onMount } from 'svelte';
-	import { updateNav } from '../store.svelte';
+	import { updateNav, dialogOpen, dialogCategory } from '../store.svelte';
+	import NewProjectDialog from '../repository/[type]/[category]/components/alert-dialog.svelte';
+	import type { CreateProjectForm } from '$lib/types/dashboard';
+  import { postCreateProject } from '$lib/api/dashboard';
+  import { Project } from '$lib/types/dashboard';
 
-	// 获取页面数据
+  // 获取页面数据
 	let { data } = $props<{ data: PageData }>();
 
 	// 页面加载时更新导航状态
@@ -70,7 +74,7 @@
 		  }
 	}
 
-	// 处理文件上传
+	// 处理头像文件上传
 	function handleFileUpload(event: Event) {
 		  const target = event.target as HTMLInputElement;
 		  if (!target.files || target.files.length === 0) return;
@@ -96,13 +100,21 @@
 		  formData.avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
 	}
 
-	// 触发文件选择
-	function triggerFileInput() {
-		  fileInput.click();
-	}
 </script>
 
 <div class="container mx-auto px-4 py-4">
+  <!-- 项目创建对话框 -->
+	<NewProjectDialog
+    bind:open={$dialogOpen}
+    category={$dialogCategory}
+    onSubmit={
+      async (form: CreateProjectForm) => {
+        const project = await postCreateProject(form);
+        return project;
+      }
+    }
+  />
+
 	<h1 class="mb-4 text-xl font-bold">{mpd.profile()}</h1>
 
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -149,7 +161,9 @@
 							<Button.Root
 								variant="outline"
 								class="w-full py-1 text-xs"
-								onclick={triggerFileInput}
+								onclick={() => {
+				          fileInput.click()
+								}}
 								disabled={isSubmitting}
 							>
 								{mpd.upload_local_image()}

@@ -21,8 +21,7 @@ export type Project = v.InferOutput<typeof Project>;
 
 export const CreateProjectForm = v.object({
     name: v.string(),
-    type: v.union(v.literal('project'), v.literal('template')),
-    category: v.union(v.literal('Blank'), v.literal('Upload')),
+    category: v.union(v.literal('blank'), v.literal('upload'), v.literal('example')),
     file: v.optional(v.instanceof(File))
 })
 export type CreateProjectForm = v.InferOutput<typeof CreateProjectForm>;

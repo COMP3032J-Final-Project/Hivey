@@ -3,11 +3,13 @@
 	import { Files, File } from 'lucide-svelte';
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
-	import { currentNav, updateNav } from './store.svelte';
+	import { currentNav, updateNav, dialogOpen, dialogCategory, openProjectDialog } from './store.svelte';
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { ChevronDown } from 'lucide-svelte';
 	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-  import { Input } from "$lib/components/ui/input/index.js";
+	import { Input } from "$lib/components/ui/input/index.js";
+	import NewProjectDialog from './repository/[type]/[category]/components/alert-dialog.svelte';
+	import type { NewProjectCategory } from './repository/[type]/[category]/components/alert-dialog.svelte';
 	
 	// 导航和资源数据
 	const navData = {
@@ -87,51 +89,22 @@
                 {/snippet}
               </DropdownMenu.Trigger>
               <DropdownMenu.Content class="w-[--bits-dropdown-menu-anchor-width]">
-                <AlertDialog.Root>
-                  <DropdownMenu.Item>
-                    <button
-                      class="w-full text-left"  
-                      onclick={(e) => e.stopPropagation()}
-                    >
-                      <AlertDialog.Trigger>Blank Project</AlertDialog.Trigger>
-                    </button>
-                  </DropdownMenu.Item>
-                  <AlertDialog.Portal>
-                    <AlertDialog.Content>
-                      <AlertDialog.Header>
-                        <AlertDialog.Title>Create Blank Project</AlertDialog.Title>
-                      </AlertDialog.Header>
-                      <Input type="text" placeholder="Project Title" />
-                      <AlertDialog.Footer>
-                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <AlertDialog.Action>Create</AlertDialog.Action>
-                      </AlertDialog.Footer>
-                    </AlertDialog.Content>
-                  </AlertDialog.Portal>
-                </AlertDialog.Root>
+                
+                <!-- 创建空白项目 -->
+                <DropdownMenu.Item onclick={() => openProjectDialog('blank')}>
+                  Blank Project
+                </DropdownMenu.Item>
 
-                <AlertDialog.Root>
-                  <DropdownMenu.Item>
-                    <button
-                      class="w-full text-left"  
-                      onclick={(e) => e.stopPropagation()}
-                    >
-                      <AlertDialog.Trigger>Example Project</AlertDialog.Trigger>
-                    </button>
-                  </DropdownMenu.Item>
-                  <AlertDialog.Portal>
-                    <AlertDialog.Content>
-                      <AlertDialog.Header>
-                        <AlertDialog.Title>Create Example Project</AlertDialog.Title>
-                      </AlertDialog.Header>
-                      <Input type="text" placeholder="Project Title" />
-                      <AlertDialog.Footer>
-                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <AlertDialog.Action>Create</AlertDialog.Action>
-                      </AlertDialog.Footer>
-                    </AlertDialog.Content>
-                  </AlertDialog.Portal>
-                </AlertDialog.Root>
+                <!-- 创建示例项目 -->
+                <DropdownMenu.Item onclick={() => openProjectDialog('example')}>
+                  Example Project
+                </DropdownMenu.Item>
+
+                <!-- 创建上传项目 -->
+                <DropdownMenu.Item onclick={() => openProjectDialog('upload')}>
+                  Upload Project
+                </DropdownMenu.Item>
+
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </Sidebar.MenuItem>

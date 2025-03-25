@@ -1,5 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
+
+
   "_marketing": {
     "_landing": {
       "why_choose_hivey":"为什么选择Hivey?",
@@ -16,6 +18,7 @@
       "join_thousands_of_researchers_students_and_professionals":"加入数千名研究人员、学生和专业人士，他们已经在使用Hivey。",
       "get_started_for_free":"开始使用"
     },
+
 
     "_features": {
       "hivey_competitor_features_1":"支持多种文件格式，不仅仅是特定文档类型。",
@@ -34,10 +37,12 @@
       "github_button":"查看GitHub源代码"
     },
 
+
     "_contact": {
       "contact_us_description":"在您有任何关于Hivey的问题或想要提供反馈时，请使用下面的联系表单。我们期待您的来信！",
       "name":"用户名"
     },
+
 
     "_about_us": {
       "company_vision":"公司愿景",
@@ -59,6 +64,7 @@
       "rao_description":"API设计，后端开发",
       "ucd_number":"UCD学号"
     },
+
 
     "_terms": {
       "privacy_terms":"隐私和条款",
@@ -93,8 +99,6 @@
       "service_availability":"服务可用性",
       "service_availability_description":"我们致力于提供持续的服务，但因维护、紧急情况或其他不可控因素，我们可能需要暂停或调整服务。对于任何计划中的服务中断，我们将尽合理努力通知您。"
     },
-    
-
 
     "about": "关于Hivey",
     "one_editor_all_formats":"一个编辑器，所有格式",
@@ -122,6 +126,7 @@
       "user_exists":"用户已存在",
       "weak_password":"密码太弱"
     },
+
     "confirm_password":"确认密码",
     "name":"用户名",
     "remember_me":"记住我",
@@ -130,6 +135,8 @@
     "success_sign_up":"注册成功！正在跳转...",
     "success_sign_in":"登录成功！正在跳转..."
   },
+
+
   "_dashboard": {
     "profile":"个人资料",
     "save_changes":"保存更改",
@@ -139,8 +146,28 @@
     "upload_local_image":"上传",
     "generate_new_avatar":"随机",
     "bio":"个性签名",
-    "bio_description":"展示您的个性和风格"
+    "bio_description":"展示您的个性和风格",
+    
+    "project_name":"项目名称",
+    "input_project_name":"输入项目名称",
+    "project_file":"项目文件",
+    "delete_project_file":"删除",
+    "cancel":"取消",
+    "create":"创建",
+    "drop_file_here":"拖放文件到此处或点击上传",
+    "create_blank_project":"创建空白项目",
+    "create_example_project":"创建示例项目",
+    "upload_project":"上传项目",
+    "upload_file_description":"上传.zip文件（最大50MB）",
+    "error_project_format":"仅支持上传.zip格式文件",
+    "error_project_size":"文件大小不能超过50MB",
+    "error_empty_project_name":"请输入项目名称",
+    "error_empty_project_file":"请选择一个文件",
+    "success_project_create":"项目创建成功",
+    "error_project_create":"项目创建失败"
   },
+
+
   "_project": {
     "send_chat_message": "输入消息...",
     "create_new_file": "创建新文件",
@@ -159,6 +186,7 @@
     "enter_folder_name": "输入文件夹名"
   },
   
+
   "app_name": "Hivey",
   "download":"下载",
   "email":"电子邮件",
@@ -173,6 +201,8 @@
   "send":"发送",
   "avatar":"头像",
   "username":"用户名",
+
+
   "__error": {
     "network":"网络错误",
     "unknown":"未知错误",

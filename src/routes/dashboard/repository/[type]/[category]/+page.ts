@@ -39,6 +39,8 @@ export const load: PageLoad = async ({ parent, params }) => {
     return {
         userInfo: user,
         projects,
+        type,
+        category,
         navGroup,
         navItem
     };

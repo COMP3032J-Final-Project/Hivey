@@ -33,13 +33,20 @@ export const getProjectById = async (id: string): Promise<Project> => {
     return response.data.data;
 };
 
-// TODO 需要和后端沟通
 export const postCreateProject = async (form: CreateProjectForm): Promise<Project> => {
-    const response = await axiosClient.post<APIResponse<Project>>('/project/create', form);
+    console.log(form);
+    // API[/project/create] 返回的data是{ project_id: string }, 因此还需要调用getProjectById()获取项目信息
+    const tempForm = { //TODO 由于后端的适配还没有做好, 因此需要临时删除掉file和category字段
+        name: form.name,
+        type: 'project'
+    }
+    const response = await axiosClient.post<APIResponse<{ project_id: string }>>('/project/create', tempForm);
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }
-    return response.data.data;
+    const projectId = response.data.data.project_id;
+    const project = await getProjectById(projectId);
+    return project;
 };
 
 export const postUpdateProject = async (project: Project): Promise<Project> => {
