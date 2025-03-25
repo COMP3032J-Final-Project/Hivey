@@ -4,10 +4,27 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+  import { deleteProject } from '$lib/api/dashboard';
+  import { goto } from '$app/navigation';
+  import { notification } from '$lib/components/ui/toast';
+  import { me } from '$lib/trans';
+  import { page } from '$app/stores';
+  import { invalidateAll } from '$app/navigation';
 
 	let { id }: { id: string } = $props();
 	let showDeleteDialog = $state(false);
 
+  async function handleDelete() {
+    try {
+      await deleteProject(id);
+      notification('Project deleted successfully');
+      showDeleteDialog = false;
+      await invalidateAll();
+      goto($page.url.pathname);
+    } catch (error) {
+      notification(me.unknown());
+    }
+  }
 </script>
 
 <DropdownMenu.Root>
@@ -42,7 +59,7 @@
     </AlertDialog.Header>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-      <AlertDialog.Action>Delete</AlertDialog.Action>
+      <AlertDialog.Action onclick={handleDelete}>Delete</AlertDialog.Action>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>

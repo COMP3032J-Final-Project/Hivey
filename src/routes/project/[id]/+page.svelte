@@ -16,13 +16,27 @@
     import Italic from "@lucide/svelte/icons/italic";
     import Underline from "@lucide/svelte/icons/underline";
     import { Input } from "$lib/components/ui/input/index.js";
-    import { postUpdateProject } from '$lib/api/dashboard';
+    import { putUpdateProject, getProjectById } from '$lib/api/dashboard';
     import { success, failure } from '$lib/components/ui/toast';
+    import { onMount } from 'svelte';
+    import type { Project } from '$lib/types/dashboard';
+    import { ProjectType } from '$lib/types/dashboard';
     
     let docContent = $state("");
     let isEditing = $state(false);
     let projectName = $state("Project Name");
     let tempProjectName = $state("");
+    let project: Project | null = $state(null);
+
+    onMount(async () => {
+        try {
+            const projectId = window.location.pathname.split('/').pop() ?? '';
+            project = await getProjectById(projectId);
+            projectName = project.name;
+        } catch (error) {
+            failure('Failed to load project');
+        }
+    });
 
     function formatMarkdown() {
         // Implement markdown formatting logic here
@@ -31,14 +45,10 @@
 
     async function handleProjectNameUpdate() {
         try {
-            // TODO
             const projectId = window.location.pathname.split('/').pop() ?? '';
-            const updatedProject = await postUpdateProject({
+            const updatedProject = await putUpdateProject({
                 id: projectId,
-                name: tempProjectName,
-                type: "Project",
-                createdAt: new Date(),
-                updatedAt: new Date()
+                name: tempProjectName
             });
             projectName = updatedProject.name;
             isEditing = false;

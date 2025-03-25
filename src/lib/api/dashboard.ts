@@ -49,16 +49,16 @@ export const postCreateProject = async (form: CreateProjectForm): Promise<Projec
     return project;
 };
 
-export const postUpdateProject = async (project: Project): Promise<Project> => {
-    const response = await axiosClient.post<APIResponse<Project>>(`/project/${project.id}`, project);
+export const putUpdateProject = async (project: { id: string; name: string }): Promise<Project> => {
+    const response = await axiosClient.put<APIResponse<Project>>(`/project/${project.id}`, project);
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }
     return response.data.data;
 };
 
-export const postDeleteProject = async (id: string): Promise<void> => {
-    const response = await axiosClient.post<APIResponse<void>>(`/project/${id}/delete`);
+export const deleteProject = async (id: string): Promise<void> => {
+    const response = await axiosClient.delete<APIResponse<void>>(`/project/${id}`);
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }
