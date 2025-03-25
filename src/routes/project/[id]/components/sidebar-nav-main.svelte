@@ -2,8 +2,10 @@
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Ellipsis } from 'lucide-svelte';
-	import { ChevronRight } from 'lucide-svelte';
+	import Ellipsis from '@lucide/svelte/icons/ellipsis';
+	import Trash2 from '@lucide/svelte/icons/trash-2';
+	import { Pencil } from 'lucide-svelte';
+  import { ChevronRight } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import type { SidebarFolder, SidebarFile } from '$lib/types/editor';
 
@@ -39,11 +41,13 @@
 								{/snippet}
 								</DropdownMenu.Trigger>
 								<DropdownMenu.Content side="right" align="start">
-								<DropdownMenu.Item>
+								<DropdownMenu.Item class="flex justify-between items-center">
 									<span>Rename</span>
+                  <Pencil class="ml-2 size-4" />
 								</DropdownMenu.Item>
-								<DropdownMenu.Item>
+								<DropdownMenu.Item class="flex justify-between items-center">
 									<span>Delete</span>
+                  <Trash2 class="ml-2 size-4" />
 								</DropdownMenu.Item>
 								</DropdownMenu.Content>
 							</DropdownMenu.Root>
@@ -90,12 +94,14 @@
 				{/snippet}
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content side="right" align="start">
-				<DropdownMenu.Item>
-					<span>Rename</span>
-				</DropdownMenu.Item>
-				<DropdownMenu.Item>
-					<span>Delete</span>
-				</DropdownMenu.Item>
+          <DropdownMenu.Item class="flex justify-between items-center">
+            <span>Rename</span>
+            <Pencil class="ml-2 size-4" />
+          </DropdownMenu.Item>
+          <DropdownMenu.Item class="flex justify-between items-center">
+            <span>Delete</span>
+            <Trash2 class="ml-2 size-4" />
+          </DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</Sidebar.MenuItem>

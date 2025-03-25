@@ -7,6 +7,7 @@
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
+    import { Pencil } from 'lucide-svelte';
     import Editor_md from "$lib/components/editor-md.svelte";
     import Previewer_md from "$lib/components/previewer-md.svelte";
     import InviteButton from "$lib/components/edit-button/invite-button.svelte";
@@ -14,12 +15,46 @@
     import Bold from "@lucide/svelte/icons/bold";
     import Italic from "@lucide/svelte/icons/italic";
     import Underline from "@lucide/svelte/icons/underline";
+    import { Input } from "$lib/components/ui/input/index.js";
+    import { postUpdateProject } from '$lib/api/dashboard';
+    import { success, failure } from '$lib/components/ui/toast';
     
     let docContent = $state("");
+    let isEditing = $state(false);
+    let projectName = $state("Project Name");
+    let tempProjectName = $state("");
 
     function formatMarkdown() {
         // Implement markdown formatting logic here
         console.log('Format markdown');
+    }
+
+    async function handleProjectNameUpdate() {
+        try {
+            // TODO
+            const projectId = window.location.pathname.split('/').pop() ?? '';
+            const updatedProject = await postUpdateProject({
+                id: projectId,
+                name: tempProjectName,
+                type: "Project",
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+            projectName = updatedProject.name;
+            isEditing = false;
+            success('Project name modified success');
+        } catch (error) {
+            failure('Project name modified failed');
+        }
+    }
+
+    function startEditing() {
+        tempProjectName = projectName;
+        isEditing = true;
+    }
+
+    function cancelEditing() {
+        isEditing = false;
     }
 
     const members = [
@@ -64,7 +99,28 @@
         </div>
         
         <div class="flex items-center">
-            <span class="text-xl font-medium">Project Name</span>
+            {#if isEditing}
+                <div class="flex items-center gap-2">
+                    <Input 
+                        bind:value={tempProjectName} 
+                        class="w-48"
+                        onkeydown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleProjectNameUpdate();
+                            } else if (e.key === 'Escape') {
+                                cancelEditing();
+                            }
+                        }}
+                    />
+                    <Button variant="ghost" size="sm" onclick={handleProjectNameUpdate}>Save</Button>
+                    <Button variant="ghost" size="sm" onclick={cancelEditing}>Cancel</Button>
+                </div>
+            {:else}
+                <span class="text-xl font-medium">{projectName}</span>
+                <Button variant="ghost" size="icon" class="ml-2" onclick={startEditing}>
+                    <Pencil class="size-4" />
+                </Button>
+            {/if}
         </div>
         
         <div class="hidden md:flex items-center gap-4">

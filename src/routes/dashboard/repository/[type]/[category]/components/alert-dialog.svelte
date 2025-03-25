@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
+  import { Input } from '$lib/components/ui/input/index.js';
 	import { closeProjectDialog } from '../../../../store.svelte';
 	import type { CreateProjectForm, ProjectFormCategory } from '$lib/types/dashboard';
 	import { success, failure } from '$lib/components/ui/toast';
@@ -122,10 +122,7 @@
 		</AlertDialog.Header>
 
 		<div class="space-y-4">
-			<div class="space-y-2">
-				<label for="project-name" class="text-sm font-medium">{mpd.project_name()}</label>
-				<Input id="project-name" bind:value={projectName} type="text" placeholder={mpd.input_project_name()} />
-			</div>
+			<Input id="project-name" bind:value={projectName} type="text" placeholder={mpd.input_project_name()} />
 
 			{#if category === 'upload'}
 				<div class="space-y-2">
