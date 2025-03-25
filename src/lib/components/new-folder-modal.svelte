@@ -45,21 +45,15 @@
    
 <Dialog.Root>
 	<Dialog.Trigger class={buttonVariants({ variant: "ghost", size: "icon"})}>
-		<FolderPlus class="w-5 h-5" />
+		<FolderPlus />
 	</Dialog.Trigger>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>{mpp.create_new_folder()}</Dialog.Title>
-			<Dialog.Description>
-			Input your new folder info here. Click save when you're done.
-			</Dialog.Description>
 	  	</Dialog.Header>
 		<form onsubmit={createFolder}>
 			<div class="grid gap-4 py-4">
-				<div class="flex items-center justify-center gap-4">
-					<Label for="foldername" class="text-right">{mpp.enter_folder_name()}</Label>
-					<Input id="foldername" name="foldername" value="" class="w-[180px]" />
-				</div>
+				<Input id="foldername" name="foldername" value="" placeholder={mpp.enter_folder_name()} />
 			</div>
 		<Dialog.Footer>
 			<Button type="submit">Confirm</Button>

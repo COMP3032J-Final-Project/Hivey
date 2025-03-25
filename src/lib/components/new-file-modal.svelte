@@ -143,10 +143,10 @@
 
 <Dialog.Root>
 	<Dialog.Trigger class={buttonVariants({ variant: "ghost", size: "icon" })} aria-label="New File">
-		<FilePlus class="w-5 h-5" /> 
+		<FilePlus/> 
 	</Dialog.Trigger> 
-    <Dialog.Content class="sm:max-w-[500px]">
-		<Tabs.Root value="createFile" class="w-[400px]">
+    <Dialog.Content>
+		<Tabs.Root value="createFile">
 			<Tabs.List>
 			  	<Tabs.Trigger value="createFile">{mpp.create_new_file()}</Tabs.Trigger>
 			  	<Tabs.Trigger value="uploadFile">{mpp.upload_file()}</Tabs.Trigger>
@@ -155,9 +155,9 @@
 				<form onsubmit={createFile}>
 					<div class="grid gap-4 py-4">
 						<div class="flex items-center justify-center gap-4">
-							<Label for="folder-select" class="text-right w-1/3">{mpp.file_path()}</Label>
+							<Label for="folder-select" class="text-right w-1/4">{mpp.file_path()}</Label>
 							<Select.Root type="single" name="folder" bind:value={folderValue}>
-								<Select.Trigger id="folder-select" class="w-[180px]">
+								<Select.Trigger id="folder-select" class="w-[200px]">
 									{triggerContent}
 								</Select.Trigger>
 								<Select.Content>
@@ -172,13 +172,13 @@
 							</Select.Root>
 						</div>
 						<div class="flex items-center justify-center gap-4">
-							<Label for="filename" class="text-right w-1/3">{mpp.file_name()}</Label>
-							<Input id="filename" name="filename" value={mpp.enter_file_name()} class="w-[180px]" />
+							<Label for="filename" class="text-right w-1/4">{mpp.file_name()}</Label>
+							<Input id="filename" name="filename" value={mpp.enter_file_name()} class="w-[200px]" />
 						</div>
 						<div class="flex items-center justify-center gap-4">
-							<Label for="filetype" class="text-right w-1/3">{mpp.file_type()}</Label>
+							<Label for="filetype" class="text-right w-1/4">{mpp.file_type()}</Label>
 							<Select.Root type="single" name="filetype" bind:value={fileTypeValue}>
-								<Select.Trigger id="filetype" class="w-[180px]">
+								<Select.Trigger id="filetype" class="w-[200px]">
 								{triggerContent1}
 								</Select.Trigger>
 								<Select.Content>
