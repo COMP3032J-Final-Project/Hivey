@@ -10,8 +10,8 @@ import { me } from '$lib/trans';
 const mockMessages: ChatMessage[] = [
 	{
 		user: {
-			username: 'Zhang San',
-			email: 'zhangsan@example.com',
+			username: 'Liyan Tao',
+			email: 'liyantao@ucdconnect.ie',
 			avatar: ''
 		},
 		message: 'Hello, everyone. We will discuss the project progress today.',
@@ -19,50 +19,50 @@ const mockMessages: ChatMessage[] = [
 	},
 	{
 		user: {
-			username: 'Li Si',
-			email: 'lisi@example.com',
+			username: 'Hanshu Rao',
+			email: 'hanshu.rao@ucdconnect.ie',
 			avatar: ''
 		},
-		message: 'I have completed the design of the front-end part.',
+		message: 'I am processing the back-end API, and it is expected to be completed tomorrow.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 25) // 25 minutes ago
 	},
 	{
 		user: {
-			username: 'Wang Wu',
-			email: 'wangwu@example.com',
+			username: 'Ziqi Yang',
+			email: 'ziqi.yang@ucdconnect.ie',
 			avatar: ''
 		},
-		message: 'I am processing the back-end API, and it is expected to be completed tomorrow.',
+		message: 'I have completed the multi-cursor part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
 	},
 	{
 		user: {
-			username: 'Zhao Liu',
-			email: 'zhaoliu@example.com',
+			username: 'Yiran Zhao',
+			email: 'yiran.zhao@ucdconnect.ie',
 			avatar: ''
 		},
 		message:
-			'I understand. I understand. I understand. I understand. I understand. I understand. I understand. I understand.',
+			'I am processing the front-end part, finished the login and register part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
 	},
 	{
 		user: {
-			username: 'Sun Qi',
-			email: 'sunqi@example.com',
+			username: 'Jiawen Chen',
+			email: 'jiawen.chen@ucdconnect.ie',
 			avatar: ''
 		},
 		message:
-			'I understand. I understand. I understand. I understand. I understand. I understand. I understand. I understand.',
+			'Ok, I will start the design of the CRDT part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
 	},
 	{
 		user: {
-			username: 'Zhou Ba',
-			email: 'zhouba@example.com',
+			username: 'Jinpeng Zhai',
+			email: 'jinpeng.zhai@ucdconnect.ie',
 			avatar: ''
 		},
 		message:
-			'I understand. I understand. I understand. I understand. I understand. I understand. I understand. I understand.',
+			'That\'s great! I will start the design of the cloud storage part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
 	}
 ];

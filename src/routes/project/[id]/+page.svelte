@@ -43,23 +43,6 @@
         <div class="hidden md:flex items-center">
             <Menubar.Root class="border-0 bg-transparent">
                 <Menubar.Menu>
-                    <Menubar.Trigger >File</Menubar.Trigger>
-                    <Menubar.Content>
-                        <Menubar.Item>
-                            New File
-                            <Menubar.Shortcut>⌘T</Menubar.Shortcut>
-                        </Menubar.Item>
-                        <Menubar.Separator />
-                        <Menubar.Sub>
-                            <Menubar.SubTrigger>Export As</Menubar.SubTrigger>
-                            <Menubar.SubContent>
-                                <Menubar.Item>PDF</Menubar.Item>
-                                <Menubar.Item>PNG</Menubar.Item>
-                            </Menubar.SubContent>
-                        </Menubar.Sub>
-                    </Menubar.Content>
-                </Menubar.Menu>
-                <Menubar.Menu>
                     <Menubar.Trigger>Edit</Menubar.Trigger>
                     <Menubar.Content>
                         <Menubar.Item>
