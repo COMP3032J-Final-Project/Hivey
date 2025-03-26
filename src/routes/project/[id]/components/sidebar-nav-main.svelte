@@ -5,14 +5,24 @@
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import { Pencil } from 'lucide-svelte';
-  import { ChevronRight } from 'lucide-svelte';
+    import { ChevronRight } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
-	import type { SidebarFolder, SidebarFile } from '$lib/types/editor';
+	import { getContext } from 'svelte';
+	import type { SidebarFolder, SidebarFile, EditorFileType } from '$lib/types/editor';
 
 	let { folders_tmp, files_tmp }: { folders_tmp: SidebarFolder[] , files_tmp: SidebarFile[]} = $props();
 
 	const folders = writable(folders_tmp);
 	const files = writable(files_tmp);
+
+	const { updateFileType } = getContext<EditorFileType>('editor-context');
+
+	function handleFileClick(title: string) {
+		const fileType = title.split('.').pop() || 'md';
+		console.log('File clicked:', title);
+		console.log('File type:', fileType);
+		updateFileType(fileType);
+	}
 </script>
 
 <Sidebar.Content>
@@ -62,7 +72,7 @@
 							    {#each mainItem.items as subItem (subItem.title)}
 								    {console.log('Rendering subItem:', subItem)}
 								    <Sidebar.MenuSubItem>
-									    <Sidebar.MenuSubButton>
+									    <Sidebar.MenuSubButton onclick={() => handleFileClick(subItem.title)}>
 										    {#snippet child({ props })}
 											    <a href={subItem.url} {...props}>
 												    <span>{subItem.title}</span>
@@ -79,7 +89,7 @@
 	    {/each}
 	    {#each $files as file (file.title)}
 		    <Sidebar.MenuItem>
-			    <Sidebar.MenuButton>
+			    <Sidebar.MenuButton onclick={() => handleFileClick(file.title)}>
 				    {#snippet child({ props })}
 					    <a href={file.url} {...props}>
 						    <file.icon />

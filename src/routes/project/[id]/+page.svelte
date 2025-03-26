@@ -7,8 +7,8 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
   import { Pencil } from 'lucide-svelte';
-  import Editor from "$lib/components/editor.svelte";
-  import Previewer from "$lib/components/previewer.svelte";
+  import Editor_md from "$lib/components/editor-md.svelte";
+  import Previewer_md from "$lib/components/previewer-md.svelte";
   import InviteButton from "./components/button/invite-button.svelte";
   import Exportbutton from "./components/button/export-button.svelte";
   import Bold from "@lucide/svelte/icons/bold";
@@ -17,14 +17,49 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { putUpdateProject, getProjectById } from '$lib/api/dashboard';
   import { success, failure } from '$lib/components/ui/toast';
-  import { onMount } from 'svelte';
+  import { onMount, getContext } from 'svelte';
   import type { Project } from '$lib/types/dashboard';
+  import { ProjectType } from '$lib/types/dashboard';
+  import type { EditorFileType } from '$lib/types/editor';
     
   let docContent = $state("");
   let isEditing = $state(false);
   let projectName = $state("Project Name");
   let tempProjectName = $state("");
   let project: Project | null = $state(null);
+
+  const ctx = getContext<EditorFileType>('editor-context');
+
+  async function loadComponents(fileType: string) {
+    try {
+      switch (fileType) {
+        case "md":
+          Editor = (await import("$lib/components/editor-md.svelte")).default;
+          Previewer = (await import("$lib/components/previewer-md.svelte")).default;
+          break;
+        // 其他文件类型...
+        default:
+          // 默认加载 Markdown 组件
+          Editor = (await import("$lib/components/editor-md.svelte")).default;
+          Previewer = (await import("$lib/components/previewer-md.svelte")).default;
+      }
+    } catch (error) {
+        console.error("Failed to load components:", error);
+    }
+  }
+  
+  $effect(() => {
+    const unsubscribe = ctx.currentFileType.subscribe((type: string) => {
+    console.log('[Page] currentFileType:', type);
+    loadComponents(type);
+  });
+
+    return () => unsubscribe();
+  });
+
+  let Editor = $state<typeof Editor_md | null>(Editor_md);
+  let Previewer = $state<typeof Previewer_md | null>(Previewer_md);
+
 
   onMount(async () => {
       try {

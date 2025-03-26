@@ -17,6 +17,13 @@ export interface SidebarFile {
 	icon?: any;
 }
 
+
+export interface EditorFileType {
+    currentFileType: Writable<string>;
+    updateFileType: (type: string) => void;
+}
+
+
 // 聊天消息接口
 export interface ChatMessage {
 	  user: User;
