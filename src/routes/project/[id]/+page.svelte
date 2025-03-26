@@ -16,7 +16,7 @@
   import Italic from "@lucide/svelte/icons/italic";
   import Underline from "@lucide/svelte/icons/underline";
   import { Input } from "$lib/components/ui/input/index.js";
-
+  import { putUpdateProject, getProjectById } from '$lib/api/dashboard';
   import { success, failure } from '$lib/components/ui/toast';
   import { onMount } from 'svelte';
   import type { Project } from '$lib/types/dashboard';
@@ -32,7 +32,9 @@
       try {
           const projectId = window.location.pathname.split('/').pop() ?? '';
           project = await getProjectById(projectId);
-          projectName = project.name;
+          if (project) {
+              projectName = project.name;
+          }
       } catch (error) {
           failure('Failed to load project');
       }

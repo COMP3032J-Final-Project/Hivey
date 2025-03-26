@@ -50,7 +50,9 @@ export const postCreateProject = async (form: CreateProjectForm): Promise<Projec
 };
 
 export const putUpdateProject = async (project: { id: string; name: string }): Promise<Project> => {
-    const response = await axiosClient.put<APIResponse<Project>>(`/project/${project.id}`, project);
+    const response = await axiosClient.put<APIResponse<Project>>(`/project/${project.id}`, {
+        name: project.name
+    });
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }
