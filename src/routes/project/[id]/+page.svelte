@@ -21,18 +21,18 @@
   import type { Project } from '$lib/types/dashboard';
   import { ProjectType } from '$lib/types/dashboard';
   import type { EditorFileType } from '$lib/types/editor';
-    
   import type { User } from '$lib/types/auth';
 
   let { data } = $props();
-
+  
   let project: Project = $state(data.project);
   let members: User[] = $state(data.members);
   let docContent = $state("");
   let isEditing = $state(false);
   let tempProjectName = $state("");
-  let project: Project | null = $state(null);
 
+  let Editor = $state<typeof Editor_md | null>(Editor_md);
+  let Previewer = $state<typeof Previewer_md | null>(Previewer_md);
   const ctx = getContext<EditorFileType>('editor-context');
 
   async function loadComponents(fileType: string) {
@@ -53,31 +53,6 @@
     }
   }
   
-  $effect(() => {
-    const unsubscribe = ctx.currentFileType.subscribe((type: string) => {
-    console.log('[Page] currentFileType:', type);
-    loadComponents(type);
-  });
-
-    return () => unsubscribe();
-  });
-
-  let Editor = $state<typeof Editor_md | null>(Editor_md);
-  let Previewer = $state<typeof Previewer_md | null>(Previewer_md);
-
-
-  onMount(async () => {
-      try {
-          const projectId = window.location.pathname.split('/').pop() ?? '';
-          project = await getProjectById(projectId);
-          if (project) {
-              projectName = project.name;
-          }
-      } catch (error) {
-          failure('Failed to load project');
-      }
-  });
-
   function formatMarkdown() {
       //TODO Implement markdown formatting logic here
       console.log('Format markdown');
@@ -101,6 +76,14 @@
       tempProjectName = project.name;
       isEditing = true;
   }
+
+  $effect(() => {
+    const unsubscribe = ctx.currentFileType.subscribe((type: string) => {
+      console.log('[Page] currentFileType:', type);
+      loadComponents(type);
+    });
+    return () => unsubscribe();
+  });
 </script>
 
 <div class="size-full flex flex-col">
