@@ -8,8 +8,8 @@
     import { Separator } from "$lib/components/ui/separator/index.js";
     import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
     import { Pencil } from 'lucide-svelte';
-    import Editor_md from "$lib/components/editor-md.svelte";
-    import Previewer_md from "$lib/components/previewer-md.svelte";
+    import Editor from "$lib/components/editor.svelte";
+    import Previewer from "$lib/components/previewer.svelte";
     import InviteButton from "$lib/components/edit-button/invite-button.svelte";
     import Exportbutton from "$lib/components/edit-button/export-button.svelte";
     import Bold from "@lucide/svelte/icons/bold";
@@ -168,7 +168,7 @@
                     </ToggleGroup.Root>
                 </div>
                 <div class="flex-1 h-full">
-                    <Editor_md bind:value={docContent}/>
+                    <Editor bind:value={docContent}/>
                 </div>
             </div>
         </Resizable.Pane>
@@ -187,7 +187,7 @@
                     </div>
                 </div>
                 <div class="flex-1 h-full overflow-y-auto"> 
-                    <Previewer_md fileType="markdown" content={docContent} />
+                    <Previewer fileType="markdown" content={docContent} />
                 </div>
             </div>
         </Resizable.Pane>
