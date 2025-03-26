@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Folder, File, FolderPlus, MessageSquare } from 'lucide-svelte';
+	import { MessageSquare } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
 	import type { SidebarFolder, SidebarFile } from '$lib/types/editor';

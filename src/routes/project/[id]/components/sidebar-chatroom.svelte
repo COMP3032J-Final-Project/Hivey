@@ -21,7 +21,7 @@
 
 		  const message: ChatMessageType = {
 			    user: currentUser,
-			    message: input,
+			    content: input,
 			    timestamp: new Date()
 		  };
 

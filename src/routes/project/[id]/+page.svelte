@@ -5,7 +5,6 @@
   import * as Resizable from "$lib/components/ui/resizable/index.js";
   import * as AvatarGroup from '$lib/components/ui/avatar-group';
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-  import { Separator } from "$lib/components/ui/separator/index.js";
   import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
   import { Pencil } from 'lucide-svelte';
   import Editor from "$lib/components/editor.svelte";
@@ -20,7 +19,6 @@
   import { success, failure } from '$lib/components/ui/toast';
   import { onMount } from 'svelte';
   import type { Project } from '$lib/types/dashboard';
-  import { ProjectType } from '$lib/types/dashboard';
     
   let docContent = $state("");
   let isEditing = $state(false);

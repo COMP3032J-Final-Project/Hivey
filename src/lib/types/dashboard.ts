@@ -35,3 +35,7 @@ export const CreateProjectForm = v.object({
     file: v.optional(v.instance(File))
 })
 export type CreateProjectForm = v.InferOutput<typeof CreateProjectForm>;
+
+export interface ProjectsDeleteForm {
+    project_ids: string[];
+}

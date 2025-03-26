@@ -5,8 +5,10 @@ import { getUserSession } from '$lib/auth';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
 import { me } from '$lib/trans';
+import type { User } from '$lib/types/auth';
+import { getUserInfo } from '$lib/api/auth';
 
-// 创建模拟聊天数据
+// 模拟聊天数据
 const mockMessages: ChatMessage[] = [
 	{
 		user: {
@@ -14,7 +16,7 @@ const mockMessages: ChatMessage[] = [
 			email: 'liyantao@ucdconnect.ie',
 			avatar: ''
 		},
-		message: 'Hello, everyone. We will discuss the project progress today.',
+		content: 'Hello, everyone. We will discuss the project progress today.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 30) // 30 minutes ago
 	},
 	{
@@ -23,7 +25,7 @@ const mockMessages: ChatMessage[] = [
 			email: 'hanshu.rao@ucdconnect.ie',
 			avatar: ''
 		},
-		message: 'I am processing the back-end API, and it is expected to be completed tomorrow.',
+		content: 'I am processing the back-end API, and it is expected to be completed tomorrow.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 25) // 25 minutes ago
 	},
 	{
@@ -32,7 +34,7 @@ const mockMessages: ChatMessage[] = [
 			email: 'ziqi.yang@ucdconnect.ie',
 			avatar: ''
 		},
-		message: 'I have completed the multi-cursor part.',
+		content: 'I have completed the multi-cursor part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
 	},
 	{
@@ -41,7 +43,7 @@ const mockMessages: ChatMessage[] = [
 			email: 'yiran.zhao@ucdconnect.ie',
 			avatar: ''
 		},
-		message:
+		content:
 			'I am processing the front-end part, finished the login and register part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
 	},
@@ -51,7 +53,7 @@ const mockMessages: ChatMessage[] = [
 			email: 'jiawen.chen@ucdconnect.ie',
 			avatar: ''
 		},
-		message:
+		content:
 			'Ok, I will start the design of the CRDT part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
 	},
@@ -61,7 +63,7 @@ const mockMessages: ChatMessage[] = [
 			email: 'jinpeng.zhai@ucdconnect.ie',
 			avatar: ''
 		},
-		message:
+		content:
 			'That\'s great! I will start the design of the cloud storage part.',
 		timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
 	}
@@ -112,15 +114,13 @@ export const load: LayoutLoad = async ({ url }) => {
 		redirect(302, `/auth/signin?returnUrl=${returnUrl}`);
 	}
 
+    const currentUser: User = await getUserInfo();
+
 	return {
 		groupName: data.groupName,
 		folders: data.folders,
 		files: data.files,
 		chatMessages: mockMessages,
-		currentUser: {
-			username: 'Zhang San',
-			email: 'zhangsan@example.com',
-			avatar: ''
-		}
+		currentUser: currentUser
 	};
 };

@@ -1,20 +1,6 @@
-import axios from 'axios';
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import { me } from '$lib/trans';
-import * as v from 'valibot';
-import {
-	  UserAuth,
-	  User,
-    RegisterForm,
-    LoginForm,
-	  RefreshUserAuthForm
-} from '$lib/types/auth';
-import {
-    getUserSession,
-    clearUserSession
-} from '$lib/auth';
-import type { Project, CreateProjectForm } from '$lib/types/dashboard';
+import type { Project, CreateProjectForm, ProjectsDeleteForm } from '$lib/types/dashboard';
 
 
 export const getUserProjects = async (): Promise<Project[]> => {
@@ -34,7 +20,6 @@ export const getProjectById = async (id: string): Promise<Project> => {
 };
 
 export const postCreateProject = async (form: CreateProjectForm): Promise<Project> => {
-    console.log(form);
     // API[/project/create] 返回的data是{ project_id: string }, 因此还需要调用getProjectById()获取项目信息
     const tempForm = { //TODO 由于后端的适配还没有做好, 因此需要临时删除掉file和category字段
         name: form.name,
@@ -65,10 +50,6 @@ export const deleteProject = async (id: string): Promise<void> => {
         throw new Error(response.data.msg);
     }
 };
-
-export interface ProjectsDelete {
-    project_ids: string[];
-}
 
 export const deleteProjects = async (projectIds: string[]): Promise<void> => {
     const response = await axiosClient.delete<APIResponse<void>>('/project', {

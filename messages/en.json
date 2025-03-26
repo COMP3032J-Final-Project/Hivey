@@ -179,7 +179,9 @@
     "uploading_file": "Uploading file...",
     "upload_file_success": "File uploaded successfully",
     "create_new_folder": "Create New Folder",
-    "enter_folder_name": "Enter folder name"
+    "enter_folder_name": "Enter folder name",
+    "error_edit_member_permission": "You don't have permission to edit member permission",
+    "error_remove_member": "You don't have permission to remove member"
   },
   
 

@@ -9,10 +9,32 @@ export const UserAuth = v.object({
 });
 
 export type UserAuth = v.InferOutput<typeof UserAuth>;
+ 
+/*
+# Project CRUD
+"CREATE_PROJECT": "owner",
+"VIEW_PROJECT": { "owner": True, "admin": True, "writer": True, "viewer": True},
+"UPDATE_PROJECT": { "owner": True, "admin": True, "writer": False, "viewer": False},
+"DELETE_PROJECT": { "owner": True, "admin": False, "writer": False, "viewer": False},
+
+# 成员CRUD
+"ADD_MEMBER": {"owner": True, "admin": True, "writer": False, "viewer": False},  # admin只能添加 writer, viewer
+"UPDATE_MEMBER": {"owner": True, "admin": True, "writer": False, "viewer": False},  # admin只能修改 writer, viewer 的权限 (且只能在这两个权限间改)
+"REMOVE_MEMBER": { "owner": True, "admin": True, "writer": False, "viewer": False},  # admin只能移除 writer, viewer
+"LEAVE": { "owner": False, "admin": True, "writer": True, "viewer": True},
+*/
+export enum UserPermissionEnum {
+    Owner = 'owner',
+    Admin = 'admin',
+    Writer = 'writer',
+    Viewer = 'viewer'
+}
 
 export const User = v.object({
     username: v.string(),
     email: v.pipe(v.string(), v.email()),
+    avatar: v.optional(v.string()),
+    permission: v.optional(v.enum(UserPermissionEnum)),
     is_active: v.optional(v.boolean()),
     is_superuser: v.optional(v.boolean()),
 });
