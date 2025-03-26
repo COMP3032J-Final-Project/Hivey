@@ -83,8 +83,8 @@
 	];
 </script>
 
-<div class="h-screen flex flex-col">
-  <header class="h-12 flex justify-between px-4 bg-sidebar">
+<div class="size-full flex flex-col">
+  <header class="h-12 flex justify-between px-4 border-b">
     <div class="hidden md:flex items-center">
       <Sidebar.Trigger class="-ml-1" />
       <Menubar.Root class="border-0 bg-transparent">
@@ -152,9 +152,9 @@
 
   <Resizable.PaneGroup direction="horizontal" autoSaveId="project">
     <Resizable.Pane  defaultSize={50}>
-      <div class="flex-1 flex flex-col h-full">
-        <div class="p-2 border-b flex space-x-2 items-center">
-          <Button variant="secondary" size="sm" onclick={formatMarkdown}>Format</Button>
+      <div class="flex flex-col h-full">
+        <div class="p-1 border-b flex space-x-2 items-center">
+          <Button size="sm" onclick={formatMarkdown}>Format</Button>
           <ToggleGroup.Root type="multiple">
             <ToggleGroup.Item value="bold" aria-label="Toggle bold">
               <Bold class="size-4 p-0" />
@@ -167,7 +167,7 @@
             </ToggleGroup.Item>
           </ToggleGroup.Root>
         </div>
-        <div class="flex-1 h-full">
+        <div class="flex-1">
           <Editor bind:value={docContent}/>
         </div>
       </div>
@@ -175,7 +175,7 @@
     <Resizable.Handle />
     <Resizable.Pane defaultSize={50}>
       <div class="flex-1 flex flex-col h-full">
-        <div class="p-2 border-b">
+        <div class="p-1 border-b">
           <div class="flex justify-between items-center">
             <div class="flex">
               <p class="p-3 h-10 flex items-center justify-center">Preview</p>
@@ -185,7 +185,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-1 h-full overflow-y-auto"> 
+        <div class="flex-1 overflow-y-auto"> 
           <Previewer fileType="markdown" content={docContent} />
         </div>
       </div>

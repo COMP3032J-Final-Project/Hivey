@@ -16,15 +16,10 @@
                 basicSetup,
                 markdown(), 
                 lineNumbers({}),
-                EditorView.lineWrapping, 
+                lineNumbers({}),
+                EditorView.lineWrapping,
                 EditorView.theme({
-                    ".cm-scroller": {
-                        overflow: "auto", // address browser scrollbar issue
-                        height: "100%",
-                        "font-family": "monospace",
-                        "font-size": "14px",
-                        "line-height": 1.5,
-                    },
+                    "&": { height: "100%", fontSize: "18px" },
                 }),
                 EditorView.updateListener.of((update) => {
                     if (update.docChanged) {
@@ -41,21 +36,6 @@
     });
 </script>
 
-<style>
-    .editor {
-        width: 100%;
-        height: 100%;
-        max-height: 88vh;
-        padding: 5px;
-        font-family: monospace;
-        font-size: 14px;
-        line-height: 1.5;
-        border: none;
-        outline: none;
-        resize: none;
-        background-color: var(--background);
-        overflow-y: auto;
-    }
-</style>
-
-<div bind:this={editorAreaElem} class="editor"></div>
+<div bind:this={editorAreaElem}
+  class="editor size-full">
+</div>

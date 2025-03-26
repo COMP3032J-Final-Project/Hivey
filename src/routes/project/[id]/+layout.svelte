@@ -31,7 +31,7 @@
 </script>
 
 <Sidebar.Provider>
-	<Sidebar.Root collapsible="icon">
+	<Sidebar.Root collapsible="offcanvas" variant="inset">
 		<Sidebar.Content>
 			<Sidebar.Group>
 				<Sidebar.GroupLabel class="flex items-center justify-end">
@@ -56,7 +56,6 @@
 				{/if}
 			</Sidebar.Group>
 		</Sidebar.Content>
-		<Sidebar.Rail />
 	</Sidebar.Root>
 
 	<Sidebar.Inset>
