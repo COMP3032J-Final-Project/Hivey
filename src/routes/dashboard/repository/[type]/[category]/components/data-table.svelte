@@ -138,7 +138,11 @@
 					<Table.Row 
 						data-state={row.getIsSelected() && 'selected'}
 						class="cursor-pointer hover:bg-muted/50"
-						onclick={() => {
+						onclick={(e) => {
+							const target = e.target as HTMLElement;
+							if (target.closest('[role="checkbox"]') || target.closest('button')) {
+								return;
+							}
 							const projectId = row.original.id;
 							window.location.href = `/project/${projectId}`;
 						}}
