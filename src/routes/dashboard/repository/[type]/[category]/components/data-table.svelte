@@ -1,4 +1,4 @@
-<script lang="ts" generics="TData, TValue">
+<script lang="ts" generics="TData extends { id: string }, TValue">
 	import {
 		type ColumnDef,
 		type SortingState,
@@ -135,7 +135,14 @@
 			</Table.Header>
 			<Table.Body>
 				{#each table.getRowModel().rows as row (row.id)}
-					<Table.Row data-state={row.getIsSelected() && 'selected'}>
+					<Table.Row 
+						data-state={row.getIsSelected() && 'selected'}
+						class="cursor-pointer hover:bg-muted/50"
+						onclick={() => {
+							const projectId = row.original.id;
+							window.location.href = `/project/${projectId}`;
+						}}
+					>
 						{#each row.getVisibleCells() as cell (cell.id)}
 							<Table.Cell>
 								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
