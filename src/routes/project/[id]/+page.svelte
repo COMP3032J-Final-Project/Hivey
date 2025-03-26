@@ -15,16 +15,21 @@
   import Italic from "@lucide/svelte/icons/italic";
   import Underline from "@lucide/svelte/icons/underline";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { putUpdateProject, getProjectById } from '$lib/api/dashboard';
+  import { putUpdateProject } from '$lib/api/dashboard';
   import { success, failure } from '$lib/components/ui/toast';
   import { onMount, getContext } from 'svelte';
   import type { Project } from '$lib/types/dashboard';
   import { ProjectType } from '$lib/types/dashboard';
   import type { EditorFileType } from '$lib/types/editor';
     
+  import type { User } from '$lib/types/auth';
+
+  let { data } = $props();
+
+  let project: Project = $state(data.project);
+  let members: User[] = $state(data.members);
   let docContent = $state("");
   let isEditing = $state(false);
-  let projectName = $state("Project Name");
   let tempProjectName = $state("");
   let project: Project | null = $state(null);
 
@@ -74,18 +79,17 @@
   });
 
   function formatMarkdown() {
-      // Implement markdown formatting logic here
+      //TODO Implement markdown formatting logic here
       console.log('Format markdown');
   }
 
   async function handleProjectNameUpdate() {
       try {
-          const projectId = window.location.pathname.split('/').pop() ?? '';
           const updatedProject = await putUpdateProject({
-              id: projectId,
+              id: project.id,
               name: tempProjectName
           });
-          projectName = updatedProject.name;
+          project.name = updatedProject.name;
           isEditing = false;
           success('Project name modified success');
       } catch (error) {
@@ -94,28 +98,9 @@
   }
 
   function startEditing() {
-      tempProjectName = projectName;
+      tempProjectName = project.name;
       isEditing = true;
   }
-
-  function cancelEditing() {
-      isEditing = false;
-  }
-
-  const members = [
-		  {
-			    username: 'huntabyte',
-			    image: 'https://github.com/huntabyte.png'
-		  },
-		  {
-			    username: 'AdrianGonz97',
-			    image: 'https://github.com/AdrianGonz97.png'
-		  },
-		  {
-			    username: 'shyakadavis',
-			    image: 'https://github.com/shyakadavis.png'
-		  }
-	];
 </script>
 
 <div class="size-full flex flex-col">
@@ -154,15 +139,15 @@
               if (e.key === 'Enter') {
               handleProjectNameUpdate();
               } else if (e.key === 'Escape') {
-              cancelEditing();
+                isEditing = false;
               }
               }}
           />
           <Button variant="ghost" size="sm" onclick={handleProjectNameUpdate}>Save</Button>
-          <Button variant="ghost" size="sm" onclick={cancelEditing}>Cancel</Button>
+          <Button variant="ghost" size="sm" onclick={() => isEditing = false}>Cancel</Button>
         </div>
       {:else}
-        <span class="text-xl font-medium">{projectName}</span>
+        <span class="text-xl font-medium">{project.name}</span>
         <Button variant="ghost" size="icon" class="ml-2" onclick={startEditing}>
           <Pencil class="size-4" />
         </Button>
@@ -173,7 +158,7 @@
       <AvatarGroup.Root>
 	      {#each members as member (member.username)}
 		      <AvatarGroup.Member class="size-8">
-			      <AvatarGroup.MemberImage src={member.image} alt={member.username} />
+			      <AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
 			      <AvatarGroup.MemberFallback>
 				      {member.username[0]}
 			      </AvatarGroup.MemberFallback>
@@ -186,6 +171,7 @@
   </header>
 
   <Resizable.PaneGroup direction="horizontal" autoSaveId="project">
+
     <Resizable.Pane  defaultSize={50}>
       <div class="flex flex-col h-full">
         <div class="p-1 border-b flex space-x-2 items-center">
@@ -207,7 +193,9 @@
         </div>
       </div>
     </Resizable.Pane>
+
     <Resizable.Handle />
+
     <Resizable.Pane defaultSize={50}>
       <div class="flex-1 flex flex-col h-full">
         <div class="p-1 border-b">
@@ -225,5 +213,6 @@
         </div>
       </div>
     </Resizable.Pane>
+
   </Resizable.PaneGroup>
 </div>

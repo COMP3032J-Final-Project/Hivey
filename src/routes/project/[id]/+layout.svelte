@@ -9,6 +9,7 @@
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
 	import { Button } from "$lib/components/ui/button/index.js";
+
 	let { data, children } = $props<{
 		data: {
 			groupName: string;
@@ -16,6 +17,7 @@
 			files: SidebarFile[];
 			chatMessages: any[];
 			currentUser: any;
+			projectId: string;
 		};
 		children: any;
 	}>();

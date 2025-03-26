@@ -7,7 +7,7 @@ import type { LayoutLoad } from './$types';
 import { me } from '$lib/trans';
 import type { User } from '$lib/types/auth';
 import { getUserInfo } from '$lib/api/auth';
-
+import { getHistoryChatMessages } from '$lib/api/project';
 // 模拟聊天数据
 const mockMessages: ChatMessage[] = [
 	{
@@ -100,7 +100,7 @@ const data = {
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
 export const prerender = false; // 禁用预渲染
 
-export const load: LayoutLoad = async ({ url }) => {
+export const load: LayoutLoad = async ({ url, params }) => {
 	// 检查用户是否已登录
 	const userAuth = getUserSession();
 
@@ -115,12 +115,18 @@ export const load: LayoutLoad = async ({ url }) => {
 	}
 
     const currentUser: User = await getUserInfo();
+    const chatMessages: ChatMessage[] = await getHistoryChatMessages({
+        projectId: params.id,
+        max_num: 10,
+        last_timestamp: new Date() // 设置为当前时间
+    });
 
 	return {
 		groupName: data.groupName,
 		folders: data.folders,
 		files: data.files,
-		chatMessages: mockMessages,
-		currentUser: currentUser
+		chatMessages: mockMessages, //TODO 由于聊天室前端的WebSocket还未实现, 先设置为mockMessages
+		currentUser: currentUser,
+        projectId: params.id
 	};
 };

@@ -1,5 +1,4 @@
 import type { PageLoad } from './$types';
-import type { User } from '$lib/types/auth';
 import type { Project } from '$lib/types/dashboard';
 import {
     getUserProjects,
