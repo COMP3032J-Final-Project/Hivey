@@ -1,12 +1,13 @@
 <script lang="ts" module>
 	import FlatGroup from '$lib/components/sidebar-flat-group.svelte';
-	import { Files, File } from 'lucide-svelte';
+	import { Files, File, CirclePlus } from 'lucide-svelte';
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
 	import { currentNav, updateNav, openProjectDialog } from './store.svelte';
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { ChevronDown } from 'lucide-svelte';
 	import { ProjectFormCategory } from '$lib/types/dashboard';
+  
 	
 	// 导航和资源数据
 	const navData = {
@@ -80,7 +81,11 @@
               <DropdownMenu.Trigger>
                 {#snippet child({ props })}
                   <Sidebar.MenuButton {...props} class="bg-primary text-primary-foreground hover:bg-primary/80 p-4">
-                    Create Project
+                    {#snippet tooltipContent()}
+                      Create Project
+                    {/snippet}
+                    <CirclePlus />
+                    <span class="ml-2">Create Project</span>
                     <ChevronDown class="ml-auto" />
                   </Sidebar.MenuButton>
                 {/snippet}
