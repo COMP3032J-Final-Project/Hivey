@@ -7,8 +7,8 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
   import { Pencil } from 'lucide-svelte';
-  import Editor_md from "$lib/components/editor-md.svelte";
-  import Previewer_md from "$lib/components/previewer-md.svelte";
+  import Editor from "$lib/components/editor.svelte";
+  import Previewer from "$lib/components/previewer.svelte";
   import InviteButton from "./components/button/invite-button.svelte";
   import Exportbutton from "./components/button/export-button.svelte";
   import Bold from "@lucide/svelte/icons/bold";
@@ -17,13 +17,12 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { putUpdateProject } from '$lib/api/dashboard';
   import { success, failure } from '$lib/components/ui/toast';
-  import { onMount, getContext } from 'svelte';
+  import { onMount } from 'svelte';
   import type { Project } from '$lib/types/dashboard';
-  import { ProjectType } from '$lib/types/dashboard';
-  import type { EditorFileType } from '$lib/types/editor';
+  import type { PageProps } from './$types';
   import type { User } from '$lib/types/auth';
 
-  let { data } = $props();
+  let { data }: PageProps = $props();
   
   let project: Project = $state(data.project);
   let members: User[] = $state(data.members);
@@ -31,28 +30,7 @@
   let isEditing = $state(false);
   let tempProjectName = $state("");
 
-  let Editor = $state<typeof Editor_md | null>(Editor_md);
-  let Previewer = $state<typeof Previewer_md | null>(Previewer_md);
-  const ctx = getContext<EditorFileType>('editor-context');
 
-  async function loadComponents(fileType: string) {
-    try {
-      switch (fileType) {
-        case "md":
-          Editor = (await import("$lib/components/editor-md.svelte")).default;
-          Previewer = (await import("$lib/components/previewer-md.svelte")).default;
-          break;
-        // 其他文件类型...
-        default:
-          // 默认加载 Markdown 组件
-          Editor = (await import("$lib/components/editor-md.svelte")).default;
-          Previewer = (await import("$lib/components/previewer-md.svelte")).default;
-      }
-    } catch (error) {
-        console.error("Failed to load components:", error);
-    }
-  }
-  
   function formatMarkdown() {
       //TODO Implement markdown formatting logic here
       console.log('Format markdown');
@@ -76,14 +54,6 @@
       tempProjectName = project.name;
       isEditing = true;
   }
-
-  $effect(() => {
-    const unsubscribe = ctx.currentFileType.subscribe((type: string) => {
-      console.log('[Page] currentFileType:', type);
-      loadComponents(type);
-    });
-    return () => unsubscribe();
-  });
 </script>
 
 <div class="size-full flex flex-col">
@@ -172,7 +142,11 @@
           </ToggleGroup.Root>
         </div>
         <div class="flex-1">
-          <Editor bind:value={docContent}/>
+          <Editor bind:value={docContent}
+            username={data.currentUser.username}
+            project_id={data.project.id}
+            access_token={data.authInfo.access_token}
+          />
         </div>
       </div>
     </Resizable.Pane>

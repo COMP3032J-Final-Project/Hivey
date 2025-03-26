@@ -51,7 +51,7 @@
     
 
     onMount(() => {
-        const ws = new WebSocket("ws://localhost:8000/project/1/ws/cursor");
+        const ws = new WebSocket("ws://localhost:8000/project/38bbae14-f1cb-472c-993e-bd442f2e5721/ws/cursor");
         
         ws.addEventListener("open", () => {
             isConnected = true;

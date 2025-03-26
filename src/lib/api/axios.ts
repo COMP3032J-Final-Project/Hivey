@@ -20,7 +20,7 @@ import { me } from '$lib/trans';
 import { browser } from '$app/environment';
 import { notification } from '$lib/components/ui/toast';
 
-import { PUBLIC_BACKEND_ADDR } from '$env/static/public';
+import { BACKEND_ADDR } from '$lib/constants';
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 	  _retry?: boolean;
@@ -28,7 +28,7 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 
 // 创建 Axios 实例
 const axiosClient = axios.create({
-	  baseURL: PUBLIC_BACKEND_ADDR,
+	  baseURL: BACKEND_ADDR,
 	  timeout: 10000
 });
 
