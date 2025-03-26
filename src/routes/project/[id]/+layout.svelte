@@ -31,7 +31,7 @@
 </script>
 
 <Sidebar.Provider>
-	<Sidebar.Root collapsible="icon" variant="inset">
+	<Sidebar.Root collapsible="icon">
 		<Sidebar.Content>
 			<Sidebar.Group>
 				<Sidebar.GroupLabel class="flex items-center justify-end">
@@ -47,7 +47,7 @@
 					</div>
 				</Sidebar.GroupLabel>
 
-				<div class="my-2 border-t border-gray-200 dark:border-gray-700"></div>
+				<div class="my-2 border-t dark:border-primary"></div>
 
 				{#if showChat}
 					<ChatRoom chatMessages={data.chatMessages} currentUser={data.currentUser} />
