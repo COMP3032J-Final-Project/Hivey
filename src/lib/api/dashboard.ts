@@ -63,3 +63,16 @@ export const deleteProject = async (id: string): Promise<void> => {
         throw new Error(response.data.msg);
     }
 };
+
+export interface ProjectsDelete {
+    project_ids: string[];
+}
+
+export const deleteProjects = async (projectIds: string[]): Promise<void> => {
+    const response = await axiosClient.delete<APIResponse<void>>('/project', {
+        data: { project_ids: projectIds }
+    });
+    if (response.data.code !== 200) {
+        throw new Error(response.data.msg);
+    }
+};

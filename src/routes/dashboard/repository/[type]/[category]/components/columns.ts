@@ -5,34 +5,18 @@ import { renderComponent } from '$lib/components/ui/data-table/index.js';
 import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 import DataTableActions from './data-table-actions.svelte';
 import DataTableTimeButton from './data-table-time-button.svelte';
-import DataTableHeaderWithDelete from './data-table-header-with-delete.svelte';
 import type { Project } from '$lib/types/dashboard';
 
 export const columns: ColumnDef<Project>[] = [
 	{
 		id: 'select',
 		header: ({ table }) =>
-			renderComponent(DataTableHeaderWithDelete, {
+			renderComponent(Checkbox, {
 				checked: table.getIsAllPageRowsSelected(),
 				indeterminate:
 					table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
 				onCheckedChange: (value: boolean) => table.toggleAllPageRowsSelected(!!value),
-				onDelete: () => {
-					const selectedRows = table.getFilteredSelectedRowModel().rows;
-					// 执行删除操作
-					console.log('删除选中的行', selectedRows.length, '条记录');
-					
-					// 这里可以通过dispatch事件或调用API来处理实际删除操作
-					// 例如：发送删除请求到服务器
-					const selectedIds = selectedRows.map(row => row.original.id);
-					console.log('要删除的ID列表:', selectedIds);
-					
-					// 删除后可能需要刷新表格数据
-					// refreshData();
-					
-					// 删除后取消所有选择
-					table.toggleAllPageRowsSelected(false);
-				}
+				'aria-label': 'Select all'
 			}),
 		cell: ({ row }) =>
 			renderComponent(Checkbox, {
@@ -170,8 +154,14 @@ export const columns: ColumnDef<Project>[] = [
 	},
 	{
 		id: 'actions',
-		cell: ({ row }) => {
-			return renderComponent(DataTableActions, { id: row.original.id });
+		cell: ({ row, table }) => {
+			return renderComponent(DataTableActions, { 
+				id: row.original.id,
+				selectedIds: table.getFilteredSelectedRowModel().rows.map(row => row.original.id),
+				onDelete: () => {
+					table.toggleAllPageRowsSelected(false);
+				}
+			});
 		},
 		enableHiding: false,
 		meta: {
