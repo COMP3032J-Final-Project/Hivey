@@ -32,30 +32,23 @@
 
 <Sidebar.Provider>
 	<Sidebar.Root collapsible="offcanvas" variant="inset">
-		<Sidebar.Content>
-			<Sidebar.Group>
-				<Sidebar.GroupLabel class="flex items-center justify-end">
-					<div class="flex">
-						<CreateFileDialog />
-						<CreateFolderDialog />
-						<Button
-							variant="ghost" size="icon"
-							onclick={() => (showChat = !showChat)}
-						>
-							<MessageSquare size={20} />
-						</Button>
-					</div>
-				</Sidebar.GroupLabel>
+    <Sidebar.Header>
+      <div class="flex">
+			  <CreateFileDialog />
+			  <CreateFolderDialog />
+			  <Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)} >
+				  <MessageSquare size={20} />
+			  </Button>
+      </div>
+    </Sidebar.Header>
 
-				<div class="my-2 border-t dark:border-primary"></div>
+    <Sidebar.Separator />
 
-				{#if showChat}
-					<ChatRoom chatMessages={data.chatMessages} currentUser={data.currentUser} />
-				{:else}
-					<NavMain folders_tmp={$folders} files_tmp={$files} />
-				{/if}
-			</Sidebar.Group>
-		</Sidebar.Content>
+    {#if showChat}
+			<ChatRoom chatMessages={data.chatMessages} currentUser={data.currentUser} />
+		{:else}
+			<NavMain folders_tmp={$folders} files_tmp={$files} />
+		{/if}
 	</Sidebar.Root>
 
 	<Sidebar.Inset>

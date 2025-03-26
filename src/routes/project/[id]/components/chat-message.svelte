@@ -6,7 +6,7 @@
 	let { message }: { message: ChatMessage } = $props();
 </script>
 
-<div class="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-secondary/20">
+<div class="flex items-start gap-3 rounded-lg px-1 transition-colors hover:bg-secondary/20">
 	<!-- 用户头像 -->
 	<div class="flex-shrink-0">
 		{#if message.user.avatar}
