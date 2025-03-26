@@ -79,7 +79,7 @@
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 {#snippet child({ props })}
-                  <Sidebar.MenuButton {...props}>
+                  <Sidebar.MenuButton {...props} class="bg-primary text-primary-foreground hover:bg-primary/80 p-4">
                     Create Project
                     <ChevronDown class="ml-auto" />
                   </Sidebar.MenuButton>
