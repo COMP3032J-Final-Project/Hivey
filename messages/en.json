@@ -143,7 +143,6 @@
     "generate_new_avatar":"Roll",
     "bio":"Bio",
     "bio_description":"Showcase Your Personality and Style",
-
     "project_name":"Project Name",
     "input_project_name":"Input project name",
     "project_file":"Project File",
@@ -160,7 +159,20 @@
     "error_empty_project_name":"Please enter a project name",
     "error_empty_project_file":"Please select a file",
     "success_project_create":"Project created successfully",
-    "error_project_create":"Failed to create project"
+    "error_project_create":"Failed to create project",
+    "create_project":"Create Project",
+    "blank_project":"Blank Project",
+    "example_project":"Example Project",
+    "upload_project":"Upload Project",
+    "documentation":"Documentation",
+    "projects":"Projects",
+    "all_projects":"All Projects",
+    "my_projects":"My Projects",
+    "shared_with_me":"Shared with Me",
+    "my_templates":"My Templates",
+    "all_templates":"All Templates",
+    "favourite_templates":"Favourite Templates",
+    "templates":"Templates"
   },
 
 

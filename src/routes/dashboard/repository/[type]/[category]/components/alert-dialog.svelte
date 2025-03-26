@@ -122,7 +122,13 @@
 		</AlertDialog.Header>
 
 		<div class="space-y-4">
-			<Input id="project-name" bind:value={projectName} type="text" placeholder={mpd.input_project_name()} />
+			<Input 
+        id="project-name" 
+        name="project-name"
+        bind:value={projectName} 
+        type="text" 
+        placeholder={mpd.input_project_name()} 
+      />
 
 			{#if category === 'upload'}
 				<div class="space-y-2">
@@ -162,6 +168,7 @@
 							<input
 								type="file"
 								id="project-file"
+								name="project-file"
 								accept=".zip"
 								class="hidden"
 								onchange={handleFileChange}

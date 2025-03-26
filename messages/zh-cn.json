@@ -147,7 +147,6 @@
     "generate_new_avatar":"随机",
     "bio":"个性签名",
     "bio_description":"展示您的个性和风格",
-    
     "project_name":"项目名称",
     "input_project_name":"输入项目名称",
     "project_file":"项目文件",
@@ -164,7 +163,20 @@
     "error_empty_project_name":"请输入项目名称",
     "error_empty_project_file":"请选择一个文件",
     "success_project_create":"项目创建成功",
-    "error_project_create":"项目创建失败"
+    "error_project_create":"项目创建失败",
+    "create_project":"创建项目",
+    "blank_project":"空白项目",
+    "example_project":"示例项目",
+    "upload_project":"上传项目",
+    "documentation":"文档",
+    "projects":"项目",
+    "all_projects":"所有项目",
+    "my_projects":"我的项目",
+    "shared_with_me":"共享给我的项目",
+    "my_templates":"我的模板",
+    "all_templates":"所有模板",
+    "favourite_templates":"收藏的模板",
+    "templates":"模板"
   },
 
 

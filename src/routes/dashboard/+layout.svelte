@@ -7,52 +7,52 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { ChevronDown } from 'lucide-svelte';
 	import { ProjectFormCategory } from '$lib/types/dashboard';
-  
+  import { mpd } from '$lib/trans';
 	
 	// 导航和资源数据
 	const navData = {
 		resources: [
 			{
-				title: 'Documentation',
+				title: mpd.documentation(),
 				url: 'https://drive.google.com/file/d/1Dsz_1Af36AS22ohMIDBBXQ9LOjA4XROo/view?usp=drive_link'
 			}
 		],
 		navMain: [
 			{
-				title: 'Projects',
+				title: mpd.projects(),
 				url: '#',
 				icon: Files,
 				isActive: true,
 				items: [
 					{
-						title: 'All Projects',
+						title: mpd.all_projects(),
 						url: '/dashboard/repository/projects/all'
 					},
 					{
-						title: 'My Projects',
+						title: mpd.my_projects(),
 						url: '/dashboard/repository/projects/mine'
 					},
 					{
-						title: 'Shared with Me',
+						title: mpd.shared_with_me(),
 						url: '/dashboard/repository/projects/shared'
 					}
 				]
 			},
 			{
-				title: 'Templates',
+				title: mpd.templates(),
 				url: '#',
 				icon: File,
 				items: [
 					{
-						title: 'All Templates',
+						title: mpd.all_templates(),
 						url: '/dashboard/repository/templates/all'
 					},
 					{
-						title: 'Favourite Templates',
+						title: mpd.favourite_templates(),
 						url: '/dashboard/repository/templates/favourite'
 					},
 					{
-						title: 'My Templates',
+						title: mpd.my_templates(),
 						url: '/dashboard/repository/templates/mine'
 					}
 				]
@@ -81,11 +81,8 @@
               <DropdownMenu.Trigger>
                 {#snippet child({ props })}
                   <Sidebar.MenuButton {...props} class="bg-primary text-primary-foreground hover:bg-primary/80 p-4">
-                    {#snippet tooltipContent()}
-                      Create Project
-                    {/snippet}
                     <CirclePlus />
-                    <span class="ml-2">Create Project</span>
+                    <span class="ml-2">{ mpd.create_project() }</span>
                     <ChevronDown class="ml-auto" />
                   </Sidebar.MenuButton>
                 {/snippet}
@@ -94,17 +91,17 @@
                 
                 <!-- 创建空白项目 -->
                 <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Blank)}>
-                  Blank Project
+                  { mpd.blank_project() }
                 </DropdownMenu.Item>
 
                 <!-- 创建示例项目 -->
                 <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Example)}>
-                  Example Project
+                  { mpd.example_project() }
                 </DropdownMenu.Item>
 
                 <!-- 创建上传项目 -->
                 <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Upload)}>
-                  Upload Project
+                  { mpd.upload_project() }
                 </DropdownMenu.Item>
 
               </DropdownMenu.Content>

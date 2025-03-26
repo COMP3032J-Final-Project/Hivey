@@ -33,7 +33,7 @@
 <Sidebar.Provider>
 	<Sidebar.Root collapsible="offcanvas" variant="inset">
     <Sidebar.Header>
-      <div class="flex">
+      <div class="flex pb-1">
 			  <CreateFileDialog />
 			  <CreateFolderDialog />
 			  <Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)} >
