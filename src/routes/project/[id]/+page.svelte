@@ -17,6 +17,8 @@
   import type { Project } from '$lib/types/dashboard';
   import type { PageProps } from './$types';
   import type { User } from '$lib/types/auth';
+  import { getContext, onMount } from 'svelte';
+  import type { EditorFileInfo } from '$lib/types/editor';
   import EditableLabel from '$lib/components/ui/editable-label';
 
   let { data }: PageProps = $props();
@@ -26,6 +28,16 @@
   let currentUser: User = $state(data.currentUser);
 
   let docContent = $state("");
+  let currentFileType = $state("Format");
+  const { currentFileType: fileTypeFromContext, docContent: docContentStore } = getContext<EditorFileInfo>('editor-context');
+  fileTypeFromContext.subscribe((value) => {
+    currentFileType = value;
+		console.log('[Page] currentFileType updated to:', currentFileType);
+	});
+  docContentStore?.subscribe((value) => {
+    docContent = value;
+    console.log('[Page] File content set to:', docContent);
+  });
 
   function formatMarkdown() {
       //TODO Implement markdown formatting logic here
@@ -101,7 +113,7 @@
     <Resizable.Pane  defaultSize={50}>
       <div class="flex flex-col h-full">
         <div class="p-1 border-b flex space-x-2 items-center">
-          <Button size="sm" onclick={formatMarkdown}>Format</Button>
+          <Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
           <ToggleGroup.Root type="multiple">
             <ToggleGroup.Item value="bold" aria-label="Toggle bold">
               <Bold class="size-4 p-0" />

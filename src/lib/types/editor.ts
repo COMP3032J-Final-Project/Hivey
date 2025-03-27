@@ -1,28 +1,39 @@
-import type { User } from '$lib/types/auth';
+import { User, UserPermissionEnum } from '$lib/types/auth';
+import { Project } from '$lib/types/dashboard';
 import type { Writable } from 'svelte/store';
-import { UserPermissionEnum } from '$lib/types/auth';
+import * as v from 'valibot';
 
 export interface SidebarFolder {
 	  title: string;
 	  url: string;
 	  icon?: any;
 	  isActive?: boolean;
-	  items?: {
-		    title: string;
-		    url: string;
-	  }[];
+	  items?: SidebarFile[];
 }
 
 export interface SidebarFile {
 	title: string;
 	url: string;
 	icon?: any;
+	id?: string;
 }
 
+export const File = v.object({
+	id: v.string(),
+	projectId: v.string(), 
+	filename: v.string(),
+	filepath: v.string(),
+})
 
-export interface EditorFileType {
+export interface EditorFileInfo {
+	currentFileName: Writable<string>;
+	updateFileName: (name: string) => void;
     currentFileType: Writable<string>;
     updateFileType: (type: string) => void;
+    docContent?: Writable<string>;
+    updateContent?: (content: string) => void;
+    currentFilePath?: Writable<string>;
+    loadFile?: (fileId: string, fileName: string) => Promise<boolean>;
 }
 
 
@@ -70,3 +81,5 @@ export interface NewFile {
 export interface NewFolder {
 	  title: string;      // 文件夹名字
 }
+
+export type FileType = v.InferOutput<typeof File>;

@@ -2,7 +2,7 @@
 	import { MessageSquare } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
-	import type { SidebarFolder, SidebarFile, EditorFileType } from '$lib/types/editor';
+	import type { SidebarFolder, SidebarFile, EditorFileInfo } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/sidebar-chatroom.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -30,15 +30,73 @@
 		console.log('Add new folder');
 	}
 
-	const currentFileType = writable('md');
+	const currentFileName = writable('');
+	const currentFileType = writable('Format');
+    const docContent = writable('');
+    const currentFilePath = writable('');
 
-	setContext<EditorFileType>('editor-context', {
-    	currentFileType, // 直接传递 Store 对象
-		updateFileType: (type) => currentFileType.set(type)
+	setContext<EditorFileInfo>('editor-context', {
+		currentFileName,
+		updateFileName: (name) => currentFileName.set(name),
+		currentFileType, // 直接传递 Store 对象
+		updateFileType: (type) => currentFileType.set(type),
+		docContent, // 修复点：此处添加了逗号
+		updateContent: (content) => docContent.set(content),
+		currentFilePath, // 修复点：此处添加了逗号
+		loadFile: async (fileName) => {
+			try {
+				console.log('Loading file:', fileName);
+				const fileType = fileName.split('.').pop() || 'md';
+				currentFileType.set(fileType);
+				currentFileName.set(fileName);
+				currentFilePath.set("1");
+				if (fileType === 'md') {
+					docContent.set(`# Heading 1
+ 
+ ## Heading 2
+ 
+ ### Heading 3
+ 
+ This is a link to [Google](https://www.google.com/).
+ 
+ Here is an example of inline code: \`console.log('Hello, World!');\`.
+ 
+ Below is a code block:
+ 
+ \`\`\`javascript
+ function greet(name) {
+	 console.log(\`Hello!\`);
+ }
+ greet('Alice');
+ \`\`\``);
+				} else if (fileType === 'png') {
+					docContent.set('Loading JSON content...');
+				} else {
+					docContent.set('Unsupported file type');
+				}
+				return true;
+				// const response = await fetch(`/projects/${data.projectId}/files/${fileId}`);
+				// if (response.ok) {
+				// 	const content = await response.text();
+				// 	docContent.set(content);
+				// 	currentFilePath.set(fileId);
+				// 	const fileType = fileName.split('.').pop() || 'md';
+				// 	currentFileType.set(fileType);
+				// 	return true;
+				// }
+				return false;
+			} catch (error) {
+				console.error('Failed to load file:', error);
+				return false;
+			}
+		}
 	});
 
 	currentFileType.subscribe((value) => {
 		console.log('[Layout] currentFileType updated to:', value);
+	});
+	docContent.subscribe((value) => {
+		console.log('[Layout] File content set to:', value);
 	});
 </script>
 

@@ -8,21 +8,38 @@
     import { ChevronRight } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import { getContext } from 'svelte';
-	import type { SidebarFolder, SidebarFile, EditorFileType } from '$lib/types/editor';
+	import type { SidebarFolder, SidebarFile, EditorFileInfo } from '$lib/types/editor';
 
 	let { folders_tmp, files_tmp }: { folders_tmp: SidebarFolder[] , files_tmp: SidebarFile[]} = $props();
 
 	const folders = writable(folders_tmp);
 	const files = writable(files_tmp);
 
-	const { updateFileType } = getContext<EditorFileType>('editor-context');
+	const { updateFileName, updateFileType, loadFile } = getContext<EditorFileInfo>('editor-context');
+	
+	async function handleFileClick(file: SidebarFile) {
+		const fileName = file.title;
+        const fileType = file.title.split('.').pop() || 'md';
+        console.log('File clicked:', fileName);
+      
+        // If we have a loadFile function in context, use it
+        if (loadFile) {
+            // Assume file has an id property, or use title as fallback
+            const fileId = file.title;
+            await loadFile(fileId, file.title);
+        } else {
+            // Fallback to just updating the file type
+			updateFileName(fileName);
+            updateFileType(fileType);
+        }
+    }
 
-	function handleFileClick(title: string) {
-		const fileType = title.split('.').pop() || 'md';
-		console.log('File clicked:', title);
-		console.log('File type:', fileType);
-		updateFileType(fileType);
-	}
+	// function handleFileClick(title: string) {
+	// 	const fileType = title.split('.').pop() || 'md';
+	// 	console.log('File clicked:', title);
+	// 	console.log('File type:', fileType);
+	// 	updateFileType(fileType);
+	// }
 </script>
 
 <Sidebar.Content>
@@ -72,7 +89,7 @@
 							    {#each mainItem.items as subItem (subItem.title)}
 								    {console.log('Rendering subItem:', subItem)}
 								    <Sidebar.MenuSubItem>
-									    <Sidebar.MenuSubButton onclick={() => handleFileClick(subItem.title)}>
+									    <Sidebar.MenuSubButton onclick={() => handleFileClick(subItem)}>
 										    {#snippet child({ props })}
 											    <a href={subItem.url} {...props}>
 												    <span>{subItem.title}</span>
@@ -89,7 +106,7 @@
 	    {/each}
 	    {#each $files as file (file.title)}
 		    <Sidebar.MenuItem>
-			    <Sidebar.MenuButton onclick={() => handleFileClick(file.title)}>
+			    <Sidebar.MenuButton onclick={() => handleFileClick(file)}>
 				    {#snippet child({ props })}
 					    <a href={file.url} {...props}>
 						    <file.icon />
