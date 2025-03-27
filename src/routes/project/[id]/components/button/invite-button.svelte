@@ -6,10 +6,11 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { postAddProjectMember } from '$lib/api/project';
   import { success } from '$lib/components/ui/toast';
-
+  import { UserPermissionEnum } from '$lib/types/auth';
   let { currentUser, projectId } = $props();
   let isOpen = $state(false);
   let inviteeName = $state('');
+  let inviteePermission = $state(UserPermissionEnum.Writer);
   let errorMessage = $state('');
   
   async function handleInvite() {
@@ -19,7 +20,7 @@
     }
     errorMessage = '';
     try {
-      await postAddProjectMember({ currentUser, projectId, inviteeName: inviteeName.trim() });
+      await postAddProjectMember({ currentUser, projectId, inviteeName: inviteeName.trim(), inviteePermission: inviteePermission });
       success(mpp.success_invite_member());
       inviteeName = '';
       isOpen = false;

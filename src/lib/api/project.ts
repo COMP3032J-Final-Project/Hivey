@@ -3,7 +3,6 @@ import type { APIResponse } from '$lib/types/public';
 import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm, AddProjectMemberForm } from '$lib/types/editor';
 import { type User, UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
-import { getUserInfo } from './auth';
 
 // 获取项目聊天室的聊天记录
 export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<ChatMessage[]> => {
@@ -50,13 +49,19 @@ export const getProjectMembers = async (projectId: string): Promise<User[]> => {
 
 // 添加项目成员
 export const postAddProjectMember = async (form: AddProjectMemberForm): Promise<void> => {
-    const { currentUser, projectId, inviteeName } = form;
+    const { currentUser, projectId, inviteeName, inviteePermission } = form;
     // 验证当前用户是否有权限添加成员
     const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
     if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner) {
         throw new Error(mpp.error_add_member());
     }
-    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/members/${inviteeName}`);
+
+    // 验证被邀请的用户权限是否在当前用户权限范围内(admin只能添加 writer, viewer, 而owner可以添加 admin, writer, viewer)
+    if (inviteePermission !== UserPermissionEnum.Admin && inviteePermission !== UserPermissionEnum.Writer && inviteePermission !== UserPermissionEnum.Viewer) {
+        throw new Error(mpp.error_add_member_admin_permission());
+    }
+
+    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/members/${inviteeName}`, { permission: inviteePermission });
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }

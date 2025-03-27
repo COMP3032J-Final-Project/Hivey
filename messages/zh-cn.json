@@ -203,7 +203,8 @@
     "success_invite_member": "成功邀请成员",
     "error_edit_member_permission": "您没有权限编辑成员权限",
     "error_remove_member": "您没有权限移除项目成员",
-    "error_add_member": "您没有权限添加项目成员"
+    "error_add_member": "您没有权限添加项目成员",
+    "error_add_member_admin_permission": "您没有权限添加具有管理员权限的成员"
   },
   
 

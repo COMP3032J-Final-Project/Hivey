@@ -48,6 +48,7 @@ export interface AddProjectMemberForm {
       currentUser: User;
       projectId: string;
       inviteeName: string;
+      inviteePermission: UserPermissionEnum;
 }
 
 export interface RemoveProjectMemberForm {
