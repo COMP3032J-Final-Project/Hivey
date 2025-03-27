@@ -1,12 +1,10 @@
 <script lang="ts">
-  import * as m from '$lib/paraglide/messages';
   import * as Menubar from "$lib/components/ui/menubar";
   import { Button } from "$lib/components/ui/button";
   import * as Resizable from "$lib/components/ui/resizable/index.js";
   import * as AvatarGroup from '$lib/components/ui/avatar-group';
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
-  import { Pencil } from 'lucide-svelte';
   import Editor from "$lib/components/editor.svelte";
   import Previewer from "$lib/components/previewer.svelte";
   import InviteButton from "./components/button/invite-button.svelte";
@@ -14,21 +12,18 @@
   import Bold from "@lucide/svelte/icons/bold";
   import Italic from "@lucide/svelte/icons/italic";
   import Underline from "@lucide/svelte/icons/underline";
-  import { Input } from "$lib/components/ui/input/index.js";
   import { updateProject } from '$lib/api/dashboard';
   import { success, failure } from '$lib/components/ui/toast';
-  import { onMount } from 'svelte';
   import type { Project } from '$lib/types/dashboard';
   import type { PageProps } from './$types';
   import type { User } from '$lib/types/auth';
+  import EditableLabel from '$lib/components/ui/editable-label';
 
   let { data }: PageProps = $props();
   
   let project: Project = $state(data.project);
   let members: User[] = $state(data.members);
   let currentUser: User = $state(data.currentUser);
-  let isEditingName = $state(false);
-  let tempProjectName = $state("");
 
   let docContent = $state("");
 
@@ -37,23 +32,19 @@
       console.log('Format markdown');
   }
 
-  async function handleProjectNameUpdate() {
+  async function handleProjectNameUpdate(projectName: string) {
       try {
           const updatedProject = await updateProject({
               id: project.id,
-              name: tempProjectName
+              name: projectName
           });
           project.name = updatedProject.name;
-          isEditingName = false;
           success('Project name modified success');
+          return projectName;
       } catch (error) {
           failure('Project name modified failed');
+          return null;
       }
-  }
-
-  function startEditing() {
-      tempProjectName = project.name;
-      isEditingName = true;
   }
 </script>
 
@@ -84,28 +75,7 @@
     </div>
         
     <div class="flex items-center">
-      {#if isEditingName}
-        <div class="flex items-center gap-2">
-          <Input 
-            bind:value={tempProjectName} 
-            class="w-48"
-            onkeydown={(e) => {
-              if (e.key === 'Enter') {
-              handleProjectNameUpdate();
-              } else if (e.key === 'Escape') {
-                isEditingName = false;
-              }
-              }}
-          />
-          <Button variant="ghost" size="sm" onclick={handleProjectNameUpdate}>Save</Button>
-          <Button variant="ghost" size="sm" onclick={() => isEditingName = false}>Cancel</Button>
-        </div>
-      {:else}
-        <span class="text-xl font-medium">{project.name}</span>
-        <Button variant="ghost" size="icon" class="ml-2" onclick={startEditing}>
-          <Pencil class="size-4" />
-        </Button>
-      {/if}
+      <EditableLabel initialText={project.name} handleUpdateValueFn={handleProjectNameUpdate}/>
     </div>
         
     <div class="hidden md:flex items-center gap-4">
