@@ -7,7 +7,8 @@ import type { LayoutLoad } from './$types';
 import { me } from '$lib/trans';
 import type { User } from '$lib/types/auth';
 import { getUserInfo } from '$lib/api/auth';
-import { getHistoryChatMessages } from '$lib/api/project';
+import { getHistoryChatMessages, getProjectMember } from '$lib/api/project';
+
 // 模拟聊天数据
 const mockMessages: ChatMessage[] = [
 	  {
@@ -116,6 +117,7 @@ export const load: LayoutLoad = async ({ url, params }) => {
     let currentUser: User;
     try {
 		    currentUser = await getUserInfo();
+            currentUser = await getProjectMember(params.id, currentUser.username);
 	  } catch (error) {
 		    failure(me.session_expired());
 		    redirect(302, '/auth/signin');

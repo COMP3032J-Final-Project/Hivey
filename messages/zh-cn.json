@@ -197,7 +197,8 @@
     "create_new_folder": "创建新文件夹",
     "enter_folder_name": "输入文件夹名",
     "error_edit_member_permission": "您没有权限编辑成员权限",
-    "error_remove_member": "您没有权限移除项目成员"
+    "error_remove_member": "您没有权限移除项目成员",
+    "error_add_member": "您没有权限添加项目成员"
   },
   
 

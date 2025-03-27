@@ -44,6 +44,12 @@ export interface UpdateProjectMemberPermissionForm {
       memberName: string;
 }
 
+export interface AddProjectMemberForm {
+      currentUser: User;
+      projectId: string;
+      inviteeName: string;
+}
+
 export interface RemoveProjectMemberForm {
       currentUser: User;
       projectId: string;

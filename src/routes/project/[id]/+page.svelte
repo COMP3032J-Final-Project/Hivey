@@ -26,10 +26,11 @@
   
   let project: Project = $state(data.project);
   let members: User[] = $state(data.members);
-  let docContent = $state("");
-  let isEditing = $state(false);
+  let currentUser: User = $state(data.currentUser);
+  let isEditingName = $state(false);
   let tempProjectName = $state("");
 
+  let docContent = $state("");
 
   function formatMarkdown() {
       //TODO Implement markdown formatting logic here
@@ -43,7 +44,7 @@
               name: tempProjectName
           });
           project.name = updatedProject.name;
-          isEditing = false;
+          isEditingName = false;
           success('Project name modified success');
       } catch (error) {
           failure('Project name modified failed');
@@ -52,7 +53,7 @@
 
   function startEditing() {
       tempProjectName = project.name;
-      isEditing = true;
+      isEditingName = true;
   }
 </script>
 
@@ -83,7 +84,7 @@
     </div>
         
     <div class="flex items-center">
-      {#if isEditing}
+      {#if isEditingName}
         <div class="flex items-center gap-2">
           <Input 
             bind:value={tempProjectName} 
@@ -92,12 +93,12 @@
               if (e.key === 'Enter') {
               handleProjectNameUpdate();
               } else if (e.key === 'Escape') {
-                isEditing = false;
+                isEditingName = false;
               }
               }}
           />
           <Button variant="ghost" size="sm" onclick={handleProjectNameUpdate}>Save</Button>
-          <Button variant="ghost" size="sm" onclick={() => isEditing = false}>Cancel</Button>
+          <Button variant="ghost" size="sm" onclick={() => isEditingName = false}>Cancel</Button>
         </div>
       {:else}
         <span class="text-xl font-medium">{project.name}</span>
@@ -109,7 +110,7 @@
         
     <div class="hidden md:flex items-center gap-4">
       <AvatarGroup.Root>
-	      {#each members as member (member.username)}
+	      {#each members.slice(0, 3) as member (member.username)}
 		      <AvatarGroup.Member class="size-8">
 			      <AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
 			      <AvatarGroup.MemberFallback>
@@ -117,7 +118,9 @@
 			      </AvatarGroup.MemberFallback>
 		      </AvatarGroup.Member>
 	      {/each}
-	      <AvatarGroup.Etc class="size-8" plus={2} />
+	      {#if members.length > 3}
+          <AvatarGroup.Etc class="size-8" plus={members.length - 3} />
+        {/if}
       </AvatarGroup.Root>
       <InviteButton />
     </div>
