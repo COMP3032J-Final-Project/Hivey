@@ -48,7 +48,7 @@ export const getProjectMembers = async (projectId: string): Promise<User[]> => {
 }
 
 // 添加项目成员
-export const postAddProjectMember = async (form: AddProjectMemberForm): Promise<void> => {
+export const addProjectMember = async (form: AddProjectMemberForm): Promise<void> => {
     const { currentUser, projectId, inviteeName, inviteePermission } = form;
     // 验证当前用户是否有权限添加成员
     const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
@@ -68,7 +68,7 @@ export const postAddProjectMember = async (form: AddProjectMemberForm): Promise<
 }
 
 // 更新项目成员权限
-export const putUpdateProjectMemberPermission = async (form: UpdateProjectMemberPermissionForm): Promise<void> => {
+export const updateProjectMemberPermission = async (form: UpdateProjectMemberPermissionForm): Promise<void> => {
     const { currentUser, memberName, projectId, newPermission } = form;
 
     // 验证当前用户是否有权限更新成员权限
@@ -84,7 +84,7 @@ export const putUpdateProjectMemberPermission = async (form: UpdateProjectMember
 }
 
 // 移除项目成员
-export const postRemoveProjectMember = async (form: RemoveProjectMemberForm): Promise<void> => {
+export const removeProjectMember = async (form: RemoveProjectMemberForm): Promise<void> => {
     const { currentUser, memberName, projectId } = form;
 
     // 验证当前用户是否有权限移除成员

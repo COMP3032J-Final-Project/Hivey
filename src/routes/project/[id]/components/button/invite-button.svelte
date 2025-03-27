@@ -4,7 +4,7 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { postAddProjectMember } from '$lib/api/project';
+  import { addProjectMember } from '$lib/api/project';
   import { success } from '$lib/components/ui/toast';
   import { UserPermissionEnum } from '$lib/types/auth';
   let { currentUser, projectId } = $props();
@@ -20,7 +20,7 @@
     }
     errorMessage = '';
     try {
-      await postAddProjectMember({ currentUser, projectId, inviteeName: inviteeName.trim(), inviteePermission: inviteePermission });
+      await addProjectMember({ currentUser, projectId, inviteeName: inviteeName.trim(), inviteePermission: inviteePermission });
       success(mpp.success_invite_member());
       inviteeName = '';
       isOpen = false;
