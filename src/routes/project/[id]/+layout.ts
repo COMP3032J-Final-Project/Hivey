@@ -5,7 +5,7 @@ import { getUserSession } from '$lib/auth';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
 import { me } from '$lib/trans';
-import type { User } from '$lib/types/auth';
+import type { User, UserAuth } from '$lib/types/auth';
 import { getUserInfo } from '$lib/api/auth';
 import { getHistoryChatMessages, getProjectMember } from '$lib/api/project';
 
@@ -102,8 +102,7 @@ export const ssr = false; // 禁用服务器端渲染，确保只在客户端执
 export const prerender = false; // 禁用预渲染
 
 export const load: LayoutLoad = async ({ url, params }) => {
-	  const session = getUserSession();
-
+	  const session: UserAuth | null = getUserSession();
 	  // 如果未登录，立即重定向到登录页面
 	  if (!session) {
 		    // 显示错误提示
@@ -135,7 +134,7 @@ export const load: LayoutLoad = async ({ url, params }) => {
 		    files: data.files,
 		    chatMessages: mockMessages, //TODO 由于聊天室前端的WebSocket还未实现, 先设置为mockMessages
 		    currentUser: currentUser,
-        projectId: params.id,
-        authInfo: session
+            projectId: params.id,
+            authInfo: session
 	  };
 };

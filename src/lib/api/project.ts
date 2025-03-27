@@ -1,8 +1,9 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm } from '$lib/types/editor';
+import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm, AddProjectMemberForm } from '$lib/types/editor';
 import { type User, UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
+import { getUserInfo } from './auth';
 
 // 获取项目聊天室的聊天记录
 export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<ChatMessage[]> => {
@@ -48,8 +49,14 @@ export const getProjectMembers = async (projectId: string): Promise<User[]> => {
 }
 
 // 添加项目成员
-export const postAddProjectMember = async (projectId: string, username: string): Promise<void> => {
-    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/members/${username}`);
+export const postAddProjectMember = async (form: AddProjectMemberForm): Promise<void> => {
+    const { currentUser, projectId, inviteeName } = form;
+    // 验证当前用户是否有权限添加成员
+    const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
+    if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner) {
+        throw new Error(mpp.error_add_member());
+    }
+    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/members/${inviteeName}`);
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }
@@ -58,13 +65,14 @@ export const postAddProjectMember = async (projectId: string, username: string):
 // 更新项目成员权限
 export const putUpdateProjectMemberPermission = async (form: UpdateProjectMemberPermissionForm): Promise<void> => {
     const { currentUser, memberName, projectId, newPermission } = form;
+
     // 验证当前用户是否有权限更新成员权限
-    const currentUserPermission = await getProjectMemberPermission(form.projectId, form.currentUser.username);
+    const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
     if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner) {
         throw new Error(mpp.error_edit_member_permission());
     }
 
-    const response = await axiosClient.put<APIResponse<void>>(`/project/${form.projectId}/members/${form.memberName}`, { permission: form.newPermission });
+    const response = await axiosClient.put<APIResponse<void>>(`/project/${projectId}/members/${memberName}`, { permission: newPermission });
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }
@@ -73,18 +81,19 @@ export const putUpdateProjectMemberPermission = async (form: UpdateProjectMember
 // 移除项目成员
 export const postRemoveProjectMember = async (form: RemoveProjectMemberForm): Promise<void> => {
     const { currentUser, memberName, projectId } = form;
+
     // 验证当前用户是否有权限移除成员
-    const currentUserPermission = await getProjectMemberPermission(form.projectId, form.currentUser.username);
+    const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
     if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner) {
         throw new Error(mpp.error_remove_member());
     }
     // 避免被移除的成员是项目所有者
-    const memberPermission = await getProjectMemberPermission(form.projectId, form.memberName);
+    const memberPermission = await getProjectMemberPermission(projectId, memberName);
     if (memberPermission === UserPermissionEnum.Owner) {
         throw new Error(mpp.error_remove_owner());
     }
 
-    const response = await axiosClient.post<APIResponse<void>>(`/project/${form.projectId}/members/${form.memberName}`);
+    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/members/${memberName}`);
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }

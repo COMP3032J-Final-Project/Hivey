@@ -122,7 +122,7 @@
           <AvatarGroup.Etc class="size-8" plus={members.length - 3} />
         {/if}
       </AvatarGroup.Root>
-      <InviteButton />
+      <InviteButton currentUser={currentUser} projectId={project.id} />
     </div>
   </header>
 
