@@ -60,7 +60,7 @@
 
   onMount(async () => {
       const ws = new WebSocket(new URL(
-          `/project/${project_id}/ws/crdt?token=${access_token}`,
+          `/project/${project_id}/ws/crdt?access_token=${access_token}`,
           BACKEND_ADDR_WEBSOCKET
       ));
 

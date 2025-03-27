@@ -57,7 +57,7 @@
     <Sidebar.Separator />
 
     {#if showChat}
-			<ChatRoom chatMessages={data.chatMessages} currentUser={data.currentUser} />
+			<ChatRoom projectId={data.projectId} currentUser={data.currentUser} />
 		{:else}
 			<NavMain folders_tmp={$folders} files_tmp={$files} />
 		{/if}

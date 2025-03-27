@@ -1,4 +1,6 @@
 import type { User } from '$lib/types/auth';
+import type { Writable } from 'svelte/store';
+import { UserPermissionEnum } from '$lib/types/auth';
 
 export interface SidebarFolder {
 	  title: string;

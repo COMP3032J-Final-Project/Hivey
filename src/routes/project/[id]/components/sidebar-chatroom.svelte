@@ -1,44 +1,141 @@
+<script lang="ts" module>
+  	import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
+
+// 模拟聊天数据
+const mockMessages: ChatMessageType[] = [
+	  {
+		    user: {
+			      username: 'Liyan Tao',
+			      email: 'liyantao@ucdconnect.ie',
+			      avatar: ''
+		    },
+		    content: 'Hello, everyone. We will discuss the project progress today.',
+		    timestamp: new Date(Date.now() - 1000 * 60 * 30) // 30 minutes ago
+	  },
+	  {
+		    user: {
+			      username: 'Hanshu Rao',
+			      email: 'hanshu.rao@ucdconnect.ie',
+			      avatar: ''
+		    },
+		    content: 'I am processing the back-end API, and it is expected to be completed tomorrow.',
+		    timestamp: new Date(Date.now() - 1000 * 60 * 25) // 25 minutes ago
+	  },
+	  {
+		    user: {
+			      username: 'Ziqi Yang',
+			      email: 'ziqi.yang@ucdconnect.ie',
+			      avatar: ''
+		    },
+		    content: 'I have completed the multi-cursor part.',
+		    timestamp: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
+	  },
+	  {
+		    user: {
+			      username: 'Yiran Zhao',
+			      email: 'yiran.zhao@ucdconnect.ie',
+			      avatar: ''
+		    },
+		    content:
+			'I am processing the front-end part, finished the login and register part.',
+		    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+	  },
+	  {
+		    user: {
+			      username: 'Jiawen Chen',
+			      email: 'jiawen.chen@ucdconnect.ie',
+			      avatar: ''
+		    },
+		    content:
+			'Ok, I will start the design of the CRDT part.',
+		    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+	  },
+	  {
+		    user: {
+			      username: 'Jinpeng Zhai',
+			      email: 'jinpeng.zhai@ucdconnect.ie',
+			      avatar: ''
+		    },
+		    content:
+			'That\'s great! I will start the design of the cloud storage part.',
+		    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+	  }
+];
+</script>
+
+
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import { Send } from 'lucide-svelte';
 	import ChatMessage from './chat-message.svelte';
-	import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
   import { mpp } from '$lib/trans';
 	import { User } from '$lib/types/auth';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-
+  import { getHistoryChatMessages } from '$lib/api/project';
+  import { onMount } from 'svelte';
+  import { failure } from '$lib/components/ui/toast';
 
   // 接收从Layout传入的props
-	let { chatMessages, currentUser }: {
-      chatMessages: ChatMessageType[];
-      currentUser: (User & { avatar: string })
-  } =$props();
-	const messages = writable<ChatMessageType[]>(chatMessages); // 创建一个可写的store来存储聊天消息
-	let input = $state(''); // 新消息内容
+	let  { currentUser, projectId}: {
+      currentUser: User;
+      projectId: string;
+  } = $props();
+
+  let input = $state(''); // 新消息内容
+  let isLoading = $state(true);
+	let messages = writable<ChatMessageType[]>(mockMessages);
+  
+  // 当组件挂载后加载历史消息
+  onMount(async () => {
+    await fetchHistoryMessages(10);
+  });
+  
+ 
+  async function fetchHistoryMessages(max_num = 10) {  // 获取最近的历史消息的函数
+    try {
+      isLoading = true;
+      const historyMessages = await getHistoryChatMessages({
+        projectId: projectId,
+        max_num: max_num,
+        last_timestamp: new Date() // 获取当前时间前的10条消息
+      });
+      
+      // 如果成功获取到消息，则更新messages store
+      if (historyMessages && historyMessages.length > 0) {
+        messages.set(historyMessages);
+      }
+    } catch (error) {
+      console.error('Failed to fetch history messages:', error);
+    } finally {
+      isLoading = false;
+      setTimeout(() => {
+        scrollToBottom(); // 消息加载完成后滚动到底部
+      }, 100);
+    }
+  }
+  
+  
+  function scrollToBottom() { // 滚动到底部函数
+    const chatContainer = document.querySelector('.chat-messages');
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }
 	
 	function sendMessage() { // 发送消息
 		  if (!input.trim()) return;
-
 		  const message: ChatMessageType = {
 			    user: currentUser,
 			    content: input,
 			    timestamp: new Date()
 		  };
-
 		  messages.update((msgs) => [...msgs, message]);
 		  input = '';
-
 		  // 自动滚动到底部
-		  // setTimeout(() => {
-		  // 	const chatContainer = document.querySelector('.chat-messages');
-		  // 	if (chatContainer) {
-		  // 		chatContainer.scrollTop = chatContainer.scrollHeight;
-		  // 	}
-		  // }, 10);
+		  // scrollToBottom();
 	}
 
-	// 处理Enter键发送消息
-	function handleKeydown(event: KeyboardEvent) {
+	function handleKeydown(event: KeyboardEvent) { // 处理Enter键发送消息
 		  if (event.key === 'Enter' && !event.shiftKey) {
 			    event.preventDefault();
 			    sendMessage();
@@ -48,9 +145,15 @@
 
 <Sidebar.Content>
   <div class="chat-messages flex-auto flex flex-col overflow-y-auto mt-1">
-    {#each $messages as msg}
-      <ChatMessage message={msg} />
-    {/each}
+    {#if isLoading}
+      <div class="flex justify-center items-center h-20">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
+      </div>
+    {:else}
+      {#each $messages as msg}
+        <ChatMessage message={msg} />
+      {/each}
+    {/if}
   </div>
 </Sidebar.Content>
 
@@ -65,7 +168,7 @@
     />
     <button
       class="flex-shrink-0 rounded-full bg-amber-400 p-2 text-white shadow-sm transition-colors hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
-      disabled={!input.trim()}
+      disabled={!input.trim() || isLoading}
       onclick={sendMessage}
     >
       <Send size={14} />
