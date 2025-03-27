@@ -15,7 +15,7 @@
   import Italic from "@lucide/svelte/icons/italic";
   import Underline from "@lucide/svelte/icons/underline";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { putUpdateProject } from '$lib/api/dashboard';
+  import { updateProject } from '$lib/api/dashboard';
   import { success, failure } from '$lib/components/ui/toast';
   import { onMount } from 'svelte';
   import type { Project } from '$lib/types/dashboard';
@@ -39,7 +39,7 @@
 
   async function handleProjectNameUpdate() {
       try {
-          const updatedProject = await putUpdateProject({
+          const updatedProject = await updateProject({
               id: project.id,
               name: tempProjectName
           });

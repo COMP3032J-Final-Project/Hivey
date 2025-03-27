@@ -14,7 +14,7 @@
     removeProjects 
   } from '../../../store.svelte';
 	import NewProjectDialog from './components/alert-dialog.svelte';
-  import { postCreateProject, deleteProject } from '$lib/api/dashboard';
+  import { createProject } from '$lib/api/dashboard';
   import type { CreateProjectForm, Project } from '$lib/types/dashboard';
   import { success, failure } from '$lib/components/ui/toast';
 
@@ -25,7 +25,7 @@
 	});
 
   async function handleCreateProject(form: CreateProjectForm): Promise<Project> {
-      const project = await postCreateProject(form); //调用API创建项目
+      const project = await createProject(form); //调用API创建项目
       // 如果当前页面为/dashboard/repository/projects/all或/dashboard/repository/projects/mine, 则更新projects数组
       if (data.type === 'projects' && (data.category === 'all' || data.category === 'mine')) {
         addProject(project);

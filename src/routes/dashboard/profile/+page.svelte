@@ -8,13 +8,10 @@
 	import * as Textarea from '$lib/components/ui/textarea/index.js';
 	import type { PageData } from './$types';
   import { m, me, mpd } from '$lib/trans';
-	import { User } from '$lib/types/auth';
 	import { onMount } from 'svelte';
 	import { updateNav, dialogOpen, dialogCategory } from '../store.svelte';
 	import NewProjectDialog from '../repository/[type]/[category]/components/alert-dialog.svelte';
 	import type { CreateProjectForm } from '$lib/types/dashboard';
-  import { postCreateProject } from '$lib/api/dashboard';
-  import { Project } from '$lib/types/dashboard';
 
   // 获取页面数据
 	let { data } = $props<{ data: PageData }>();
@@ -109,7 +106,7 @@
     category={$dialogCategory}
     onSubmit={
       async (form: CreateProjectForm) => {
-        const project = await postCreateProject(form);
+        const project = await (form);
         return project;
       }
     }
