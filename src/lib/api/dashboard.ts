@@ -4,7 +4,7 @@ import type { Project, CreateProjectForm, ProjectsDeleteForm } from '$lib/types/
 
 
 export const getUserProjects = async (): Promise<Project[]> => {
-    const response = await axiosClient.get<APIResponse<Project[]>>('/project');
+    const response = await axiosClient.get<APIResponse<Project[]>>('/project/');
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }
@@ -52,7 +52,7 @@ export const deleteProject = async (id: string): Promise<void> => {
 };
 
 export const deleteProjects = async (projectIds: string[]): Promise<void> => {
-    const response = await axiosClient.delete<APIResponse<void>>('/project', {
+    const response = await axiosClient.delete<APIResponse<void>>('/project/', {
         data: { project_ids: projectIds }
     });
     if (response.data.code !== 200) {

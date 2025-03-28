@@ -40,7 +40,7 @@ export const getProjectMemberPermission = async (projectId: string, memberName: 
 
 // 获取项目的所有成员和成员的权限
 export const getProjectMembers = async (projectId: string): Promise<User[]> => {
-    const response = await axiosClient.get<APIResponse<User[]>>(`/project/${projectId}/members`);
+    const response = await axiosClient.get<APIResponse<User[]>>(`/project/${projectId}/members/`);
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }
