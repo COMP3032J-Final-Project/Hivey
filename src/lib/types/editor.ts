@@ -42,9 +42,9 @@ export interface EditorFileInfo {
     loadFile?: (fileId: string, fileName: string) => Promise<boolean>;
 }
 
-
 // 聊天消息接口
 export interface ChatMessage {
+	  message_type: string; // 默认为text
 	  user: User;
 	  content: string; // 消息内容
 	  timestamp: Date; // 消息发送时间

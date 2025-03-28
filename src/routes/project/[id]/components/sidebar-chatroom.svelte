@@ -1,70 +1,5 @@
-<script lang="ts" module>
-  	import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
-
-// 模拟聊天数据
-const mockMessages: ChatMessageType[] = [
-	  {
-		    user: {
-			      username: 'Liyan Tao',
-			      email: 'liyantao@ucdconnect.ie',
-			      avatar: ''
-		    },
-		    content: 'Hello, everyone. We will discuss the project progress today.',
-		    timestamp: new Date(Date.now() - 1000 * 60 * 30) // 30 minutes ago
-	  },
-	  {
-		    user: {
-			      username: 'Hanshu Rao',
-			      email: 'hanshu.rao@ucdconnect.ie',
-			      avatar: ''
-		    },
-		    content: 'I am processing the back-end API, and it is expected to be completed tomorrow.',
-		    timestamp: new Date(Date.now() - 1000 * 60 * 25) // 25 minutes ago
-	  },
-	  {
-		    user: {
-			      username: 'Ziqi Yang',
-			      email: 'ziqi.yang@ucdconnect.ie',
-			      avatar: ''
-		    },
-		    content: 'I have completed the multi-cursor part.',
-		    timestamp: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
-	  },
-	  {
-		    user: {
-			      username: 'Yiran Zhao',
-			      email: 'yiran.zhao@ucdconnect.ie',
-			      avatar: ''
-		    },
-		    content:
-			'I am processing the front-end part, finished the login and register part.',
-		    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
-	  },
-	  {
-		    user: {
-			      username: 'Jiawen Chen',
-			      email: 'jiawen.chen@ucdconnect.ie',
-			      avatar: ''
-		    },
-		    content:
-			'Ok, I will start the design of the CRDT part.',
-		    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
-	  },
-	  {
-		    user: {
-			      username: 'Jinpeng Zhai',
-			      email: 'jinpeng.zhai@ucdconnect.ie',
-			      avatar: ''
-		    },
-		    content:
-			'That\'s great! I will start the design of the cloud storage part.',
-		    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
-	  }
-];
-</script>
-
-
 <script lang="ts">
+  import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
 	import { writable, get } from 'svelte/store';
 	import { Send } from 'lucide-svelte';
 	import ChatMessage from './chat-message.svelte';
@@ -73,11 +8,12 @@ const mockMessages: ChatMessageType[] = [
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { getHistoryChatMessages } from '$lib/api/project';
   import { onMount, onDestroy } from 'svelte';
-  import { failure, success } from '$lib/components/ui/toast';
+  import { failure } from '$lib/components/ui/toast';
   import { getUserSession, isSessionExpired } from '$lib/auth';
   import { ArrowUp } from 'lucide-svelte';
   import { ChatWebSocketClient } from '$lib/api/websocket';
-  
+  import { goto } from '$app/navigation';
+
   // 接收从Layout传入的props
 	let  { currentUser, projectId}: {
       currentUser: User;
@@ -90,16 +26,17 @@ const mockMessages: ChatMessageType[] = [
   let isLoading = $state(false);
   let isLoadingMore = $state(false);
   let hasMoreMessages = $state(false); // 是否有更多历史消息
-  let lastMessageTimestamp = $state<Date | null>(null); // 最早消息的时间戳
+  let lastMessageTimestamp = $state<Date>(new Date()); // 最早消息的时间戳
  
   onMount(async () => {  // 当组件挂载后加载历史消息并连接WebSocket
-    console.log('onMount', "projectId", projectId);
     if (isSessionExpired()) { 
       failure(mpa.session_expired());
+      goto('/auth/login');
       return;
     }
     const userSession = getUserSession() as UserAuth;
     await connectWebSocket(userSession, currentUser); // 创建WebSocket连接
+    console.log('onMount', "projectId", projectId, "currentUser", currentUser, "userSession", userSession);
   });
   
   onDestroy(() => { 
@@ -112,13 +49,16 @@ const mockMessages: ChatMessageType[] = [
       const result = await getHistoryChatMessages({ // result.code, result.messages
         projectId: projectId,
         max_num: 20,
-        last_timestamp: lastMessageTimestamp || new Date() // 获取当前时间前的10条消息或指定时间前的消息
+        last_timestamp: lastMessageTimestamp  // 获取当前时间前的20条消息或指定时间前的消息
       });
 
       if (result.messages && result.messages.length > 0) { 
-        const sortedMessages = [...result.messages].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+        // 按时间戳从旧到新排序消息
+        const sortedMessages = [...result.messages].sort((a, b) => 
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
         lastMessageTimestamp = new Date(sortedMessages[0].timestamp); // 更新最早消息的时间戳 
-        messagesList = result.messages;       
+        messagesList = sortedMessages;
       } 
       hasMoreMessages = result.code === 200; // 根据状态码确定是否还有更多消息
 
@@ -156,10 +96,20 @@ const mockMessages: ChatMessageType[] = [
         last_timestamp: lastMessageTimestamp || new Date() // 获取当前时间前的10条消息或指定时间前的消息
       });
       if (result.messages && result.messages.length > 0) {
-        const sortedMessages = [...result.messages].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+        // 按时间从旧到新排序
+        const sortedMessages = [...result.messages].sort((a, b) => 
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
         lastMessageTimestamp = new Date(sortedMessages[0].timestamp); // 更新最早消息的时间戳     
         if (wsClient) {
-          wsClient.messages.update(messages => [...result.messages, ...messages]);
+          // 先将新消息添加到列表前端，然后整体排序
+          wsClient.messages.update(messages => {
+            const combinedMessages = [...sortedMessages, ...messages];
+            // 确保整个列表按时间从旧到新排序
+            return combinedMessages.sort((a, b) => 
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            );
+          });
         }
       } 
       hasMoreMessages = result.code === 200; // 根据状态码确定是否还有更多消息
@@ -232,7 +182,7 @@ const mockMessages: ChatMessageType[] = [
       </div>
     {:else}
       {#if messagesList.length > 0}
-        {#each messagesList as msg (msg.timestamp.getTime() + msg.user.username)}
+        {#each messagesList as msg}
           <ChatMessage chatMessage={msg} />
         {/each}
       {:else}

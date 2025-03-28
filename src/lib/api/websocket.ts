@@ -36,7 +36,6 @@ export class ChatWebSocketClient {
     
     try {
       this.socket = new WebSocket(wsUrl);
-      console.log('Chatroom WebSocket连接成功');
       // 设置事件处理程序
       this.socket.onopen = this.handleOpen.bind(this);
       this.socket.onmessage = this.handleMessage.bind(this);
@@ -52,15 +51,9 @@ export class ChatWebSocketClient {
     if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
       return;
     }
-    
+
     try {
-      const messageObject: ChatMessage = {
-        user: this.currentUser,
-        content: content,
-        timestamp: new Date()
-      };
-      
-      this.socket.send(JSON.stringify(messageObject));
+      this.socket.send(content);
     } catch (error) {
       console.error('消息发送失败:', error);
     }
@@ -90,21 +83,22 @@ export class ChatWebSocketClient {
   private handleMessage(event: MessageEvent): void {
     try {
       const data = JSON.parse(event.data);
-      
-      // 处理接收到的消息
-      if (data.type === 'message') {
-        // 创建新的聊天消息
-        const chatMessage: ChatMessage = {
-          user: data.user,
-          content: data.content,
-          timestamp: new Date(data.timestamp)
-        };
-        
-        // 更新消息存储
-        this.messages.update(msgs => [...msgs, chatMessage]);
+      const chatMessage: ChatMessage = { // 创建新的聊天消息
+        message_type: data.message_type,
+        user: data.user,
+        content: data.content,
+        timestamp: new Date(data.timestamp)
       }
+      
+      this.messages.update(msgs => { 
+        // 更新消息存储，确保新消息添加在列表末尾
+        const updatedMsgs = [...msgs, chatMessage].sort((a, b) => 
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
+        return updatedMsgs;
+      });
     } catch (error) {
-      console.error('消息解析失败:', error);
+      console.error('消息解析失败:', error, '原始数据:', event.data);
     }
   }
   

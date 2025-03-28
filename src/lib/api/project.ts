@@ -7,13 +7,19 @@ import { mpp } from '$lib/trans';
 // 获取项目聊天室的聊天记录
 export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{code: number, messages: ChatMessage[]}> => {
     const { projectId, max_num, last_timestamp } = form;
+
+    // 将Date转换为本地ISO格式字符串
+    const formattedTimestamp = last_timestamp instanceof Date ? 
+    new Date(last_timestamp.getTime() - last_timestamp.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 19) : last_timestamp;
+        
     const response = await axiosClient.get<APIResponse<ChatMessage[]>>(`/project/${projectId}/chat/history`, {
         params: {
             max_num: max_num,
-            last_timestamp: last_timestamp
+            last_timestamp: formattedTimestamp
         }
     });
-    console.log('getHistoryChatMessages', "response", response);
     // 如果状态码不是200或201
     if (response.data.code !== 200 && response.data.code !== 201){
         throw new Error(response.data.msg);
