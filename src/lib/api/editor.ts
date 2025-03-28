@@ -37,8 +37,9 @@ export async function fetchDocData(url: string): Promise<any> {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();console.log(data);
-      return data;
+      const text = await response.text(); 
+      console.log(text);
+      return text;
 }
 
 // export const createFiles = async (file: createFileFrom): Promise<EditorFile[]> => {
