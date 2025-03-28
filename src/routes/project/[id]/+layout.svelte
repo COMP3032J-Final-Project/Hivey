@@ -2,7 +2,7 @@
 	import { MessageSquare } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
-	import type { SidebarFolder, SidebarFile, EditorFileInfo } from '$lib/types/editor';
+	import type { SidebarFolder, SidebarFile, EditorFileInfo, FileType } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/sidebar-chatroom.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -21,7 +21,6 @@
 		};
 		children: any;
 	}>();
-	let groupName = data.groupName;
 	let folders = writable<SidebarFolder[]>(data.folders);
 	let files = writable<SidebarFile[]>(data.files);
 	let showChat = $state(false); // 聊天室的显示状态
@@ -30,19 +29,23 @@
 		console.log('Add new folder');
 	}
 
+	// const currentFile = writable<FileType>;
+	const currentFileId = writable('');
 	const currentFileName = writable('');
 	const currentFileType = writable('Format');
     const docContent = writable('');
     const currentFilePath = writable('');
 
 	setContext<EditorFileInfo>('editor-context', {
+		// currentFileId,
+		// updateFileId: (id) => currentFileId.set(id),
 		currentFileName,
 		updateFileName: (name) => currentFileName.set(name),
-		currentFileType, // 直接传递 Store 对象
+		currentFileType,
 		updateFileType: (type) => currentFileType.set(type),
-		docContent, // 修复点：此处添加了逗号
+		docContent,
 		updateContent: (content) => docContent.set(content),
-		currentFilePath, // 修复点：此处添加了逗号
+		currentFilePath,
 		loadFile: async (fileName) => {
 			try {
 				console.log('Loading file:', fileName);
@@ -75,15 +78,6 @@
 					docContent.set('Unsupported file type');
 				}
 				return true;
-				// const response = await fetch(`/projects/${data.projectId}/files/${fileId}`);
-				// if (response.ok) {
-				// 	const content = await response.text();
-				// 	docContent.set(content);
-				// 	currentFilePath.set(fileId);
-				// 	const fileType = fileName.split('.').pop() || 'md';
-				// 	currentFileType.set(fileType);
-				// 	return true;
-				// }
 				return false;
 			} catch (error) {
 				console.error('Failed to load file:', error);

@@ -6,7 +6,7 @@
 	import * as Select from "$lib/components/ui/select/index.js";
 	import * as Tabs from "$lib/components/ui/tabs/index.js";
 	import { FileDropZone } from "$lib/components/ui/file-drop-zone/index.js";
-	import type { NewFile } from '$lib/types/editor';
+	import type { createFileFrom } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus, Folder } from 'lucide-svelte';
     import { me, mpp } from '$lib/trans';
@@ -71,7 +71,7 @@
 		fileTypes.find((f) => f.value === fileTypeValue)?.label ?? mpp.choose_file_type()
 	);
 
-	let formData: NewFile = {
+	let formData: createFileFrom = {
 		title: '',      // 文件标题
 		suffix: '',     // 文件后缀
 		path: '',       // 文件路径
@@ -98,8 +98,8 @@
 					path: folderValue,    // 文件路径
 				};
 				//TODO 接后端
-
 				console.log(formData);
+				//createFiles(formData);
 				success('Create file successfully');
 				document.getElementById("dialog-close-btn")?.click();
 			}

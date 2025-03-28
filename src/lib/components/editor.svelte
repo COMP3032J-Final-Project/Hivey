@@ -145,6 +145,18 @@
           parent: editorAreaElem
       });
   });
+
+//   $effect(() => {
+//       console.log('Editor value updated:', value);
+//       if (editorView && !isExternalUpdate) {
+//           const currentContent = editorView.state.doc.toString();
+//       if (value !== currentContent) {
+//         isExternalUpdate = true;
+//         editorView.setState(createEditorState(value)); // 关键！
+//         isExternalUpdate = false;
+//       }
+//     }
+//   });
 </script>
 
 <div bind:this={editorAreaElem} class="editor size-full"></div>

@@ -23,9 +23,15 @@ export const File = v.object({
 	projectId: v.string(), 
 	filename: v.string(),
 	filepath: v.string(),
-})
+	created_at: v.string(),
+	updated_at: v.string(),
+});
+
+export type FileType = v.InferOutput<typeof File>;
 
 export interface EditorFileInfo {
+	// currentFileId: Writable<string>;
+	// updateFileId: (id: string) => void;
 	currentFileName: Writable<string>;
 	updateFileName: (name: string) => void;
     currentFileType: Writable<string>;
@@ -70,16 +76,16 @@ export interface RemoveProjectMemberForm {
       memberName: string;
 }
 
-// 新建文件接口
-export interface NewFile {
-  	title: string;      // 文件标题
-  	suffix: string;     // 文件后缀
-  	path: string;       // 文件路径
-}
+export const createFileFrom = v.object({
+	title: v.string(),
+	suffix: v.string(),
+	path: v.string(),
+});
 
-// 新建文件夹接口
-export interface NewFolder {
-	  title: string;      // 文件夹名字
-}
+export type createFileFrom = v.InferOutput<typeof createFileFrom>;
 
-export type FileType = v.InferOutput<typeof File>;
+export const createFolderFrom = v.object({
+	fodername: v.string(),
+});
+
+export type createFolderFrom = v.InferOutput<typeof createFolderFrom>;

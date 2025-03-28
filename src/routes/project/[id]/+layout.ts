@@ -72,43 +72,53 @@ const mockMessages: ChatMessage[] = [
 	  }
 ];
 
-// 侧边栏导航数据, 包括项目名称和文件夹数据
-const data = {
-	  groupName: 'Hivey Project',
-	  folders: [
-		    {
-			      title: "Images",
-			      url: "#",
-			      icon: Folder,
-			      items: [
-			          {
-				            title: "Gantt Chart.png",
-				            url: "#",
-							icon: File,
-			          },
-			          {
-				            title: "Apple.jpg",
-				            url: "#",
-							icon: File,
-			          },],
-		    },
-	  ] as SidebarFolder[],
-	  files: [
-		    {
-		        title: "test.md",
-		        url: "#",
-		        icon: File
-		    }
-	  ] as SidebarFile[],
-};
-
-export const _getSidebarFiles = (files: FileType[]): SidebarFile[] => {
-	return files.map((file) => ({
+export const _loadSidebarFiles = (files: FileType[]): SidebarFile[] => {
+	const processedFiles = files.map(file => {
+		const pathParts = file.filepath.split('/');
+		const newPath = pathParts.slice(1).join('/'); // 忽略第一级目录
+		return {
+		  ...file,
+		  filepath: newPath,
+		};
+	});
+	console.log("filePath:", processedFiles);
+	return processedFiles
+	.filter(file => !file.filepath)
+	.map((file) => ({
 	  title: file.filename,
 	  url: "#",
 	  icon: File,
 	  id: file.id
 	}));
+  };
+
+export const _loadSidebarFolder = (files: FileType[]): SidebarFolder[] => {
+	const processedFiles = files.map(file => {
+		const pathParts = file.filepath.split('/');
+		const newPath = pathParts.slice(1).join('/'); // 忽略第一级目录
+		return {
+		  ...file,
+		  filepath: newPath,
+		};
+	});
+	const filesWithPath = processedFiles.filter(file => file.filepath);
+	const groupedFiles: Record<string, FileType[]> = {};
+		filesWithPath.forEach(file => {
+		if (!groupedFiles[file.filepath]) {
+		groupedFiles[file.filepath] = [];
+		}
+		groupedFiles[file.filepath].push(file);
+	});
+	return Object.entries(groupedFiles).map(([folderPath, folderFiles]) => ({
+		title: folderPath.charAt(0).toUpperCase() + folderPath.slice(1), // 首字母大写
+		url: "#",
+		icon: Folder,
+		items: folderFiles.map(file => ({
+		  title: file.filename,
+		  url: "#",
+		  icon: File
+		}))
+	  }));
   };
 
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
@@ -141,14 +151,13 @@ export const load: LayoutLoad = async ({ url, params }) => {
         last_timestamp: new Date() // 设置为当前时间
     });
 
-	const filesdata= getFiles(params.id);
+	const filesdata= await getFiles(params.id);
 	console.log("files:", filesdata);
-	const files =  _getSidebarFiles(await filesdata)
-	console.log("files:", files);
+	const files: SidebarFile[] = _loadSidebarFiles(filesdata);
+	const folders: SidebarFolder[] = _loadSidebarFolder(filesdata);
 
 	  return {
-		    groupName: data.groupName,
-		    folders: [],
+		    folders: folders,
 		    files: files,
 		    chatMessages: mockMessages, //TODO 由于聊天室前端的WebSocket还未实现, 先设置为mockMessages
 		    currentUser: currentUser,
