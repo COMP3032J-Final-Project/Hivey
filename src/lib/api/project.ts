@@ -5,18 +5,23 @@ import { type User, UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
 
 // 获取项目聊天室的聊天记录
-export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<ChatMessage[]> => {
-    const response = await axiosClient.get<APIResponse<ChatMessage[]>>(`/project/${form.projectId}/chat/history`, {
+export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{code: number, messages: ChatMessage[]}> => {
+    const { projectId, max_num, last_timestamp } = form;
+    const response = await axiosClient.get<APIResponse<ChatMessage[]>>(`/project/${projectId}/chat/history`, {
         params: {
-            max_num: form.max_num,
-            last_timestamp: form.last_timestamp
+            max_num: max_num,
+            last_timestamp: last_timestamp
         }
     });
+    console.log('getHistoryChatMessages', "response", response);
     // 如果状态码不是200或201
     if (response.data.code !== 200 && response.data.code !== 201){
         throw new Error(response.data.msg);
     }
-    return response.data.data || [];
+    return {
+        code: response.data.code,
+        messages: response.data.data || []
+    };
 }
 
 // 获取项目下的某个成员的所有信息(包括其权限)

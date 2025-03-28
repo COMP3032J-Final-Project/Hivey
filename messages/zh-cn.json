@@ -167,7 +167,6 @@
     "create_project":"创建项目",
     "blank_project":"空白项目",
     "example_project":"示例项目",
-    "upload_project":"上传项目",
     "documentation":"文档",
     "projects":"项目",
     "all_projects":"所有项目",
@@ -182,6 +181,8 @@
 
   "_project": {
     "send_chat_message": "输入消息...",
+    "load_more_messages": "加载更多消息",
+    "no_messages": "没有聊天消息",
     "create_new_file": "创建新文件",
     "upload_file": "上传文件",
     "file_path": "文件路径",

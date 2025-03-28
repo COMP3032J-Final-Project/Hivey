@@ -163,7 +163,6 @@
     "create_project":"Create Project",
     "blank_project":"Blank Project",
     "example_project":"Example Project",
-    "upload_project":"Upload Project",
     "documentation":"Documentation",
     "projects":"Projects",
     "all_projects":"All Projects",
@@ -178,6 +177,8 @@
 
   "_project": {
     "send_chat_message": "Enter message...",
+    "load_more_messages": "Load more messages",
+    "no_messages": "No chat messages",
     "create_new_file": "Create New File",
     "upload_file": "Upload File",
     "file_path": "File Path",

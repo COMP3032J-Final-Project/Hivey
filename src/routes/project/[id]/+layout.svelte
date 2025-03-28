@@ -57,7 +57,7 @@
 				currentFilePath.set("1");
 				if (fileType === 'tex') {
 					const content = await getFileContent(projectId, fileId);
-					const str = content.url;
+					const str = content; // const str = content.url; 报错
 					console.log('File content url:', str);
 					fetchDocData(str).then((data) => {
 						console.log('File content:', data);
