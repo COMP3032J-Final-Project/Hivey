@@ -12,7 +12,8 @@ export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): 
             last_timestamp: form.last_timestamp
         }
     });
-    if (response.data.code !== 200) {
+    // 如果状态码不是200或201
+    if (response.data.code !== 200 && response.data.code !== 201){
         throw new Error(response.data.msg);
     }
     return response.data.data || [];

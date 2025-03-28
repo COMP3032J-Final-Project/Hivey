@@ -85,18 +85,14 @@ const mockMessages: ChatMessageType[] = [
 
   let input = $state(''); // 新消息内容
   let isLoading = $state(true);
-	let messages = writable<ChatMessageType[]>(mockMessages);
+	let messages = writable<ChatMessageType[]>([]);
   let chatWebSocket: WebSocket | null = $state(null);
   let closeWebSocketConnection: (() => void) | null = $state(null);
   
   // 当组件挂载后加载历史消息
   onMount(async () => {
     await fetchHistoryMessages(10);
-    
-    // 如果聊天室可见，则连接WebSocket
-   
     connectWebSocket();
-    
   });
 
   
