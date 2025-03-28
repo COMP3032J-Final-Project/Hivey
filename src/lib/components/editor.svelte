@@ -32,6 +32,9 @@
 
   let editorAreaElem: HTMLElement;
   let isConnected = $state(false);
+  let editorView: EditorView;
+  let isExternalUpdate = false;
+
   
   const doc = new LoroDoc();
   // TODO setPeerId()
@@ -140,23 +143,25 @@
           ]
       });
 
-      new EditorView({
+      editorView = new EditorView({
           state: startState,
           parent: editorAreaElem
       });
   });
 
-//   $effect(() => {
-//       console.log('Editor value updated:', value);
-//       if (editorView && !isExternalUpdate) {
-//           const currentContent = editorView.state.doc.toString();
-//       if (value !== currentContent) {
-//         isExternalUpdate = true;
-//         editorView.setState(createEditorState(value)); // 关键！
-//         isExternalUpdate = false;
-//       }
-//     }
-//   });
+$effect(() => {
+    console.log('Editor value updated:', value);
+    if (editorView && !isExternalUpdate) {
+        isExternalUpdate = true;
+        const currentValue = editorView!.state.doc.toString();
+        if (value !== currentValue) {
+            editorView.dispatch({
+                changes: { from: 0, to: currentValue.length, insert: value }
+            });
+        }
+        isExternalUpdate = false;
+    }
+});
 </script>
 
 <div bind:this={editorAreaElem} class="editor size-full"></div>

@@ -55,38 +55,21 @@
 				currentFileType.set(fileType);
 				currentFileName.set(fileName);
 				currentFilePath.set("1");
-				if (fileType === 'tex') {
-					const content = await getFileContent(projectId, fileId);
-					const str = content; // const str = content.url; 报错
-					console.log('File content url:', str);
-					fetchDocData(str).then((data) => {
-						console.log('File content:', data);
-					});
-					docContent.set(`# Heading 1
- 
- ## Heading 2
- 
- ### Heading 3
- 
- This is a link to [Google](https://www.google.com/).
- 
- Here is an example of inline code: \`console.log('Hello, World!');\`.
- 
- Below is a code block:
- 
- \`\`\`javascript
- function greet(name) {
-	 console.log(\`Hello!\`);
- }
- greet('Alice');
- \`\`\``);
+				if (fileType === 'tex' || fileType === 'md') {
+					try {
+						const content = await getFileContent(projectId, fileId);
+						const fileData = await fetchDocData(content.url);
+						docContent.set(fileData);
+					} catch (error) {
+						console.error('Failed to fetch file content:', error);
+						docContent.set('Error loading file content');
+					}
 				} else if (fileType === 'png') {
 					docContent.set('Loading JSON content...');
 				} else {
 					docContent.set('Unsupported file type');
 				}
 				return true;
-				return false;
 			} catch (error) {
 				console.error('Failed to load file:', error);
 				return false;

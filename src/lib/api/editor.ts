@@ -22,15 +22,6 @@ export const getFileContent = async (projectId: string, fileId: string): Promise
     return response.data.data;
 }
 
-// export async function fetchDocData(url: string): Promise<any> {
-//     try {
-//       const response = await axios.get(url); // 发送 GET 请求
-//       return response.data;
-//     } catch (error) {
-//       console.error("Axios error:", error);
-//     }
-// }
-
 export async function fetchDocData(url: string): Promise<any> {
       console.log("Fetching data from URL:", url);
       const response = await fetch(url);
