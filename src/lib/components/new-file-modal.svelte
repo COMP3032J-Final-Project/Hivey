@@ -10,6 +10,11 @@
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus, Folder } from 'lucide-svelte';
     import { me, mpp } from '$lib/trans';
+	import { createFile as createNewFile } from '$lib/api/editor';
+
+	let { projectId } : {projectId : string}= $props();
+
+	const project_id = projectId;
 
 	interface NavItem {
 	title: string;
@@ -23,38 +28,11 @@
 	navMain: NavItem[];
 	}
 
-	// Sample data
-	const SampleData = {
-		navMain: [
-		{
-			title: "Images",
-			url: "#",
-			icon: Folder,
-			isActive: true,
-			items: [
-			{
-				title: "Gantt Chart.png",
-				url: "#",
-			},
-			{
-				title: "Apple.jpg",
-				url: "#",
-			},],
-		},
-		{
-			title: "test.md",
-			url: "#",
-			icon: File
-		},]
-	};
-
 	let folderValue = $state("");
 	let fileTypeValue = $state("");
 
 	const foldersData = [
 		{ value: "root", label: "root" },
-		{ value: "Projects", label: "Projects" },
-		{ value: "Templates", label: "Templates" }
 	];
 
 	const triggerContent = $derived(
@@ -72,9 +50,10 @@
 	);
 
 	let formData: createFileFrom = {
-		title: '',      // 文件标题
-		suffix: '',     // 文件后缀
-		path: '',       // 文件路径
+		title: '',      	// 文件标题
+		suffix: '',     	// 文件后缀
+		path: '',       	// 文件路径
+		filetype: 'file',	// 文件类型
 	};
 
 
@@ -96,10 +75,11 @@
 					title: filename,      // 文件标题
 					suffix: fileTypeValue, // 文件后缀
 					path: folderValue,    // 文件路径
+					filetype: 'file',     // 文件类型
 				};
 				//TODO 接后端
 				console.log(formData);
-				//createFiles(formData);
+				createNewFile(project_id, formData);
 				success('Create file successfully');
 				document.getElementById("dialog-close-btn")?.click();
 			}

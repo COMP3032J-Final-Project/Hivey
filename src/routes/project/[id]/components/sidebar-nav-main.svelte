@@ -34,13 +34,6 @@
             updateFileType(fileType);
         }
     }
-
-	// function handleFileClick(title: string) {
-	// 	const fileType = title.split('.').pop() || 'md';
-	// 	console.log('File clicked:', title);
-	// 	console.log('File type:', fileType);
-	// 	updateFileType(fileType);
-	// }
 </script>
 
 <Sidebar.Content>

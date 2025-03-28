@@ -74,7 +74,24 @@
 				console.error('Failed to load file:', error);
 				return false;
 			}
-		}
+		},
+		// currentFiles: files,
+		// updateFiles: (newFiles) => {
+		// 	files.set(newFiles);
+		// },
+		// reloadFiles: async () => {
+		// 	try {
+		// 		const response = await fetch(`/api/projects/${projectId}/files`);
+		// 		if (!response.ok) {
+		// 			throw new Error('Failed to fetch files');
+		// 		}
+		// 		const data = await response.json();
+		// 		currentFiles.set(data.files);
+		// 	} catch (error) {
+		// 		console.error('Failed to reload files:', error);
+		// 	}
+		// 	return false;
+		// }
 	});
 
 	currentFileType.subscribe((value) => {
@@ -89,7 +106,7 @@
 	<Sidebar.Root collapsible="offcanvas" variant="inset">
     <Sidebar.Header>
       <div class="flex pb-1">
-			  <CreateFileDialog />
+			  <CreateFileDialog projectId={projectId} />
 			  <CreateFolderDialog />
 			  <Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)} >
 				  <MessageSquare size={20} />

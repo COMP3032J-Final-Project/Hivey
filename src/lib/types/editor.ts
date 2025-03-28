@@ -40,6 +40,9 @@ export interface EditorFileInfo {
     updateContent?: (content: string) => void;
     currentFilePath?: Writable<string>;
     loadFile?: (fileId: string, fileName: string) => Promise<boolean>;
+	// currentFiles?: Writable<FileType[]>;
+	// updateFiles?: (files: FileType[]) => void;
+	// reloadFiles?: () => Promise<boolean>;
 }
 
 // 聊天消息接口
@@ -80,6 +83,7 @@ export const createFileFrom = v.object({
 	title: v.string(),
 	suffix: v.string(),
 	path: v.string(),
+	filetype: v.string(),
 });
 
 export type createFileFrom = v.InferOutput<typeof createFileFrom>;

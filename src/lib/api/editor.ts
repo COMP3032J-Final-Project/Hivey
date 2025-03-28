@@ -33,16 +33,15 @@ export async function fetchDocData(url: string): Promise<any> {
       return text;
 }
 
-// export const createFiles = async (file: createFileFrom): Promise<EditorFile[]> => {
-//   data.push(
-//     {
-//       id: '070cdcb670844fc99ad698bb7cb6595e',
-//       projectId: "",
-//       filename: file.title+'.'+file.suffix,
-//       filepath: file.path,
-//       created_at: '2023-10-01T12:00:00Z',
-//       updated_at: '2023-10-01T12:00:00Z'
-//     }
-//   );
-//   return data;
-// };
+export const createFile = async (projectId: string, fileForm: createFileFrom): Promise<EditorFile[]> => {
+    const tempForm = {
+        filename: fileForm.title + "." + fileForm.suffix,
+        filepath: fileForm.path,
+        filetype: fileForm.filetype,
+    }
+    const response = await axiosClient.post<APIResponse<EditorFile[]>>(`/project/${projectId}/files/create`, tempForm);
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+};
