@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MessageSquare } from 'lucide-svelte';
+	import { MessageSquare, Home } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
 	import type { SidebarFolder, SidebarFile, EditorFileInfo, FileType } from '$lib/types/editor';
@@ -10,13 +10,13 @@
 	import { setContext } from 'svelte';
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { getFileContent, fetchDocData } from '$lib/api/editor';
+	import { goto } from '$app/navigation';
 
 	let { data, children } = $props<{
 		data: {
 			groupName: string;
 			folders: SidebarFolder[];
 			files: SidebarFile[];
-			chatMessages: any[];
 			currentUser: any;
 			projectId: string;
 		};
@@ -58,7 +58,7 @@
 				if (fileType === 'tex' || fileType === 'md') {
 					try {
 						const content = await getFileContent(projectId, fileId);
-						const fileData = await fetchDocData(content.url);
+						const fileData = await fetchDocData(content);
 						docContent.set(fileData);
 					} catch (error) {
 						console.error('Failed to fetch file content:', error);
@@ -106,11 +106,18 @@
 	<Sidebar.Root collapsible="offcanvas" variant="inset">
     <Sidebar.Header>
       <div class="flex pb-1">
+        <Button variant="ghost" size="icon" onclick={() => goto('/dashboard/repository/projects/all')} >
+				  <Home size={20} />
+			  </Button>
+
 			  <CreateFileDialog projectId={projectId} />
+
 			  <CreateFolderDialog />
+
 			  <Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)} >
 				  <MessageSquare size={20} />
 			  </Button>
+
       </div>
     </Sidebar.Header>
 
