@@ -72,8 +72,10 @@ const mockMessages: ChatMessageType[] = [
 	import { User } from '$lib/types/auth';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { getHistoryChatMessages } from '$lib/api/project';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { failure } from '$lib/components/ui/toast';
+  import { getUserSession } from '$lib/auth';
+  import { createChatWebSocket, sendChatMessage } from '$lib/api/websocket';
 
   // 接收从Layout传入的props
 	let  { currentUser, projectId}: {
@@ -84,12 +86,48 @@ const mockMessages: ChatMessageType[] = [
   let input = $state(''); // 新消息内容
   let isLoading = $state(true);
 	let messages = writable<ChatMessageType[]>(mockMessages);
+  let chatWebSocket: WebSocket | null = $state(null);
+  let closeWebSocketConnection: (() => void) | null = $state(null);
   
   // 当组件挂载后加载历史消息
   onMount(async () => {
     await fetchHistoryMessages(10);
+    
+    // 如果聊天室可见，则连接WebSocket
+   
+    connectWebSocket();
+    
+  });
+
+  
+  // 组件销毁时关闭WebSocket连接
+  onDestroy(() => {
+    if (closeWebSocketConnection) {
+      closeWebSocketConnection();
+    }
   });
   
+  // 连接WebSocket
+  function connectWebSocket() {
+    if (chatWebSocket) return; // 已经连接则不再连接
+    
+    try {
+      const { socket, close } = createChatWebSocket(projectId, handleNewMessage);
+      chatWebSocket = socket;
+      closeWebSocketConnection = close;
+    } catch (error) {
+      console.error('连接聊天WebSocket失败:', error);
+      failure('连接聊天服务失败，请刷新页面重试');
+    }
+  }
+  
+  // 处理新收到的WebSocket消息
+  function handleNewMessage(message: ChatMessageType) {
+    messages.update((msgs) => [...msgs, message]);
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+  }
  
   async function fetchHistoryMessages(max_num = 10) {  // 获取最近的历史消息的函数
     try {
@@ -129,10 +167,19 @@ const mockMessages: ChatMessageType[] = [
 			    content: input,
 			    timestamp: new Date()
 		  };
+		  
+		  // 通过WebSocket发送消息
+		  if (chatWebSocket) {
+		    sendChatMessage(chatWebSocket, message);
+		  }
+		  
+		  // 添加到本地消息列表
 		  messages.update((msgs) => [...msgs, message]);
 		  input = '';
 		  // 自动滚动到底部
-		  // scrollToBottom();
+		  // setTimeout(() => {
+		  //   scrollToBottom();
+		  // }, 100);
 	}
 
 	function handleKeydown(event: KeyboardEvent) { // 处理Enter键发送消息

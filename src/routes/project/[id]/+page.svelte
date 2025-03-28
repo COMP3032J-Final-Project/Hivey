@@ -20,11 +20,11 @@
   import { getContext, onMount } from 'svelte';
   import type { EditorFileInfo } from '$lib/types/editor';
   import EditableLabel from '$lib/components/ui/editable-label';
+  import { members } from './store.svelte';
 
   let { data }: PageProps = $props();
   
   let project: Project = $state(data.project);
-  let members: User[] = $state(data.members);
   let currentUser: User = $state(data.currentUser);
 
   let docContent = $state("");
@@ -92,7 +92,7 @@
         
     <div class="hidden md:flex items-center gap-4">
       <AvatarGroup.Root>
-	      {#each members.slice(0, 3) as member (member.username)}
+	      {#each $members.slice(0, 3) as member (member.username)}
 		      <AvatarGroup.Member class="size-8">
 			      <AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
 			      <AvatarGroup.MemberFallback>
@@ -100,8 +100,8 @@
 			      </AvatarGroup.MemberFallback>
 		      </AvatarGroup.Member>
 	      {/each}
-	      {#if members.length > 3}
-          <AvatarGroup.Etc class="size-8" plus={members.length - 3} />
+	      {#if $members.length > 3}
+          <AvatarGroup.Etc class="size-8" plus={$members.length - 3} />
         {/if}
       </AvatarGroup.Root>
       <InviteButton currentUser={currentUser} projectId={project.id} />

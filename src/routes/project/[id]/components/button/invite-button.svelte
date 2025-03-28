@@ -7,6 +7,9 @@
   import { addProjectMember } from '$lib/api/project';
   import { success } from '$lib/components/ui/toast';
   import { UserPermissionEnum } from '$lib/types/auth';
+  import type { User } from '$lib/types/auth';
+  import { getProjectMembers } from '$lib/api/project';
+  import { setMembers } from '../../store.svelte';
   let { currentUser, projectId } = $props();
   let isOpen = $state(false);
   let inviteeName = $state('');
@@ -20,7 +23,23 @@
     }
     errorMessage = '';
     try {
-      await addProjectMember({ currentUser, projectId, inviteeName: inviteeName.trim(), inviteePermission: inviteePermission });
+      const response = await addProjectMember({ 
+        currentUser, 
+        projectId, 
+        inviteeName: inviteeName.trim(), 
+        inviteePermission: inviteePermission 
+      });
+      
+      // 更新全局成员状态
+      const membersData: User[] = await getProjectMembers(projectId);
+      membersData.forEach(member => { // 检查每个members的头像, 如果头像为空, 则使用用户名简写作为头像
+          if (!member.avatar) {
+              const avatar = member.username.slice(0, 2).toUpperCase();
+              member.avatar = `https://ui-avatars.com/api/?name=${avatar}`;
+          }
+      });
+      setMembers(membersData);
+      
       success(mpp.success_invite_member());
       inviteeName = '';
       isOpen = false;
