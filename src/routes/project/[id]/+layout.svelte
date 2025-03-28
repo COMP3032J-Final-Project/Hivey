@@ -9,6 +9,7 @@
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
 	import { Button } from "$lib/components/ui/button/index.js";
+	import { getFileContent, fetchDocData } from '$lib/api/editor';
 
 	let { data, children } = $props<{
 		data: {
@@ -21,6 +22,7 @@
 		};
 		children: any;
 	}>();
+	let projectId = data.projectId;
 	let folders = writable<SidebarFolder[]>(data.folders);
 	let files = writable<SidebarFile[]>(data.files);
 	let showChat = $state(false); // 聊天室的显示状态
@@ -37,8 +39,8 @@
     const currentFilePath = writable('');
 
 	setContext<EditorFileInfo>('editor-context', {
-		// currentFileId,
-		// updateFileId: (id) => currentFileId.set(id),
+		currentFileId,
+		updateFileId: (id) => currentFileId.set(id),
 		currentFileName,
 		updateFileName: (name) => currentFileName.set(name),
 		currentFileType,
@@ -46,14 +48,20 @@
 		docContent,
 		updateContent: (content) => docContent.set(content),
 		currentFilePath,
-		loadFile: async (fileName) => {
+		loadFile: async (fileId, fileName) => {
 			try {
 				console.log('Loading file:', fileName);
 				const fileType = fileName.split('.').pop() || 'md';
 				currentFileType.set(fileType);
 				currentFileName.set(fileName);
 				currentFilePath.set("1");
-				if (fileType === 'md') {
+				if (fileType === 'tex') {
+					const content = await getFileContent(projectId, fileId);
+					const str = content.url;
+					console.log('File content url:', str);
+					fetchDocData(str).then((data) => {
+						console.log('File content:', data);
+					});
 					docContent.set(`# Heading 1
  
  ## Heading 2

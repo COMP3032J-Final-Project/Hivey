@@ -25,8 +25,9 @@
         // If we have a loadFile function in context, use it
         if (loadFile) {
             // Assume file has an id property, or use title as fallback
-            const fileId = file.title;
-            await loadFile(fileId, file.title);
+			const fileId = file.id;
+            const fileTitle = file.title;
+            await loadFile(fileId, fileTitle);
         } else {
             // Fallback to just updating the file type
 			updateFileName(fileName);

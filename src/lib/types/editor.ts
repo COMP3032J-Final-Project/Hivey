@@ -15,7 +15,7 @@ export interface SidebarFile {
 	title: string;
 	url: string;
 	icon?: any;
-	id?: string;
+	id: string;
 }
 
 export const File = v.object({
@@ -30,8 +30,8 @@ export const File = v.object({
 export type FileType = v.InferOutput<typeof File>;
 
 export interface EditorFileInfo {
-	// currentFileId: Writable<string>;
-	// updateFileId: (id: string) => void;
+	currentFileId: Writable<string>;
+	updateFileId: (id: string) => void;
 	currentFileName: Writable<string>;
 	updateFileName: (name: string) => void;
     currentFileType: Writable<string>;

@@ -81,7 +81,6 @@ export const _loadSidebarFiles = (files: FileType[]): SidebarFile[] => {
 		  filepath: newPath,
 		};
 	});
-	console.log("filePath:", processedFiles);
 	return processedFiles
 	.filter(file => !file.filepath)
 	.map((file) => ({
@@ -116,7 +115,8 @@ export const _loadSidebarFolder = (files: FileType[]): SidebarFolder[] => {
 		items: folderFiles.map(file => ({
 		  title: file.filename,
 		  url: "#",
-		  icon: File
+		  icon: File,
+		  id: file.id
 		}))
 	  }));
   };
