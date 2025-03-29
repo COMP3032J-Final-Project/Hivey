@@ -1,9 +1,5 @@
-import axios from 'axios';
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm, AddProjectMemberForm } from '$lib/types/editor';
-import { type User, UserPermissionEnum } from '$lib/types/auth';
-import { mpp } from '$lib/trans';
 import type { FileType as EditorFile, createFileFrom, FileURLResponse } from '$lib/types/editor';
 
 export const getFiles = async (id: string): Promise<EditorFile[]> => {

@@ -2,7 +2,7 @@
 	import { MessageSquare, Home } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
-	import type { SidebarFolder, SidebarFile, EditorFileInfo, FileType } from '$lib/types/editor';
+	import type { EditorFileInfo, FileType, TreeNode } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/sidebar-chatroom.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -11,27 +11,25 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { getFiles, getFileContent, fetchDocData } from '$lib/api/editor';
 	import { goto } from '$app/navigation';
+	import { buildFileTree } from '$lib/utils';
 
 	let { data, children } = $props<{
 		data: {
-			groupName: string;
-			folders: SidebarFolder[];
-			files: SidebarFile[];
+			filesStruct: TreeNode[];
 			currentUser: any;
 			projectId: string;
 		};
 		children: any;
 	}>();
 	let projectId = data.projectId;
-	let folders = writable<SidebarFolder[]>(data.folders);
-	let files = writable<SidebarFile[]>(data.files);
 	let showChat = $state(false); // 聊天室的显示状态
 
 	function addNewFolder() {
 		console.log('Add new folder');
 	}
 
-	const currentFiles = writable<FileType[]>([]);
+	const currentFiles = writable<FileType[]>(data.files);
+	const currentFilesStruct = writable<TreeNode[]>(data.filesStruct);
 	const currentFileId = writable('');
 	const currentFileName = writable('');
 	const currentFileType = writable('Format');
@@ -51,6 +49,7 @@
 		loadFile: async (fileId, fileName) => {
 			try {
 				console.log('Loading file:', fileName);
+				docContent.set('Loading content...');
 				const fileType = fileName.split('.').pop() || 'md';
 				currentFileType.set(fileType);
 				currentFileName.set(fileName);
@@ -77,11 +76,15 @@
 		},
 		currentFiles,
 		updateFiles: (newFiles: FileType[]) => currentFiles.set(newFiles),
+		currentFilesStruct,
+		updateFilesStruct: (newFilesStruct: TreeNode[]) => currentFilesStruct.set(newFilesStruct),
 		reloadFiles: async (project_Id) => {
 			try {
 				const files = await getFiles(project_Id);
 				currentFiles.set(files);
+				currentFilesStruct.set(buildFileTree(files));
 				console.log('Files reloaded:', files);
+				console.log('File structure:', buildFileTree(files));
 			} catch (error) {
 				console.error('Failed to reload files:', error);
 			}
@@ -90,6 +93,9 @@
 	});
 	currentFiles.subscribe((value) => {
 		console.log('[Layout] currentFiles update to:', value);
+	});
+	currentFilesStruct.subscribe((value) => {
+		console.log('[Layout] currentFilesStruct update to:', value);
 	});
 	currentFileType.subscribe((value) => {
 		console.log('[Layout] currentFileType updated to:', value);
@@ -109,7 +115,7 @@
 
 			  <CreateFileDialog projectId={projectId} />
 
-			  <CreateFolderDialog />
+			  <CreateFolderDialog projectId={projectId} />
 
 			  <Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)} >
 				  <MessageSquare size={20} />
@@ -123,7 +129,7 @@
     {#if showChat}
 			<ChatRoom projectId={data.projectId} currentUser={data.currentUser} />
 		{:else}
-			<NavMain folders_tmp={$folders} files_tmp={$files} />
+			<NavMain/>
 		{/if}
 	</Sidebar.Root>
 

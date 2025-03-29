@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { FileType, TreeNode } from "$lib/types/editor";
 
 /**
  * Combines multiple class values into a single string, handling Tailwind CSS conflicts.
@@ -109,4 +110,168 @@ export function base64ToUint8Array(base64: string): Uint8Array {
         bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes;
+}
+
+
+export function buildFileTree(files: FileType[]): TreeNode[] {
+    // Create a map for quick lookup
+    const processedFiles = files.map(file => {
+        if (!file.filepath) {
+            return file;
+        }
+
+        // 移除第一级目录
+        const pathParts = file.filepath.split('/');
+        const newPath = pathParts.slice(1).join('/'); // 去掉第一个部分
+
+        return {
+            ...file,
+            filepath: newPath, // 更新 filepath
+        };
+    });
+
+    const fileMap = new Map<string, TreeNode>();
+    processedFiles.forEach(file => {
+        fileMap.set(file.id, {
+            ...file,
+            filetype: file.filetype as 'file' | 'folder',
+            children: file.filetype === 'folder' ? [] : null,
+            project_id: file.project_id,
+        });
+    });
+
+    // Create a root object to hold top-level items
+    interface TreeLevel { children: TreeNode[] }
+    const root: TreeLevel = { children: [] };
+    
+    // Helper function to get or create path segments
+    const getPathParts = (path: string): string[] => path ? path.split('/') : [];
+    
+    // First, add all folders to the tree structure
+    fileMap.forEach((file) => {
+        if (file.filetype === 'folder') {
+            const pathParts = getPathParts(file.filepath);
+            let currentLevel: TreeLevel = root;
+            
+            // Traverse or create the folder structure
+            for (const part of pathParts) {
+                let found = currentLevel.children.find(
+                    child => child.filename === part && child.filetype === 'folder'
+                );
+                
+                if (!found) {
+                    // Only create placeholder if no real folder exists
+                    found = {
+                        id: `placeholder-${part}`,
+                        filename: part,
+                        filepath: pathParts.slice(0, pathParts.indexOf(part)).join('/'),
+                        filetype: 'folder' as const,
+                        children: [],
+                        project_id: file.project_id,
+                    };
+                    currentLevel.children.push(found);
+                }
+                currentLevel = found as TreeLevel;
+            }
+            
+            // Check if folder already exists at this level
+            const existingFolder = currentLevel.children.find(
+                child => child.id === file.id
+            );
+            if (!existingFolder) {
+                currentLevel.children.push(file);
+            }
+        }
+    });
+    
+    // Then, add all files to the tree structure
+    fileMap.forEach((file) => {
+        if (file.filetype === 'file') {
+            const pathParts = getPathParts(file.filepath);
+            let currentLevel: TreeLevel = root;
+            
+            // Traverse the folder structure
+            for (const part of pathParts) {
+                const found = currentLevel.children.find(
+                    child => child.filename === part && child.filetype === 'folder'
+                );
+                
+                if (!found) {
+                    // Shouldn't happen as folders were added first
+                    const placeholder = {
+                        id: `placeholder-${part}`,
+                        project_id: file.project_id,
+                        filename: part,
+                        filepath: pathParts.slice(0, pathParts.indexOf(part)).join('/'),
+                        filetype: 'folder' as const,
+                        children: []
+                    };
+                    currentLevel.children.push(placeholder);
+                    currentLevel = placeholder;
+                } else {
+                    currentLevel = found as TreeLevel;
+                }
+            }
+            
+            // Add the file to the appropriate level
+            currentLevel.children.push({
+                ...file,
+                filetype: 'file' as const,
+                children: null
+            });
+        }
+    });
+    
+    // Clean up placeholder folders by replacing them with real folders when found
+    function replacePlaceholders(node: TreeNode): void {
+        if (!node.children) return;
+        
+        for (let i = 0; i < node.children.length; i++) {
+            const child = node.children[i];
+            if (child.id.startsWith('placeholder-')) {
+                // Look for a real folder with the same name
+                const realFolder = node.children.find(
+                    (c): c is TreeNode & { children: TreeNode[] } => 
+                        !c.id.startsWith('placeholder-') && 
+                        c.filename === child.filename && 
+                        c.filetype === 'folder'
+                );
+                
+                if (realFolder) {
+                    // Merge children from placeholder to real folder
+                    if (child.children) {
+                        realFolder.children.push(...child.children);
+                    }
+                    // Replace placeholder with real folder
+                    node.children[i] = realFolder;
+                    // Remove the duplicate real folder
+                    const realFolderIndex = node.children.indexOf(realFolder);
+                    if (realFolderIndex > i) {
+                        node.children.splice(realFolderIndex, 1);
+                    }
+                }
+            }
+            
+            // Recursively process children
+            if (node.children[i].children) {
+                replacePlaceholders(node.children[i]);
+            }
+        }
+    }
+    
+    root.children.forEach(replacePlaceholders);
+    
+    // Update filepaths to include 'root' prefix
+    function updatePaths(node: TreeNode, currentPath: string = ''): void {
+        node.filepath = currentPath;
+        if (node.children) {
+            node.children.forEach(child => {
+                updatePaths(child, `${currentPath}/${child.filename}`);
+            });
+        }
+    }
+    
+    root.children.forEach(child => updatePaths(child));
+    
+    return root.children;
 }

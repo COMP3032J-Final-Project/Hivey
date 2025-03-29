@@ -18,18 +18,6 @@
 
 	const project_id = projectId;
 
-	interface NavItem {
-	title: string;
-	url: string;
-	icon?: any;
-	isActive?: boolean;
-	items?: NavItem[];
-	}
-
-	interface Data {
-	navMain: NavItem[];
-	}
-
 	let folderValue = $state("");
 	let fileTypeValue = $state("");
 
@@ -79,15 +67,14 @@
 					path: folderValue,    // 文件路径
 					filetype: 'file',     // 文件类型
 				};
-				//TODO 接后端
 				console.log(formData);
 				createNewFile(project_id, formData);
 				success('Create file successfully');
 				document.getElementById("dialog-close-btn")?.click();
 				if (reloadFiles) {
 					// Assume file has an id property, or use title as fallback
-					await reloadFiles(projectId);
 					console.log("reload files for projectId:", projectId);
+					await reloadFiles(projectId);
 				}
 			}
 		} catch (error) {

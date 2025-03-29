@@ -1,28 +1,23 @@
 import { User, UserPermissionEnum } from '$lib/types/auth';
-import { Project } from '$lib/types/dashboard';
 import type { Writable } from 'svelte/store';
 import * as v from 'valibot';
 
-export interface SidebarFolder {
-	  title: string;
-	  url: string;
-	  icon?: any;
-	  isActive?: boolean;
-	  items?: SidebarFile[];
-}
 
-export interface SidebarFile {
-	title: string;
-	url: string;
-	icon?: any;
+export interface TreeNode {
 	id: string;
+	project_id: string;
+	filename: string;
+	filepath: string;
+	filetype: 'file' | 'folder';
+	children: TreeNode[] | null; 
 }
 
 export const File = v.object({
 	id: v.string(),
-	projectId: v.string(), 
+	project_id: v.string(), 
 	filename: v.string(),
 	filepath: v.string(),
+	filetype: v.string(),
 	created_at: v.string(),
 	updated_at: v.string(),
 });
@@ -46,6 +41,8 @@ export interface EditorFileInfo {
     loadFile?: (fileId: string, fileName: string) => Promise<boolean>;
 	currentFiles?: Writable<FileType[]>;
 	updateFiles?: (files: FileType[]) => void;
+	currentFilesStruct?: Writable<TreeNode[]>;
+	updateFilesStruct?: (filesStruct: TreeNode[]) => void;
 	reloadFiles?: (projectId: string) => Promise<boolean>;
 }
 
