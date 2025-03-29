@@ -1,5 +1,11 @@
 <script lang="ts">
   import { m, mpm, mpma } from '$lib/trans';
+  import yang from '$lib/images/team/yang.jpg';
+  import tao from '$lib/images/team/tao.jpg';
+  import zhao from '$lib/images/team/zhao.jpg';
+  import chen from '$lib/images/team/chen.jpg';
+  import rao from '$lib/images/team/rao.jpg';
+  import zhai from '$lib/images/team/zhai.jpg';
 </script>
 
 <svelte:head>
@@ -13,7 +19,16 @@
   <ul class="grid grid-cols-1 md:grid-cols-3 gap-8 list-none p-0">
     <!-- Team Member 1 -->
     <li class="flex flex-col items-center">
-      <img src="/src/lib/images/team/yang.jpg" alt="{mpma.yang()}" width="200" height="200" class="rounded-full">
+      <img 
+        src={yang} 
+        alt="{mpma.yang()}" 
+        width="200" 
+        height="200" 
+        class="rounded-full"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+      >
       <div class="flex items-center justify-center gap-2 mt-4">
         <h2 class="text-xl font-medium mb-0">{mpma.yang()}</h2>
         <div class="flex gap-2">
@@ -29,7 +44,16 @@
     </li>
     <!-- Team Member 2 -->
     <li class="flex flex-col items-center">
-      <img src="/src/lib/images/team/tao.jpg" alt="{mpma.tao()}" width="200" height="200" class="rounded-full">
+      <img 
+        src={tao} 
+        alt="{mpma.tao()}" 
+        width="200" 
+        height="200" 
+        class="rounded-full"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+      >
       <div class="flex items-center justify-center gap-2 mt-4">
         <h2 class="text-xl font-medium mb-0">{mpma.tao()}</h2>
         <div class="flex gap-2">
@@ -46,7 +70,16 @@
         
     <!-- Team Member 3 -->
     <li class="flex flex-col items-center">
-      <img src="/src/lib/images/team/zhao.jpg" alt="{mpma.zhao()}" width="200" height="200" class="rounded-full">
+      <img 
+        src={zhao} 
+        alt="{mpma.zhao()}" 
+        width="200" 
+        height="200" 
+        class="rounded-full"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+      >
       <div class="flex items-center justify-center gap-2 mt-4">
         <h2 class="text-xl font-medium mb-0">{mpma.zhao()}</h2>
         <div class="flex gap-2">
@@ -63,7 +96,16 @@
         
     <!-- Team Member 4 -->
     <li class="flex flex-col items-center">
-      <img src="/src/lib/images/team/chen.jpg" alt="{mpma.chen()}" width="200" height="200" class="rounded-full">
+      <img 
+        src={chen} 
+        alt="{mpma.chen()}" 
+        width="200" 
+        height="200" 
+        class="rounded-full"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+      >
       <div class="flex items-center justify-center gap-2 mt-4">
         <h2 class="text-xl font-medium mb-0">{mpma.chen()}</h2>
         <div class="flex gap-2">
@@ -80,7 +122,16 @@
         
     <!-- Team Member 5 -->
     <li class="flex flex-col items-center">
-      <img src="/src/lib/images/team/rao.jpg" alt="{mpma.rao()}" width="200" height="200" class="rounded-full">
+      <img 
+        src={rao} 
+        alt="{mpma.rao()}" 
+        width="200" 
+        height="200" 
+        class="rounded-full"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+      >
       <div class="flex items-center justify-center gap-2 mt-4">
         <h2 class="text-xl font-medium mb-0">{mpma.rao()}</h2>
         <div class="flex gap-2">
@@ -97,7 +148,16 @@
         
     <!-- Team Member 6 -->
     <li class="flex flex-col items-center">
-      <img src="/src/lib/images/team/zhai.jpg" alt="{mpma.zhai()}" width="200" height="200" class="rounded-full">
+      <img 
+        src={zhai} 
+        alt="{mpma.zhai()}" 
+        width="200" 
+        height="200" 
+        class="rounded-full"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+      >
       <div class="flex items-center justify-center gap-2 mt-4">
         <h2 class="text-xl font-medium mb-0">{mpma.zhai()}</h2>
         <div class="flex gap-2">
