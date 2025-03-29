@@ -16,16 +16,14 @@
 	async function handleFileClick(file: TreeNode) {
 		const fileName = file.filename;
         const fileType = file.filename.split('.').pop() || 'md';
-        console.log('File clicked:', fileName);
+        console.log('[NavMain] File clicked:', fileName);
       
-        // If we have a loadFile function in context, use it
         if (loadFile) {
-            // Assume file has an id property, or use title as fallback
 			const fileId = file.id;
             const fileTitle = file.filename;
+            console.log('[NavMain] Loading file:', fileId, fileTitle);
             await loadFile(fileId, fileTitle);
         } else {
-            // Fallback to just updating the file type
 			updateFileName(fileName);
             updateFileType(fileType);
         }

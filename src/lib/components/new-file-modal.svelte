@@ -71,11 +71,10 @@
 				createNewFile(project_id, formData);
 				success('Create file successfully');
 				document.getElementById("dialog-close-btn")?.click();
-				if (reloadFiles) {
-					// Assume file has an id property, or use title as fallback
-					console.log("reload files for projectId:", projectId);
-					await reloadFiles(projectId);
-				}
+				console.log("[Create File Dialog] Reload files for projectId:", projectId);
+				// 后端有延迟，必须要等一会
+				await new Promise(resolve => setTimeout(resolve, 200));
+				await reloadFiles(projectId);
 			}
 		} catch (error) {
 			// 直接使用错误消息

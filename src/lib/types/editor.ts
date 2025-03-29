@@ -38,12 +38,12 @@ export interface EditorFileInfo {
     docContent?: Writable<string>;
     updateContent?: (content: string) => void;
     currentFilePath?: Writable<string>;
-    loadFile?: (fileId: string, fileName: string) => Promise<boolean>;
-	currentFiles?: Writable<FileType[]>;
-	updateFiles?: (files: FileType[]) => void;
-	currentFilesStruct?: Writable<TreeNode[]>;
+    loadFile: (fileId: string, fileName: string) => Promise<boolean>;
+	currentFiles: Writable<FileType[]>;
+	updateFiles: (files: FileType[]) => void;
+	currentFilesStruct: Writable<TreeNode[]>;
 	updateFilesStruct?: (filesStruct: TreeNode[]) => void;
-	reloadFiles?: (projectId: string) => Promise<boolean>;
+	reloadFiles: (projectId: string) => Promise<boolean>;
 }
 
 // 聊天消息接口

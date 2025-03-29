@@ -78,13 +78,12 @@
 		updateFiles: (newFiles: FileType[]) => currentFiles.set(newFiles),
 		currentFilesStruct,
 		updateFilesStruct: (newFilesStruct: TreeNode[]) => currentFilesStruct.set(newFilesStruct),
-		reloadFiles: async (project_Id) => {
+		reloadFiles: async (project_Id: string) => {
 			try {
 				const files = await getFiles(project_Id);
+				console.log('[Layout] Files structure reloaded:', buildFileTree(files));
 				currentFiles.set(files);
 				currentFilesStruct.set(buildFileTree(files));
-				console.log('Files reloaded:', files);
-				console.log('File structure:', buildFileTree(files));
 			} catch (error) {
 				console.error('Failed to reload files:', error);
 			}
