@@ -1,160 +1,160 @@
 <script lang="ts">
-  import * as Menubar from "$lib/components/ui/menubar";
-  import { Button } from "$lib/components/ui/button";
-  import * as Resizable from "$lib/components/ui/resizable/index.js";
-  import * as AvatarGroup from '$lib/components/ui/avatar-group';
-  import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-  import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
-  import Editor from "$lib/components/editor.svelte";
-  import Previewer from "$lib/components/previewer.svelte";
-  import InviteButton from "./components/button/invite-button.svelte";
-  import Exportbutton from "./components/button/export-button.svelte";
-  import Bold from "@lucide/svelte/icons/bold";
-  import Italic from "@lucide/svelte/icons/italic";
-  import Underline from "@lucide/svelte/icons/underline";
-  import { updateProject } from '$lib/api/dashboard';
-  import { success, failure } from '$lib/components/ui/toast';
-  import type { Project } from '$lib/types/dashboard';
-  import type { PageProps } from './$types';
-  import type { User } from '$lib/types/auth';
-  import { getContext, onMount } from 'svelte';
-  import type { EditorFileInfo } from '$lib/types/editor';
-  import EditableLabel from '$lib/components/ui/editable-label';
-  import { members } from './store.svelte';
+	import * as Menubar from '$lib/components/ui/menubar';
+	import { Button } from '$lib/components/ui/button';
+	import * as Resizable from '$lib/components/ui/resizable/index.js';
+	import * as AvatarGroup from '$lib/components/ui/avatar-group';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
+	import Editor from '$lib/components/editor.svelte';
+	import Previewer from '$lib/components/previewer.svelte';
+	import InviteButton from './components/button/invite-button.svelte';
+	import Exportbutton from './components/button/export-button.svelte';
+	import Bold from '@lucide/svelte/icons/bold';
+	import Italic from '@lucide/svelte/icons/italic';
+	import Underline from '@lucide/svelte/icons/underline';
+	import { updateProject } from '$lib/api/dashboard';
+	import { success, failure } from '$lib/components/ui/toast';
+	import type { Project } from '$lib/types/dashboard';
+	import type { PageProps } from './$types';
+	import type { User } from '$lib/types/auth';
+	import { getContext, onMount } from 'svelte';
+	import type { EditorFileInfo } from '$lib/types/editor';
+	import EditableLabel from '$lib/components/ui/editable-label';
+	import { members } from './store.svelte';
 
-  let { data }: PageProps = $props();
-  
-  let project: Project = $state(data.project);
-  let currentUser: User = $state(data.currentUser);
+	let { data }: PageProps = $props();
 
-  let docContent = $state("");
-  let currentFileType = $state("Format");
-  const { currentFileType: fileTypeFromContext, docContent: docContentStore } = getContext<EditorFileInfo>('editor-context');
-  fileTypeFromContext.subscribe((value) => {
-    currentFileType = value;
+	let project: Project = $state(data.project);
+	let currentUser: User = $state(data.currentUser);
+
+	let docContent = $state('');
+	let currentFileType = $state('Format');
+	const { currentFileType: fileTypeFromContext, docContent: docContentStore } =
+		getContext<EditorFileInfo>('editor-context');
+	fileTypeFromContext.subscribe((value) => {
+		currentFileType = value;
 		console.log('[Page] currentFileType updated to:', currentFileType);
 	});
-  docContentStore?.subscribe((value) => {
-    docContent = value;
-    console.log('[Page] File content set to:', docContent);
-  });
+	docContentStore?.subscribe((value) => {
+		docContent = value;
+		console.log('[Page] File content set to:', docContent);
+	});
 
-  function formatMarkdown() {
-      //TODO Implement markdown formatting logic here
-      console.log('Format markdown');
-  }
+	function formatMarkdown() {
+		//TODO Implement markdown formatting logic here
+		console.log('Format markdown');
+	}
 
-  async function handleProjectNameUpdate(projectName: string) {
-      try {
-          const updatedProject = await updateProject({
-              id: project.id,
-              name: projectName
-          });
-          project.name = updatedProject.name;
-          success('Project name modified success');
-          return projectName;
-      } catch (error) {
-          failure('Project name modified failed');
-          return null;
-      }
-  }
+	async function handleProjectNameUpdate(projectName: string) {
+		try {
+			const updatedProject = await updateProject({
+				id: project.id,
+				name: projectName
+			});
+			project.name = updatedProject.name;
+			success('Project name modified success');
+			return projectName;
+		} catch (error) {
+			failure('Project name modified failed');
+			return null;
+		}
+	}
 </script>
 
-<div class="size-full flex flex-col">
-  <header class="h-12 flex justify-between px-4 border-b">
-    <div class="hidden md:flex items-center">
-      <Sidebar.Trigger class="-ml-1" />
-      <Menubar.Root class="border-0 bg-transparent">
-        <Menubar.Menu>
-          <Menubar.Trigger>Edit</Menubar.Trigger>
-          <Menubar.Content>
-            <Menubar.Item>
-              Search & Replace
-              <Menubar.Shortcut>⌘T</Menubar.Shortcut>
-            </Menubar.Item>
-          </Menubar.Content>
-        </Menubar.Menu>
-        <Menubar.Menu>
-          <Menubar.Trigger>View</Menubar.Trigger>
-          <Menubar.Content>
-            <Menubar.Item>
-              Search & Replace
-              <Menubar.Shortcut>⌘T</Menubar.Shortcut>
-            </Menubar.Item>
-          </Menubar.Content>
-        </Menubar.Menu>
-      </Menubar.Root>
-    </div>
-        
-    <div class="flex items-center">
-      <EditableLabel initialText={project.name} handleUpdateValueFn={handleProjectNameUpdate}/>
-    </div>
-        
-    <div class="hidden md:flex items-center gap-4">
-      <AvatarGroup.Root>
-	      {#each $members.slice(0, 3) as member (member.username)}
-		      <AvatarGroup.Member class="size-8">
-			      <AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
-			      <AvatarGroup.MemberFallback>
-				      {member.username[0]}
-			      </AvatarGroup.MemberFallback>
-		      </AvatarGroup.Member>
-	      {/each}
-	      {#if $members.length > 3}
-          <AvatarGroup.Etc class="size-8" plus={$members.length - 3} />
-        {/if}
-      </AvatarGroup.Root>
-      <InviteButton currentUser={currentUser} projectId={project.id} />
-    </div>
-  </header>
+<div class="flex size-full flex-col">
+	<header class="flex h-12 justify-between border-b px-4">
+		<div class="hidden items-center md:flex">
+			<Sidebar.Trigger class="-ml-1" />
+			<Menubar.Root class="border-0 bg-transparent">
+				<Menubar.Menu>
+					<Menubar.Trigger>Edit</Menubar.Trigger>
+					<Menubar.Content>
+						<Menubar.Item>
+							Search & Replace
+							<Menubar.Shortcut>⌘T</Menubar.Shortcut>
+						</Menubar.Item>
+					</Menubar.Content>
+				</Menubar.Menu>
+				<Menubar.Menu>
+					<Menubar.Trigger>View</Menubar.Trigger>
+					<Menubar.Content>
+						<Menubar.Item>
+							Search & Replace
+							<Menubar.Shortcut>⌘T</Menubar.Shortcut>
+						</Menubar.Item>
+					</Menubar.Content>
+				</Menubar.Menu>
+			</Menubar.Root>
+		</div>
 
-  <Resizable.PaneGroup direction="horizontal" autoSaveId="project">
+		<div class="flex items-center">
+			<EditableLabel initialText={project.name} handleUpdateValueFn={handleProjectNameUpdate} />
+		</div>
 
-    <Resizable.Pane  defaultSize={50}>
-      <div class="flex flex-col h-full">
-        <div class="p-1 border-b flex space-x-2 items-center">
-          <Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
-          <ToggleGroup.Root type="multiple">
-            <ToggleGroup.Item value="bold" aria-label="Toggle bold">
-              <Bold class="size-4 p-0" />
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="italic" aria-label="Toggle italic">
-              <Italic class="size-4 p-0" />
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
-              <Underline class="size-4 p-0" />
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
-        </div>
-        <div class="flex-1">
-          <Editor bind:value={docContent}
-            username={data.currentUser.username}
-            project_id={data.project.id}
-            access_token={data.authInfo.access_token}
-          />
-        </div>
-      </div>
-    </Resizable.Pane>
+		<div class="hidden items-center gap-4 md:flex">
+			<AvatarGroup.Root>
+				{#each $members.slice(0, 3) as member (member.username)}
+					<AvatarGroup.Member class="size-8">
+						<AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
+						<AvatarGroup.MemberFallback>
+							{member.username[0]}
+						</AvatarGroup.MemberFallback>
+					</AvatarGroup.Member>
+				{/each}
+				{#if $members.length > 3}
+					<AvatarGroup.Etc class="size-8" plus={$members.length - 3} />
+				{/if}
+			</AvatarGroup.Root>
+			<InviteButton {currentUser} projectId={project.id} />
+		</div>
+	</header>
 
-    <Resizable.Handle />
+	<Resizable.PaneGroup direction="horizontal" autoSaveId="project">
+		<Resizable.Pane defaultSize={50}>
+			<div class="flex h-full flex-col">
+				<div class="flex items-center space-x-2 border-b p-1">
+					<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
+					<ToggleGroup.Root type="multiple">
+						<ToggleGroup.Item value="bold" aria-label="Toggle bold">
+							<Bold class="size-4 p-0" />
+						</ToggleGroup.Item>
+						<ToggleGroup.Item value="italic" aria-label="Toggle italic">
+							<Italic class="size-4 p-0" />
+						</ToggleGroup.Item>
+						<ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
+							<Underline class="size-4 p-0" />
+						</ToggleGroup.Item>
+					</ToggleGroup.Root>
+				</div>
+				<div class="flex-1">
+					<Editor
+						bind:value={docContent}
+						username={data.currentUser.username}
+						project_id={data.project.id}
+						access_token={data.authInfo.access_token}
+					/>
+				</div>
+			</div>
+		</Resizable.Pane>
 
-    <Resizable.Pane defaultSize={50}>
-      <div class="flex-1 flex flex-col h-full">
-        <div class="p-1 border-b">
-          <div class="flex justify-between items-center">
-            <div class="flex">
-              <p class="p-3 h-10 flex items-center justify-center">Preview</p>
-            </div>
-            <div class="flex">
-              <Exportbutton />
-            </div>
-          </div>
-        </div>
-        <div class="flex-1 overflow-y-auto"> 
-          <Previewer fileType="markdown" content={docContent} />
-        </div>
-      </div>
-    </Resizable.Pane>
+		<Resizable.Handle />
 
-  </Resizable.PaneGroup>
+		<Resizable.Pane defaultSize={50}>
+			<div class="flex h-full flex-1 flex-col">
+				<div class="border-b p-1">
+					<div class="flex items-center justify-between">
+						<div class="flex">
+							<p class="flex h-10 items-center justify-center p-3">Preview</p>
+						</div>
+						<div class="flex">
+							<Exportbutton />
+						</div>
+					</div>
+				</div>
+				<div class="flex-1 overflow-y-auto">
+					<Previewer fileType="markdown" content={docContent} />
+				</div>
+			</div>
+		</Resizable.Pane>
+	</Resizable.PaneGroup>
 </div>
