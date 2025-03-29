@@ -2,6 +2,8 @@
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	// import * as TreeView from '$lib/components/ui/tree-view/index.js';
+	// import TreeViewNode from '$lib/components/tree-view-node.svelte';
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import { Pencil } from 'lucide-svelte';
@@ -34,11 +36,22 @@
             updateFileType(fileType);
         }
     }
+// 	const data = {
+//     'a': ['f', 'g', 'h'],
+//     'b': [
+//       { 'c': [] },
+//       { 'd': ['i', { 'x': ['y'] }] },
+//       'e'
+//     ]
+//   };
 </script>
 
 <Sidebar.Content>
 	<Sidebar.Group>
     <Sidebar.Menu>
+		<!-- <TreeView.Root>
+			<TreeViewNode node={data} />
+		</TreeView.Root> -->
 	    {#each $folders as mainItem, i (mainItem.title)}
 		    <Collapsible.Root open={mainItem.isActive} class="group/collapsible">
 			    <Sidebar.MenuItem>

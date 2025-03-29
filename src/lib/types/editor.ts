@@ -29,6 +29,10 @@ export const File = v.object({
 
 export type FileType = v.InferOutput<typeof File>;
 
+export interface FileURLResponse{
+    url: string;
+}
+
 export interface EditorFileInfo {
 	currentFileId: Writable<string>;
 	updateFileId: (id: string) => void;
@@ -40,9 +44,9 @@ export interface EditorFileInfo {
     updateContent?: (content: string) => void;
     currentFilePath?: Writable<string>;
     loadFile?: (fileId: string, fileName: string) => Promise<boolean>;
-	// currentFiles?: Writable<FileType[]>;
-	// updateFiles?: (files: FileType[]) => void;
-	// reloadFiles?: () => Promise<boolean>;
+	currentFiles?: Writable<FileType[]>;
+	updateFiles?: (files: FileType[]) => void;
+	reloadFiles?: (projectId: string) => Promise<boolean>;
 }
 
 // 聊天消息接口

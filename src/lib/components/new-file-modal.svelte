@@ -6,13 +6,15 @@
 	import * as Select from "$lib/components/ui/select/index.js";
 	import * as Tabs from "$lib/components/ui/tabs/index.js";
 	import { FileDropZone } from "$lib/components/ui/file-drop-zone/index.js";
-	import type { createFileFrom } from '$lib/types/editor';
+	import type { createFileFrom, EditorFileInfo } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus, Folder } from 'lucide-svelte';
     import { me, mpp } from '$lib/trans';
 	import { createFile as createNewFile } from '$lib/api/editor';
+	import { getContext } from 'svelte';
 
 	let { projectId } : {projectId : string}= $props();
+	const { reloadFiles } = getContext<EditorFileInfo>('editor-context');
 
 	const project_id = projectId;
 
@@ -82,6 +84,11 @@
 				createNewFile(project_id, formData);
 				success('Create file successfully');
 				document.getElementById("dialog-close-btn")?.click();
+				if (reloadFiles) {
+					// Assume file has an id property, or use title as fallback
+					await reloadFiles(projectId);
+					console.log("reload files for projectId:", projectId);
+				}
 			}
 		} catch (error) {
 			// 直接使用错误消息

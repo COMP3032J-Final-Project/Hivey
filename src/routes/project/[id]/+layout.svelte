@@ -9,7 +9,7 @@
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
 	import { Button } from "$lib/components/ui/button/index.js";
-	import { getFileContent, fetchDocData } from '$lib/api/editor';
+	import { getFiles, getFileContent, fetchDocData } from '$lib/api/editor';
 	import { goto } from '$app/navigation';
 
 	let { data, children } = $props<{
@@ -31,7 +31,7 @@
 		console.log('Add new folder');
 	}
 
-	// const currentFile = writable<FileType>;
+	const currentFiles = writable<FileType[]>([]);
 	const currentFileId = writable('');
 	const currentFileName = writable('');
 	const currentFileType = writable('Format');
@@ -58,7 +58,7 @@
 				if (fileType === 'tex' || fileType === 'md') {
 					try {
 						const content = await getFileContent(projectId, fileId);
-						const fileData = await fetchDocData(content);
+						const fileData = await fetchDocData(content.url);
 						docContent.set(fileData);
 					} catch (error) {
 						console.error('Failed to fetch file content:', error);
@@ -75,25 +75,22 @@
 				return false;
 			}
 		},
-		// currentFiles: files,
-		// updateFiles: (newFiles) => {
-		// 	files.set(newFiles);
-		// },
-		// reloadFiles: async () => {
-		// 	try {
-		// 		const response = await fetch(`/api/projects/${projectId}/files`);
-		// 		if (!response.ok) {
-		// 			throw new Error('Failed to fetch files');
-		// 		}
-		// 		const data = await response.json();
-		// 		currentFiles.set(data.files);
-		// 	} catch (error) {
-		// 		console.error('Failed to reload files:', error);
-		// 	}
-		// 	return false;
-		// }
+		currentFiles,
+		updateFiles: (newFiles: FileType[]) => currentFiles.set(newFiles),
+		reloadFiles: async (project_Id) => {
+			try {
+				const files = await getFiles(project_Id);
+				currentFiles.set(files);
+				console.log('Files reloaded:', files);
+			} catch (error) {
+				console.error('Failed to reload files:', error);
+			}
+			return false;
+		}
 	});
-
+	currentFiles.subscribe((value) => {
+		console.log('[Layout] currentFiles update to:', value);
+	});
 	currentFileType.subscribe((value) => {
 		console.log('[Layout] currentFileType updated to:', value);
 	});
