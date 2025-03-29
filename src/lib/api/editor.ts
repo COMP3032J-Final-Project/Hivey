@@ -15,7 +15,7 @@ export const getFiles = async (id: string): Promise<EditorFile[]> => {
 };
 
 export const getFileContent = async (projectId: string, fileId: string): Promise<FileURLResponse> => {
-    const response = await axiosClient.get<APIResponse<string>>(`/project/${projectId}/files/${fileId}`);
+    const response = await axiosClient.get<APIResponse<FileURLResponse>>(`/project/${projectId}/files/${fileId}`);
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }
