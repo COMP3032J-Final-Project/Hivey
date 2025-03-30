@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {Button, buttonVariants} from "$lib/components/ui/button/index.js";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
+	import * as Select from "$lib/components/ui/select/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
 	import { FolderPlus } from 'lucide-svelte';
@@ -9,16 +10,23 @@
     import { me, mpp } from '$lib/trans'
 	import { createFile as createNewFile } from '$lib/api/editor';
 	import { getContext } from 'svelte';
+	import { getFolders } from '$lib/utils';
 
 	let { projectId } : {projectId : string}= $props();
-	const { reloadFiles } = getContext<EditorFileInfo>('editor-context');
+	const { currentFiles: latestFiles, reloadFiles } = getContext<EditorFileInfo>('editor-context');
+	
 	const project_id = projectId;
 
 	let folderValue = $state("");
-
-	const foldersData = [
+	let foldersData = $state([
 		{ value: "root", label: "root" },
-	];
+	]);
+
+	latestFiles?.subscribe((value) => {
+        foldersData = getFolders(value);
+		console.log('[Create Folder Dialog] Files value:', value);
+        console.log('[Create Folder Dialog] Folder update to:', foldersData);
+    });
 
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
@@ -48,7 +56,7 @@
 				formData = {
 					title: foldername,
 					suffix: '',     	// 文件后缀
-					path: '',       	// 文件路径
+					path: folderValue,  // 文件路径
 					filetype: 'folder',	// 文件类型
 				};
 				//TODO 接后端
@@ -79,6 +87,23 @@
 		<form onsubmit={createFolder}>
 			<div class="grid gap-4 py-4">
 				<Input id="foldername" name="foldername" value="" placeholder={mpp.enter_folder_name()} />
+			</div>
+			<div class="flex items-center justify-center gap-4">
+				<Label for="folder-select" class="text-right w-1/4">{mpp.file_path()}</Label>
+				<Select.Root type="single" name="folder" bind:value={folderValue}>
+					<Select.Trigger id="folder-select" class="w-[200px]">
+						{triggerContent}
+					</Select.Trigger>
+					<Select.Content>
+						<Select.Group>
+							{#each foldersData as folder}
+							<Select.Item value={folder.value} label={folder.label}
+								>{folder.label}</Select.Item
+							>
+							{/each}
+						</Select.Group>
+					</Select.Content>
+				</Select.Root>
 			</div>
 		<Dialog.Footer>
 			<Button type="submit">Confirm</Button>

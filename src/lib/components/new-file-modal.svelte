@@ -12,18 +12,23 @@
     import { me, mpp } from '$lib/trans';
 	import { createFile as createNewFile } from '$lib/api/editor';
 	import { getContext } from 'svelte';
+	import { getFolders } from '$lib/utils';
 
 	let { projectId } : {projectId : string}= $props();
-	const { reloadFiles } = getContext<EditorFileInfo>('editor-context');
-
+	const { currentFiles: latestFiles, reloadFiles } = getContext<EditorFileInfo>('editor-context');
+		
 	const project_id = projectId;
 
 	let folderValue = $state("");
 	let fileTypeValue = $state("");
-
-	const foldersData = [
+	let foldersData = $state([
 		{ value: "root", label: "root" },
-	];
+	]);
+
+	latestFiles?.subscribe((value) => {
+        foldersData = getFolders(value);
+        console.log('[Create File Dialog] Folder update to:', foldersData);
+    });
 
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()

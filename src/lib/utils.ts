@@ -275,3 +275,36 @@ export function buildFileTree(files: FileType[]): TreeNode[] {
     
     return root.children;
 }
+
+export function getFolders(fileData: FileType[]) {
+    const parentFolders = fileData.map(file => {
+        return file.filepath.split('/')[0];
+    });
+    
+    // 获取唯一的父文件夹名称（如果有的话）
+    const uniqueParentFolders = [...new Set(parentFolders)];
+
+    // 筛选出文件夹类型的数据
+    const folders = fileData.filter(item => item.filetype === 'folder');
+    
+    // 创建结果数组
+    const result: { value: string; label: string }[] = [];
+
+    if(uniqueParentFolders.length == 1) {
+        result.push({
+            value: uniqueParentFolders[0], // 或者可以根据需要处理多个父文件夹
+            label: "root"
+        });
+    }
+    
+    // 处理每个文件夹
+    folders.forEach(folder => {
+        const fullPath = folder.filepath ? `${folder.filepath}/${folder.filename}` : folder.filename;
+        result.push({
+            value: fullPath,
+            label: folder.filename
+        });
+    });
+    
+    return result;
+}

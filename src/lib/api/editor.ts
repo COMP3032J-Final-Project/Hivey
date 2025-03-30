@@ -30,10 +30,20 @@ export async function fetchDocData(url: string): Promise<any> {
 }
 
 export const createFile = async (projectId: string, fileForm: createFileFrom): Promise<EditorFile[]> => {
-    const tempForm = {
-        filename: fileForm.title + "." + fileForm.suffix,
-        filepath: fileForm.path,
-        filetype: fileForm.filetype,
+    let tempForm;
+    if(fileForm.filetype=="folder") {
+        tempForm = {
+            filename: fileForm.title,
+            filepath: fileForm.path,
+            filetype: fileForm.filetype,
+        };
+    }
+    else{
+        tempForm = {
+            filename: fileForm.title + "." + fileForm.suffix,
+            filepath: fileForm.path,
+            filetype: fileForm.filetype,
+        };
     }
     const response = await axiosClient.post<APIResponse<EditorFile[]>>(`/project/${projectId}/files/create`, tempForm);
     if (!response.data.data) {
