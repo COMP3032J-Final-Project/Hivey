@@ -192,6 +192,8 @@
     "uploading_file": "Uploading file...",
     "upload_file_success": "File uploaded successfully",
     "create_new_folder": "Create New Folder",
+    "folder_name": "Folder Name",
+    "folder_path": "Folder Path",
     "enter_folder_name": "Enter folder name",
     "invite": "Invite",
     "invite_member": "Invite Member",

@@ -112,25 +112,8 @@
 				<form onsubmit={createFile}>
 					<div class="grid gap-4 py-4">
 						<div class="flex items-center justify-center gap-4">
-							<Label for="folder-select" class="text-right w-1/4">{mpp.file_path()}</Label>
-							<Select.Root type="single" name="folder" bind:value={folderValue}>
-								<Select.Trigger id="folder-select" class="w-[200px]">
-									{triggerContent}
-								</Select.Trigger>
-								<Select.Content>
-									<Select.Group>
-										{#each foldersData as folder}
-										<Select.Item value={folder.value} label={folder.label}
-											>{folder.label}</Select.Item
-										>
-										{/each}
-									</Select.Group>
-								</Select.Content>
-							</Select.Root>
-						</div>
-						<div class="flex items-center justify-center gap-4">
 							<Label for="filename" class="text-right w-1/4">{mpp.file_name()}</Label>
-							<Input id="filename" name="filename" value={mpp.enter_file_name()} class="w-[200px]" />
+							<Input id="filename" name="filename" placeholder={mpp.enter_file_name()} class="w-[200px]" />
 						</div>
 						<div class="flex items-center justify-center gap-4">
 							<Label for="filetype" class="text-right w-1/4">{mpp.file_type()}</Label>
@@ -143,6 +126,23 @@
 										{#each fileTypes as fileType}
 										<Select.Item value={fileType.value} label={fileType.label}
 											>{fileType.label}</Select.Item
+										>
+										{/each}
+									</Select.Group>
+								</Select.Content>
+							</Select.Root>
+						</div>
+						<div class="flex items-center justify-center gap-4">
+							<Label for="folder-select" class="text-right w-1/4">{mpp.file_path()}</Label>
+							<Select.Root type="single" name="folder" bind:value={folderValue}>
+								<Select.Trigger id="folder-select" class="w-[200px]">
+									{triggerContent}
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Group>
+										{#each foldersData as folder}
+										<Select.Item value={folder.value} label={folder.label}
+											>{folder.label}</Select.Item
 										>
 										{/each}
 									</Select.Group>

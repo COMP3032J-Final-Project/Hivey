@@ -86,24 +86,27 @@
 	  	</Dialog.Header>
 		<form onsubmit={createFolder}>
 			<div class="grid gap-4 py-4">
-				<Input id="foldername" name="foldername" value="" placeholder={mpp.enter_folder_name()} />
-			</div>
-			<div class="flex items-center justify-center gap-4">
-				<Label for="folder-select" class="text-right w-1/4">{mpp.file_path()}</Label>
-				<Select.Root type="single" name="folder" bind:value={folderValue}>
-					<Select.Trigger id="folder-select" class="w-[200px]">
-						{triggerContent}
-					</Select.Trigger>
-					<Select.Content>
-						<Select.Group>
-							{#each foldersData as folder}
-							<Select.Item value={folder.value} label={folder.label}
-								>{folder.label}</Select.Item
-							>
-							{/each}
-						</Select.Group>
-					</Select.Content>
-				</Select.Root>
+				<div class="flex items-center justify-center gap-4">
+					<Label for="filename" class="text-right w-1/4">{mpp.folder_name()}</Label>
+					<Input id="foldername" name="foldername" value="" placeholder={mpp.enter_folder_name()} class="w-[200px]"/>
+				</div>
+				<div class="flex items-center justify-center gap-4">
+					<Label for="folder-select" class="text-right w-1/4">{mpp.folder_path()}</Label>
+					<Select.Root type="single" name="folder" bind:value={folderValue}>
+						<Select.Trigger id="folder-select" class="w-[200px]">
+							{triggerContent}
+						</Select.Trigger>
+						<Select.Content>
+							<Select.Group>
+								{#each foldersData as folder}
+								<Select.Item value={folder.value} label={folder.label}
+									>{folder.label}</Select.Item
+								>
+								{/each}
+							</Select.Group>
+						</Select.Content>
+					</Select.Root>
+				</div>
 			</div>
 		<Dialog.Footer>
 			<Button type="submit">Confirm</Button>
