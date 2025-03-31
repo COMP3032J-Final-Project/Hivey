@@ -70,12 +70,14 @@
               </DropdownMenu.Trigger>
               <DropdownMenu.Content side="right" align="start">
                 <DropdownMenu.Item class="flex justify-between items-center">
-                  <span>Rename</span>
-                  <Pencil class="ml-2 size-4" />
+                  <RenameDialog file={item}/>
+                  <!-- <span>Rename</span>
+                  <Pencil class="ml-2 size-4" /> -->
                 </DropdownMenu.Item>
                 <DropdownMenu.Item class="flex justify-between items-center">
-                  <span>Delete</span>
-                  <Trash2 class="ml-2 size-4" />
+                  <DeleteDialog file={item}/>
+                  <!-- <span>Delete</span>
+                  <Trash2 class="ml-2 size-4" /> -->
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Root>
