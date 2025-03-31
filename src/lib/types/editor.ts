@@ -89,8 +89,11 @@ export const createFileFrom = v.object({
 
 export type createFileFrom = v.InferOutput<typeof createFileFrom>;
 
-export const createFolderFrom = v.object({
-	fodername: v.string(),
+export const updateFileFrom = v.object({
+	title: v.string(),
+	suffix: v.string(),
+	path: v.string(),
+	filetype: v.string(),
 });
 
-export type createFolderFrom = v.InferOutput<typeof createFolderFrom>;
+export type updateFileFrom = v.InferOutput<typeof updateFileFrom>;
