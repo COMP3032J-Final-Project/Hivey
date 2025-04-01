@@ -113,12 +113,12 @@
 					<div class="grid gap-4 py-4">
 						<div class="flex items-center justify-center gap-4">
 							<Label for="filename" class="text-right w-1/4">{mpp.file_name()}</Label>
-							<Input id="filename" name="filename" placeholder={mpp.enter_file_name()} class="w-[200px]" />
+							<Input id="filename" name="filename" placeholder={mpp.enter_file_name()} class="w-[250px]" />
 						</div>
 						<div class="flex items-center justify-center gap-4">
 							<Label for="filetype" class="text-right w-1/4">{mpp.file_type()}</Label>
 							<Select.Root type="single" name="filetype" bind:value={fileTypeValue}>
-								<Select.Trigger id="filetype" class="w-[200px]">
+								<Select.Trigger id="filetype" class="w-[250px]">
 								{triggerContent1}
 								</Select.Trigger>
 								<Select.Content>
@@ -135,7 +135,7 @@
 						<div class="flex items-center justify-center gap-4">
 							<Label for="folder-select" class="text-right w-1/4">{mpp.file_path()}</Label>
 							<Select.Root type="single" name="folder" bind:value={folderValue}>
-								<Select.Trigger id="folder-select" class="w-[200px]">
+								<Select.Trigger id="folder-select" class="w-[250px]">
 									{triggerContent}
 								</Select.Trigger>
 								<Select.Content>
