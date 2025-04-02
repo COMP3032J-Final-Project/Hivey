@@ -2,8 +2,8 @@ import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
 import type { FileType as EditorFile, createFileFrom, FileURLResponse } from '$lib/types/editor';
 
-export const getFiles = async (id: string): Promise<EditorFile[]> => {
-    const response = await axiosClient.get<APIResponse<EditorFile[]>>(`/project/${id}/files/`);
+export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
+    const response = await axiosClient.get<APIResponse<EditorFile[]>>(`/project/${projectId}/files/`);
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }

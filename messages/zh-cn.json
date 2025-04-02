@@ -106,10 +106,11 @@
     "the_collaborative_editor_for_all_your_document_formats":"一个编辑器，所有格式",
     "features":"功能",
     "about_us":"关于我们",
-    "contact_us":"联系我们",
-    "all_rights_reserved":"所有权利保留。",
-    "terms": "隐私和条款",
-    "open_menu": "打开菜单"
+    "contact_us": "联系我们",
+    "all_rights_reserved":"版权所有。",
+    "terms": "条款和隐私",
+    "open_menu": "打开菜单",
+    "app_name": "Hivey"
   },
 
   
@@ -205,6 +206,10 @@
     "rename_file_failed": "重命名失败",
     "invite": "邀请",
     "invite_member": "邀请成员",
+    "member_permission": "成员权限",
+    "permission_admin": "管理员",
+    "permission_writer": "可编辑",
+    "permission_viewer": "可查看",
     "invite_member_description": "输入成员名称邀请成员加入项目",
     "invite_member_placeholder": "输入成员名称",
     "success_invite_member": "成功邀请成员",

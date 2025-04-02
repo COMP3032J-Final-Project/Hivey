@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import { getProjectById } from '$lib/api/dashboard';
-import { getProjectMembers } from '$lib/api/project';
+import { getProjectMembers, getProjectMember } from '$lib/api/project';
 import type { Project } from '$lib/types/dashboard';
 import type { User } from '$lib/types/auth';
 import { setMembers } from './store.svelte';
@@ -11,6 +11,7 @@ export const load: PageLoad = async ({ params, parent }) => {
     const { currentUser } = layoutData;
 
     const project: Project = await getProjectById(params.id);
+    const userWithPermission: User = await getProjectMember(params.id, currentUser.username);
 
     const membersData: User[] = await getProjectMembers(params.id);
     membersData.forEach(member => { // 检查每个members的头像, 如果头像为空, 则使用用户名简写作为头像
@@ -20,9 +21,9 @@ export const load: PageLoad = async ({ params, parent }) => {
         }
     });
     setMembers(membersData); // 设置全局状态
-    
+
     return {
         project,
-        currentUser
+        currentUser: userWithPermission,
     };
 } 

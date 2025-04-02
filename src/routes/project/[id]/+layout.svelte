@@ -13,11 +13,12 @@
 	import { getFiles, getFileContent, fetchDocData } from '$lib/api/editor';
 	import { goto } from '$app/navigation';
 	import { buildFileTree } from '$lib/utils';
+	import type { User } from '$lib/types/auth';
 
 	let { data, children } = $props<{
 		data: {
 			filesStruct: TreeNode[];
-			currentUser: any;
+			currentUser: User;
 			projectId: string;
 		};
 		children: any;

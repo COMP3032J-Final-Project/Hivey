@@ -108,7 +108,8 @@
     "contact_us": "Contact Us",
     "all_rights_reserved":"All rights reserved.",
     "terms": "Terms and Privacy",
-    "open_menu": "Open Menu"
+    "open_menu": "Open Menu",
+    "app_name": "Hivey"
   },
 
 
@@ -204,6 +205,10 @@
     "delete_file_description": "Are you sure you want to delete this file?",
     "invite": "Invite",
     "invite_member": "Invite Member",
+    "member_permission": "Member Permission",
+    "permission_admin": "Admin",
+    "permission_writer": "Writer",
+    "permission_viewer": "Viewer",
     "invite_member_description": "Enter member's name to invite",
     "invite_member_placeholder": "Enter member's name",
     "success_invite_member": "Successfully invited member",

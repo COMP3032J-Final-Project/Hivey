@@ -17,7 +17,7 @@
   <nav class="flex justify-between items-center p-6 px-8 max-w-7xl mx-auto">
     <a href={localizeHref("/landing")} class="text-3xl font-bold flex items-center gap-2">
       <enhanced:img class="w-12 h-12" src="$lib/images/logo.svg" alt="Logo" />
-      <span>{ m.app_name() }</span>
+      <span>{ mpm.app_name() }</span>
     </a>
         
     <!-- Desktop Navigation -->

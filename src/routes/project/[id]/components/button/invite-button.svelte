@@ -10,11 +10,39 @@
   import type { User } from '$lib/types/auth';
   import { getProjectMembers } from '$lib/api/project';
   import { setMembers } from '../../store.svelte';
+  
   let { currentUser, projectId } = $props();
   let isOpen = $state(false);
   let inviteeName = $state('');
-  let inviteePermission = $state(UserPermissionEnum.Writer);
+  let inviteePermission = $state<UserPermissionEnum>(UserPermissionEnum.Writer);
   let errorMessage = $state('');
+  
+  let permissionOptions = $state<Array<{value: UserPermissionEnum, label: string}>>([]);
+  
+  $effect(() => {
+    // 根据当前用户权限设置可选的权限选项
+    if (currentUser.permission === UserPermissionEnum.Owner) {
+      permissionOptions = [
+        { value: UserPermissionEnum.Admin, label: mpp.permission_admin() },
+        { value: UserPermissionEnum.Writer, label: mpp.permission_writer() },
+        { value: UserPermissionEnum.Viewer, label: mpp.permission_viewer() }
+      ];
+    } else if (currentUser.permission === UserPermissionEnum.Admin) {
+      permissionOptions = [
+        { value: UserPermissionEnum.Writer, label: mpp.permission_writer() },
+        { value: UserPermissionEnum.Viewer, label: mpp.permission_viewer() }
+      ];
+    } else {
+      permissionOptions = [
+        { value: UserPermissionEnum.Writer, label: mpp.permission_writer() }
+      ];
+    }
+  });
+  
+  function handleSelectChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    inviteePermission = target.value as UserPermissionEnum;
+  }
   
   async function handleInvite() {
     if (!inviteeName.trim()) {
@@ -27,12 +55,12 @@
         currentUser, 
         projectId, 
         inviteeName: inviteeName.trim(), 
-        inviteePermission: inviteePermission 
+        inviteePermission
       });
       
       // 更新全局成员状态
       const membersData: User[] = await getProjectMembers(projectId);
-      membersData.forEach(member => { // 检查每个members的头像, 如果头像为空, 则使用用户名简写作为头像
+      membersData.forEach(member => {
           if (!member.avatar) {
               const avatar = member.username.slice(0, 2).toUpperCase();
               member.avatar = `https://ui-avatars.com/api/?name=${avatar}`;
@@ -48,7 +76,6 @@
       errorMessage = message;
     }
   }
-
 </script>
 
 <div>
@@ -74,6 +101,23 @@
             if (e.key === 'Enter') handleInvite();
           }}
         />
+        
+        <div class="pt-2">
+          <label for="permission-select" class="text-sm font-medium mb-2 block">
+            {mpp.member_permission()}
+          </label>
+          <select 
+            id="permission-select"
+            class="w-full border rounded-md h-10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-background"
+            value={inviteePermission}
+            onchange={handleSelectChange}
+          >
+            {#each permissionOptions as option}
+              <option value={option.value}>{option.label}</option>
+            {/each}
+          </select>
+        </div>
+        
         {#if errorMessage}
           <div class="text-destructive text-sm">{errorMessage}</div>
         {/if}
