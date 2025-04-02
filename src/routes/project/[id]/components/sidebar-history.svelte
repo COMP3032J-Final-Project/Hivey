@@ -8,17 +8,12 @@
 
 	let { projectId } = $props<{ projectId: string }>();
 
-	const {
-		currentFileId,
-		currentFileName,
-		docContent,
-		updateContent,
-		loadFile
-	} = getContext<EditorFileInfo>('editor-context');
+	const { currentFileId, currentFileName, docContent, updateContent, loadFile } =
+		getContext<EditorFileInfo>('editor-context');
 
 	// 历史操作类型
 	type OperationType = 'add' | 'edit' | 'delete';
-	
+
 	// 历史记录条目
 	type HistoryEntry = {
 		id: string;
@@ -106,39 +101,41 @@
 </script>
 
 <Sidebar.Content>
-	<div class="flex flex-col h-full p-2">
+	<div class="flex h-full flex-col p-2">
 		{#if loading}
-			<div class="flex-1 flex items-center justify-center text-muted-foreground">
-			  Loading history...
+			<div class="flex flex-1 items-center justify-center text-muted-foreground">
+				Loading history...
 			</div>
 		{:else if historyEntries.length === 0}
-			<div class="flex-1 flex items-center justify-center text-muted-foreground">
+			<div class="flex flex-1 items-center justify-center text-muted-foreground">
 				No history records
 			</div>
 		{:else}
 			<div class="flex-1 overflow-y-auto">
 				{#each historyEntries as entry}
-					<div class="border rounded-md p-3 mb-2 hover:bg-muted">
-						<div class="flex items-center gap-2 mb-1">
+					<div class="mb-2 rounded-md border p-3 hover:bg-muted">
+						<div class="mb-1 flex items-center gap-2">
 							{#if entry.operation === 'add'}
-								<FilePlus size={16} class="text-green-500" />
+								<FilePlus size={20} class="text-green-500" />
 							{:else if entry.operation === 'edit'}
-								<FileEdit size={16} class="text-blue-500" />
+								<FileEdit size={20} class="text-blue-500" />
 							{:else if entry.operation === 'delete'}
-								<FileX size={16} class="text-red-500" />
+								<FileX size={20} class="text-red-500" />
 							{/if}
-							<span class="text-sm font-medium">{entry.user} {getOperationText(entry.operation)} {entry.fileName}</span>
+							<span class="text-sm font-medium"
+								>{entry.user} {getOperationText(entry.operation)} {entry.fileName}</span
+							>
 						</div>
-						<div class="text-xs text-muted-foreground ml-6 mb-2">
+						<div class="mb-2 ml-6 text-xs text-muted-foreground">
 							{entry.timestamp}
 						</div>
 						{#if entry.operation !== 'delete'}
-							<div class="flex justify-end mt-2">
-								<Button 
+							<div class="mt-2 flex justify-end">
+								<Button
 									onclick={() => viewFile(entry.fileId, entry.fileName)}
 									variant="outline"
 									size="sm"
-									class="flex items-center px-2 py-0 bg-transparent"
+									class="flex items-center bg-transparent px-2 py-0"
 								>
 									<Eye size={14} />
 									View file
@@ -150,4 +147,4 @@
 			</div>
 		{/if}
 	</div>
-</Sidebar.Content> 
+</Sidebar.Content>
