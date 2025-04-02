@@ -4,20 +4,21 @@
   import { m, mpm, mpmf } from '$lib/trans';
   import { localizeHref } from '$lib/paraglide/runtime';
 
-  import image1 from '$lib/images/demoslide/1.png';
-  import image2 from '$lib/images/demoslide/2.png';
-  import image3 from '$lib/images/demoslide/3.png';
-  import image4 from '$lib/images/demoslide/4.png';
-  import image5 from '$lib/images/demoslide/5.png';
-  import image6 from '$lib/images/demoslide/6.png';
-  import image7 from '$lib/images/demoslide/7.png';
-  import image8 from '$lib/images/demoslide/8.png';
-  import image9 from '$lib/images/demoslide/9.png';
-  import image10 from '$lib/images/demoslide/10.png';
-  import image11 from '$lib/images/demoslide/11.png';
-  import image12 from '$lib/images/demoslide/12.png';
-  import image13 from '$lib/images/demoslide/13.png';
-  import image14 from '$lib/images/demoslide/14.png';
+  import image1 from '$lib/images/demoslide/1.webp';
+  import image2 from '$lib/images/demoslide/2.webp';
+  import image3 from '$lib/images/demoslide/3.webp';
+  import image4 from '$lib/images/demoslide/4.webp';
+  import image5 from '$lib/images/demoslide/5.webp';
+  import image6 from '$lib/images/demoslide/6.webp';
+  import image7 from '$lib/images/demoslide/7.webp';
+  import image8 from '$lib/images/demoslide/8.webp';
+  import image9 from '$lib/images/demoslide/9.webp';
+  import image10 from '$lib/images/demoslide/10.webp';
+  import image11 from '$lib/images/demoslide/11.webp';
+  import image12 from '$lib/images/demoslide/12.webp';
+  import image13 from '$lib/images/demoslide/13.webp';
+  import image14 from '$lib/images/demoslide/14.webp';
+  import image15 from '$lib/images/demoslide/15.webp';
     
   let activeCompetitor = 0;
     
@@ -53,59 +54,63 @@
   const featureScreenshots = [
       {
           src: image1,
-          alt: "demo1 slide 1"
+          alt: "demo slide 1"
       },
       {
           src: image2,
-          alt: "demo1 slide 2"
+          alt: "demo slide 2"
       },
       {
           src: image3,
-          alt: "demo1 slide 3"
+          alt: "demo slide 3"
       },
       {
           src: image4,
-          alt: "demo1 slide 4"
+          alt: "demo slide 4"
       },
       {
           src: image5,
-          alt: "demo1 slide 5"
+          alt: "demo slide 5"
       },
       {
           src: image6,
-          alt: "demo1 slide 6"
+          alt: "demo slide 6"
       },
       {
           src: image7,
-          alt: "demo1 slide 7"
+          alt: "demo slide 7"
       },
       {
           src: image8,
-          alt: "demo1 slide 8"
+          alt: "demo slide 8"
       },
       {
           src: image9,
-          alt: "demo1 slide 9"
+          alt: "demo slide 9"
       },
       {
           src: image10,
-          alt: "demo1 slide 10"
+          alt: "demo slide 10"
       },
       {
           src: image11,
-          alt: "demo1 slide 11"
+          alt: "demo slide 11"
       },
       {
           src: image12,
-          alt: "demo1 slide 12"
+          alt: "demo slide 12"
       },
       {
           src: image13,
-          alt: "demo1 slide 13"
+          alt: "demo slide 13"
       },
       {
           src: image14,
-          alt: "demo1 slide 14"
+          alt: "demo slide 14"
+      },
+      {
+          src: image15,
+          alt: "demo slide 15"
       }
   ];
     

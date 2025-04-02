@@ -19,7 +19,7 @@
       <div class="absolute bottom-10 left-10 w-96 h-96 bg-black/5 rounded-full blur-3xl"></div>
       -->
             
-      <div class="text-center px-7 py-14 md:py-20 max-w-4xl mx-auto relative z-0">
+      <div class="text-center px-7 py-10 md:py-16 max-w-4xl mx-auto relative z-0">
         <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
           {mpm.one_editor_all_formats()}
         </h1>
@@ -42,12 +42,18 @@
     </section>
 
     <!-- Editor Preview Section -->
-    <section class="max-w-7xl mx-auto px-4 md:px-8 pb-16 md:pb-24 relative z-0">
+    <section class="max-w-4xl mx-auto px-4 md:px-8 pb-10 md:pb-16 relative z-0">
       <div class="bg-card rounded-xl shadow-2xl overflow-hidden border border-white/10">
-        <img 
-          src="https://picsum.photos/1200/600" 
-          alt="Hivey Editor Interface"
-          class="w-full">
+        <div class="relative w-full pt-[56.25%]">
+          <iframe
+            class="absolute top-0 left-0 w-full h-full"
+            src="https://www.youtube.com/embed/D1Hgn1o3FNg"
+            title="Hivey Editor Interface"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
           <!--
           <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
           -->
