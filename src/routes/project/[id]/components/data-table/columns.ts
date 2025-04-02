@@ -7,14 +7,6 @@ import type { User } from '$lib/types/auth';
 import { UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
 
-// 定义权限的排序优先级 (数字越小，优先级越高)
-const permissionPriority = {
-  [UserPermissionEnum.Owner]: 1,
-  [UserPermissionEnum.Admin]: 2,
-  [UserPermissionEnum.Writer]: 3,
-  [UserPermissionEnum.Viewer]: 4
-};
-
 export const columns: ColumnDef<User>[] = [
     {   
         id: "username",
@@ -76,8 +68,14 @@ export const columns: ColumnDef<User>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => {
-            return renderComponent(DataTableActions, { id: row.original.username });
+        cell: ({ row, ...context }) => {
+            // 将额外上下文作为自定义类型处理
+            const { projectId, currentUser } = context as unknown as { projectId: string, currentUser: User };
+            return renderComponent(DataTableActions, { 
+                id: row.original.username,
+                projectId: projectId || '',
+                currentUser
+            });
         },
     },
     

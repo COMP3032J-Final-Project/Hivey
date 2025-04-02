@@ -101,7 +101,8 @@ export const removeProjectMember = async (form: RemoveProjectMemberForm): Promis
 
     // 验证当前用户是否有权限移除成员
     const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
-    if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner) {
+    // 只有admin和owner可以移除成员, 或者成员自己可以移除自己
+    if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner && currentUser.username !== memberName) { 
         throw new Error(mpp.error_remove_member());
     }
     // 避免被移除的成员是项目所有者
@@ -109,8 +110,9 @@ export const removeProjectMember = async (form: RemoveProjectMemberForm): Promis
     if (memberPermission === UserPermissionEnum.Owner) {
         throw new Error(mpp.error_remove_owner());
     }
-
-    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/members/${memberName}`);
+    console.log('removeProjectMember', form);
+    // 在字段中添加project_id 和 member_name
+    const response = await axiosClient.delete<APIResponse<void>>(`/project/${projectId}/members/${memberName}`);
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }

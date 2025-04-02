@@ -114,10 +114,21 @@
         <Table.Row data-state={row.getIsSelected() && "selected"}>
           {#each row.getVisibleCells() as cell (cell.id)}
             <Table.Cell>
-              <FlexRender
-                content={cell.column.columnDef.cell}
-                context={cell.getContext()}
-              />
+              {#if cell.column.id === "actions"}
+                <FlexRender
+                  content={cell.column.columnDef.cell}
+                  context={{
+                    ...cell.getContext(),
+                    projectId,
+                    currentUser
+                  }}
+                />
+              {:else}
+                <FlexRender
+                  content={cell.column.columnDef.cell}
+                  context={cell.getContext()}
+                />
+              {/if}
             </Table.Cell>
           {/each}
         </Table.Row>
