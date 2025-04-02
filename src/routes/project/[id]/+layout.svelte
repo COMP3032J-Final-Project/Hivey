@@ -1,14 +1,15 @@
 <script lang="ts">
-	import { MessageSquare, Home } from 'lucide-svelte';
+	import { MessageSquare, Home, History } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
 	import type { EditorFileInfo, FileType, TreeNode } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/sidebar-chatroom.svelte';
+	import HistoryPanel from './components/sidebar-history.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
-	import { Button } from "$lib/components/ui/button/index.js";
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { getFiles, getFileContent, fetchDocData } from '$lib/api/editor';
 	import { goto } from '$app/navigation';
 	import { buildFileTree } from '$lib/utils';
@@ -22,19 +23,16 @@
 		children: any;
 	}>();
 	let projectId = data.projectId;
-	let showChat = $state(false); // 聊天室的显示状态
-
-	function addNewFolder() {
-		console.log('Add new folder');
-	}
+	let showChat = $state(false);
+	let showHistory = $state(false);
 
 	const currentFiles = writable<FileType[]>(data.files);
 	const currentFilesStruct = writable<TreeNode[]>(data.filesStruct);
 	const currentFileId = writable('');
 	const currentFileName = writable('');
 	const currentFileType = writable('Format');
-    const docContent = writable('');
-    const currentFilePath = writable('');
+	const docContent = writable('');
+	const currentFilePath = writable('');
 
 	setContext<EditorFileInfo>('editor-context', {
 		currentFileId,
@@ -53,7 +51,7 @@
 				const fileType = fileName.split('.').pop() || 'md';
 				currentFileType.set(fileType);
 				currentFileName.set(fileName);
-				currentFilePath.set("1");
+				currentFilePath.set('1');
 				if (fileType === 'tex' || fileType === 'md') {
 					try {
 						const content = await getFileContent(projectId, fileId);
@@ -106,29 +104,38 @@
 
 <Sidebar.Provider>
 	<Sidebar.Root collapsible="offcanvas" variant="inset">
-    <Sidebar.Header>
-      <div class="flex pb-1">
-        <Button variant="ghost" size="icon" onclick={() => goto('/dashboard/repository/projects/all')} >
-				  <Home size={20} />
-			  </Button>
+		<Sidebar.Header>
+			<div class="flex pb-1">
+				<Button
+					variant="ghost"
+					size="icon"
+					onclick={() => goto('/dashboard/repository/projects/all')}
+				>
+					<Home size={20} />
+				</Button>
 
-			  <CreateFileDialog projectId={projectId} />
+				<CreateFileDialog {projectId} />
 
-			  <CreateFolderDialog projectId={projectId} />
+				<CreateFolderDialog {projectId} />
 
-			  <Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)} >
-				  <MessageSquare size={20} />
-			  </Button>
+				<Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)}>
+					<MessageSquare size={20} />
+				</Button>
 
-      </div>
-    </Sidebar.Header>
+				<Button variant="ghost" size="icon" onclick={() => (showHistory = !showHistory)}>
+					<History size={20} />
+				</Button>
+			</div>
+		</Sidebar.Header>
 
-    <Sidebar.Separator />
+		<Sidebar.Separator />
 
-    {#if showChat}
+		{#if showChat}
 			<ChatRoom projectId={data.projectId} currentUser={data.currentUser} />
+		{:else if showHistory}
+			<HistoryPanel projectId={data.projectId} />
 		{:else}
-			<NavMain/>
+			<NavMain />
 		{/if}
 	</Sidebar.Root>
 
