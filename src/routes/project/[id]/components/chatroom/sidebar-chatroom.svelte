@@ -2,7 +2,7 @@
   import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
 	import { writable, get } from 'svelte/store';
 	import { Send } from 'lucide-svelte';
-	import ChatMessage from './chat-message.svelte';
+	import ChatMessage from './chat-message.svelte'
   import { mpp, mpa } from '$lib/trans';
 	import { User, UserAuth } from '$lib/types/auth';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';

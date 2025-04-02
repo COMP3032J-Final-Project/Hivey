@@ -4,7 +4,7 @@
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
 	import type { EditorFileInfo, FileType, TreeNode } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
-	import ChatRoom from './components/sidebar-chatroom.svelte';
+	import ChatRoom from './components/chatroom/sidebar-chatroom.svelte';
 	import HistoryPanel from './components/sidebar-history.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { writable } from 'svelte/store';
