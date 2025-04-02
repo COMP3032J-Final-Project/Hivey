@@ -16,13 +16,16 @@
   import * as Table from "$lib/components/ui/table/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
+  import type { User } from '$lib/types/auth';
 
   type DataTableProps<TData, TValue> = {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    currentUser: User;
+    projectId: string;
   };
  
-  let { data, columns }: DataTableProps<TData, TValue> = $props();
+  let { data, columns, currentUser, projectId }: DataTableProps<TData, TValue> = $props();
   let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 5 });
   let sorting = $state<SortingState>([]);
   let columnFilters = $state<ColumnFiltersState>([]);
@@ -93,10 +96,12 @@
           {#each headerGroup.headers as header (header.id)}
             <Table.Head>
               {#if !header.isPlaceholder}
-                <FlexRender
-                  content={header.column.columnDef.header}
-                  context={header.getContext()}
-                />
+                <div class="flex items-center justify-center">
+                  <FlexRender
+                    content={header.column.columnDef.header}
+                    context={header.getContext()}
+                  />
+                </div>
               {/if}
             </Table.Head>
           {/each}
@@ -128,20 +133,25 @@
 </div>
 
 <div class="flex items-center justify-end space-x-2 py-4">
-  <Button
-    variant="outline"
-    size="sm"
-    onclick={() => table.previousPage()}
-    disabled={!table.getCanPreviousPage()}
-  >
-    Previous
-  </Button>
-  <Button
-    variant="outline"
-    size="sm"
-    onclick={() => table.nextPage()}
-    disabled={!table.getCanNextPage()}
-  >
-    Next
-  </Button>
+  <div class="flex-1 text-sm text-muted-foreground">
+    Total Members: {table.getFilteredRowModel().rows.length}
+  </div>
+  {#if table.getFilteredRowModel().rows.length > 5}
+    <Button
+      variant="outline"
+      size="sm"
+      onclick={() => table.previousPage()}
+      disabled={!table.getCanPreviousPage()}
+    >
+      Previous
+    </Button>
+    <Button
+      variant="outline"
+      size="sm"
+      onclick={() => table.nextPage()}
+      disabled={!table.getCanNextPage()}
+    >
+      Next
+    </Button>
+  {/if}
 </div>

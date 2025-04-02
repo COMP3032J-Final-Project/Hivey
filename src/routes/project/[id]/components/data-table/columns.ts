@@ -3,8 +3,17 @@ import { createRawSnippet } from 'svelte';
 import { renderSnippet } from '$lib/components/ui/data-table/index.js';
 import { renderComponent } from '$lib/components/ui/data-table/index.js';
 import DataTableActions from './data-table-actions.svelte';
-import DataTablePermissionButton from './data-table-permission-button.svelte';
 import type { User } from '$lib/types/auth';
+import { UserPermissionEnum } from '$lib/types/auth';
+import { mpp } from '$lib/trans';
+
+// 定义权限的排序优先级 (数字越小，优先级越高)
+const permissionPriority = {
+  [UserPermissionEnum.Owner]: 1,
+  [UserPermissionEnum.Admin]: 2,
+  [UserPermissionEnum.Writer]: 3,
+  [UserPermissionEnum.Viewer]: 4
+};
 
 export const columns: ColumnDef<User>[] = [
     {   
@@ -48,10 +57,12 @@ export const columns: ColumnDef<User>[] = [
     {
         id: 'permission',
         accessorKey: "permission",
-        header: ({ column }) =>
-          renderComponent(DataTablePermissionButton, {
-            onclick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-          }), 
+        header: () => {
+          const permissionHeaderSnippet = createRawSnippet(() => ({
+            render: () => `<div class="text-center">Permission</div>`,
+          }));
+          return renderSnippet(permissionHeaderSnippet, "");
+        },
         cell: ({ row }) => {
           const permissionCellSnippet = createRawSnippet<[string]>((getPermission) => {
             const permission = getPermission();
@@ -61,6 +72,7 @@ export const columns: ColumnDef<User>[] = [
           });
           return renderSnippet(permissionCellSnippet, row.getValue("permission"));
         },
+        enableSorting: false,
     },
     {
         id: "actions",

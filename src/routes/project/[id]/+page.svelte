@@ -9,6 +9,7 @@
 	import Previewer from '$lib/components/previewer.svelte';
 	import InviteButton from './components/button/invite-button.svelte';
 	import Exportbutton from './components/button/export-button.svelte';
+	import MembersDialog from './components/members-dialog.svelte';
 	import Bold from '@lucide/svelte/icons/bold';
 	import Italic from '@lucide/svelte/icons/italic';
 	import Underline from '@lucide/svelte/icons/underline';
@@ -20,12 +21,13 @@
 	import { getContext, onMount } from 'svelte';
 	import type { EditorFileInfo } from '$lib/types/editor';
 	import EditableLabel from '$lib/components/ui/editable-label';
-	import { members } from './store.svelte';
+	import { members, setMembers } from './store.svelte';
 
 	let { data }: PageProps = $props();
 
 	let project: Project = $state(data.project);
 	let currentUser: User = $state(data.currentUser);
+	let membersDialogOpen = $state(false);
 
 	let docContent = $state('');
 	let currentFileType = $state('Format');
@@ -92,23 +94,31 @@
 		</div>
 
 		<div class="hidden items-center gap-4 md:flex">
-			<AvatarGroup.Root>
-				{#each $members.slice(0, 3) as member (member.username)}
-					<AvatarGroup.Member class="size-8">
-						<AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
-						<AvatarGroup.MemberFallback>
-							{member.username[0]}
-						</AvatarGroup.MemberFallback>
-					</AvatarGroup.Member>
-				{/each}
-				{#if $members.length > 3}
-					<AvatarGroup.Etc class="size-8" plus={$members.length - 3} />
-				{/if}
-			</AvatarGroup.Root>
+			<button 
+				class="cursor-pointer" 
+				onclick={() => (membersDialogOpen = true)}
+				onkeydown={(e) => e.key === 'Enter' && (membersDialogOpen = true)}
+			>
+				<AvatarGroup.Root>
+					{#each $members.slice(0, 3) as member (member.username)}
+						<AvatarGroup.Member class="size-8">
+							<AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
+							<AvatarGroup.MemberFallback>
+								{member.username[0]}
+							</AvatarGroup.MemberFallback>
+						</AvatarGroup.Member>
+					{/each}
+					{#if $members.length > 3}
+						<AvatarGroup.Etc class="size-8" plus={$members.length - 3} />
+					{/if}
+				</AvatarGroup.Root>
+			</button>
       
 			<InviteButton {currentUser} projectId={project.id} />
 		</div>
 	</header>
+
+  <MembersDialog currentUser={currentUser} projectId={project.id} open={membersDialogOpen} onOpenChange={(open) => (membersDialogOpen = open)} />
 
 	<Resizable.PaneGroup direction="horizontal" autoSaveId="project">
 		<Resizable.Pane defaultSize={50}>
