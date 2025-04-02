@@ -4,7 +4,7 @@
 		type SortingState,
 		type ColumnFiltersState,
 		type VisibilityState,
-    type RowSelectionState,
+		type RowSelectionState,
 		getCoreRowModel,
 		getSortedRowModel,
 		getFilteredRowModel
@@ -13,25 +13,28 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-  import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
 		data: TData[];
+		type?: string;
 	};
 
-	let { data, columns }: DataTableProps<TData, TValue> = $props();
+	let { data, columns, type = 'projects' }: DataTableProps<TData, TValue> = $props();
 
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
 	let columnVisibility = $state<VisibilityState>({});
-    let rowSelection = $state<RowSelectionState>({});
+	let rowSelection = $state<RowSelectionState>({});
 
 	const table = createSvelteTable({
 		get data() {
 			return data;
 		},
-		columns,
+		get columns() {
+			return columns;
+		},
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
@@ -49,20 +52,20 @@
 				columnFilters = updater;
 			}
 		},
-    onColumnVisibilityChange: (updater) => {
-      if (typeof updater === "function") {
-        columnVisibility = updater(columnVisibility);
-      } else {
-        columnVisibility = updater;
-      }
-    },
-    onRowSelectionChange: (updater) => {
-      if (typeof updater === "function") {
-        rowSelection = updater(rowSelection);
-      } else {
-        rowSelection = updater;
-      }
-    },
+		onColumnVisibilityChange: (updater) => {
+			if (typeof updater === 'function') {
+				columnVisibility = updater(columnVisibility);
+			} else {
+				columnVisibility = updater;
+			}
+		},
+		onRowSelectionChange: (updater) => {
+			if (typeof updater === 'function') {
+				rowSelection = updater(rowSelection);
+			} else {
+				rowSelection = updater;
+			}
+		},
 		state: {
 			get sorting() {
 				return sorting;
@@ -93,27 +96,23 @@
 			}}
 			class="max-w-sm"
 		/>
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
-        {#snippet child({ props })}
-          <Button {...props} variant="outline" class="ml-auto">Columns</Button>
-        {/snippet}
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Content align="end">
-        {#each table
-          .getAllColumns()
-          .filter((col) => col.getCanHide()) as column (column.id)}
-          <DropdownMenu.CheckboxItem
-            class="capitalize"
-            bind:checked={
-              () => column.getIsVisible(), (v) => column.toggleVisibility(!!v)
-            }
-          >
-            {column.id}
-          </DropdownMenu.CheckboxItem>
-        {/each}
-      </DropdownMenu.Content>
-    </DropdownMenu.Root>
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger>
+				{#snippet child({ props })}
+					<Button {...props} variant="outline" class="ml-auto">Columns</Button>
+				{/snippet}
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content align="end">
+				{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
+					<DropdownMenu.CheckboxItem
+						class="capitalize"
+						bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)}
+					>
+						{column.id}
+					</DropdownMenu.CheckboxItem>
+				{/each}
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 	</div>
 	<div class="rounded-md border">
 		<Table.Root>
@@ -135,7 +134,7 @@
 			</Table.Header>
 			<Table.Body>
 				{#each table.getRowModel().rows as row (row.id)}
-					<Table.Row 
+					<Table.Row
 						data-state={row.getIsSelected() && 'selected'}
 						class="cursor-pointer hover:bg-muted/50"
 						onclick={(e) => {
