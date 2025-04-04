@@ -83,7 +83,6 @@
     oninput={(e) => {
       table.getColumn("username")?.setFilterValue(e.currentTarget.value);
     }}
-    class="max-w-sm"
   />
 </div>
  
