@@ -13,7 +13,7 @@
   import * as v from 'valibot';
   import { Message } from '$lib/types/websocket';
   import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
-
+  import { UserPermissionEnum } from '$lib/types/auth';
     
   let {
       value = $bindable(),
@@ -23,11 +23,13 @@
       // TODO handle situation at the first connecting, the access_token is expired and
       // needed to be refershed
       access_token,
+      permission
   }: {
       value: any,
       username: string,
       project_id: string,
-      access_token: string
+      access_token: string,
+      permission: UserPermissionEnum
   } = $props();
 
   let editorAreaElem: HTMLElement;
@@ -116,31 +118,41 @@
           }
       });
 
+      // basic extensions
+      const extensions = [
+          basicSetup,
+          markdown(), 
+          lineNumbers({}),
+          EditorView.lineWrapping,
+          EditorView.theme({
+              "&": { height: "100%", fontSize: "18px" },
+          }),
+          EditorView.updateListener.of((update) => {
+              if (update.docChanged) {
+                  value = update.state.doc.toString();
+              }
+          }),
+          LoroExtensions(
+              doc,
+              {
+                  user: { name: username, colorClassName: "bg-orange-500 text-orange-500" },
+                  awareness: awareness,
+              },
+              undoManager,
+          ),
+      ];
+
+      if (permission === UserPermissionEnum.Viewer) { // 如果用户只有查看权限则配置编辑器为只读
+          extensions.push(
+              EditorState.readOnly.of(true),
+              EditorView.editable.of(false),
+              EditorView.contentAttributes.of({tabindex: "0"})
+          );
+      }
+
       const startState = EditorState.create({
           doc: value,
-          extensions: [
-              basicSetup,
-              markdown(), 
-              lineNumbers({}),
-              lineNumbers({}),
-              EditorView.lineWrapping,
-              EditorView.theme({
-                  "&": { height: "100%", fontSize: "18px" },
-              }),
-              EditorView.updateListener.of((update) => {
-                  if (update.docChanged) {
-                      value = update.state.doc.toString();
-                  }
-              }),
-              LoroExtensions(
-                  doc,
-                  {
-                      user: { name: username, colorClassName: "bg-orange-500 text-orange-500" },
-                      awareness: awareness,
-                  },
-                  undoManager,
-              ),
-          ]
+          extensions: extensions
       });
 
       editorView = new EditorView({

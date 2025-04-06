@@ -17,7 +17,7 @@
 	import { success, failure } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
 	import type { PageProps } from './$types';
-	import type { User } from '$lib/types/auth';
+	import  {type User, UserPermissionEnum } from '$lib/types/auth';
 	import { getContext, onMount } from 'svelte';
 	import type { EditorFileInfo } from '$lib/types/editor';
 	import EditableLabel from '$lib/components/ui/editable-label';
@@ -143,6 +143,7 @@
 						username={data.currentUser.username}
 						project_id={data.project.id}
 						access_token={data.authInfo.access_token}
+						permission={data.currentUser.permission ?? UserPermissionEnum.Viewer}
 					/>
 				</div>
 			</div>
