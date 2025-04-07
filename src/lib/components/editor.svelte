@@ -44,6 +44,41 @@
   const undoManager = new UndoManager(doc, {});
 
 
+  export function wrapSelection(wrapText: string) {
+    console.log("wrapSelection", wrapText);
+    if (!editorView){
+        console.error("EditorView is not initialized");
+        return;
+    }
+    
+    const selection = editorView.state.selection;
+    if (selection.main.empty){
+        const cursorPos = selection.main.from;
+        editorView.dispatch({
+            changes:[ 
+                { from: cursorPos, insert: wrapText },
+                { from: cursorPos, insert: wrapText }
+            ]
+        });
+        console.log("insert into empty editor");
+        return;
+    }
+    
+    const { from, to } = selection.main;
+    console.log("from", from, "to", to);
+    
+    editorView.dispatch({
+      changes: [
+        { from, insert: wrapText },
+        { from: to, insert: wrapText }
+      ],
+      selection: {
+        anchor: from + wrapText.length,
+        head: to + wrapText.length
+      }
+    });
+  }
+
   function handleWsMessage(message: Message) {
       message = v.parse(Message, message);
       if (message.action !== "send_message" || message.client_id == username) return;

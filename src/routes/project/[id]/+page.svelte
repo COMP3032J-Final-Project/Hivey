@@ -61,6 +61,12 @@
 			return null;
 		}
 	}
+
+	let editorRef: Editor;
+	let boldRef: ToggleGroup.Item;
+	let italicRef: ToggleGroup.Item;
+	let underlineRef: ToggleGroup.Item;
+	let isBold = $state(false);
 </script>
 
 <div class="flex size-full flex-col">
@@ -126,7 +132,7 @@
 				<div class="flex items-center space-x-2 border-b p-1">
 					<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
 					<ToggleGroup.Root type="multiple">
-						<ToggleGroup.Item value="bold" aria-label="Toggle bold">
+						<ToggleGroup.Item value="bold" aria-label="Toggle bold" onclick={() => editorRef.wrapSelection('**')}>
 							<Bold class="size-4 p-0" />
 						</ToggleGroup.Item>
 						<ToggleGroup.Item value="italic" aria-label="Toggle italic">
@@ -140,6 +146,7 @@
 				<div class="flex-1">
 					<Editor
 						bind:value={docContent}
+						bind:this={editorRef}
 						username={data.currentUser.username}
 						project_id={data.project.id}
 						access_token={data.authInfo.access_token}
