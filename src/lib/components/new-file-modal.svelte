@@ -66,6 +66,9 @@
 				throw new Error("Please complete the form");
 			}
 			else{
+				if( folderValue == "root" ){
+					folderValue = "" ;
+				}
 				formData = {
 					title: filename,      // 文件标题
 					suffix: fileTypeValue, // 文件后缀

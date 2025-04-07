@@ -114,24 +114,8 @@ export function base64ToUint8Array(base64: string): Uint8Array {
 
 
 export function buildFileTree(files: FileType[]): TreeNode[] {
-    // Create a map for quick lookup
-    const processedFiles = files.map(file => {
-        if (!file.filepath) {
-            return file;
-        }
-
-        // 移除第一级目录
-        const pathParts = file.filepath.split('/');
-        const newPath = pathParts.slice(1).join('/'); // 去掉第一个部分
-
-        return {
-            ...file,
-            filepath: newPath, // 更新 filepath
-        };
-    });
-
     const fileMap = new Map<string, TreeNode>();
-    processedFiles.forEach(file => {
+    files.forEach(file => {
         fileMap.set(file.id, {
             ...file,
             filetype: file.filetype as 'file' | 'folder',
@@ -277,25 +261,16 @@ export function buildFileTree(files: FileType[]): TreeNode[] {
 }
 
 export function getFolders(fileData: FileType[]) {
-    const parentFolders = fileData.map(file => {
-        return file.filepath.split('/')[0];
-    });
-    
-    // 获取唯一的父文件夹名称（如果有的话）
-    const uniqueParentFolders = [...new Set(parentFolders)];
-
     // 筛选出文件夹类型的数据
     const folders = fileData.filter(item => item.filetype === 'folder');
     
     // 创建结果数组
     const result: { value: string; label: string }[] = [];
 
-    if(uniqueParentFolders.length == 1) {
-        result.push({
-            value: uniqueParentFolders[0], // 或者可以根据需要处理多个父文件夹
-            label: "root"
-        });
-    }
+    result.push({
+        value: "root",
+        label: "root"
+    });
     
     // 处理每个文件夹
     folders.forEach(folder => {

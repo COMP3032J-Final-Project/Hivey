@@ -51,3 +51,11 @@ export const createFile = async (projectId: string, fileForm: createFileFrom): P
     }
     return response.data.data;
 };
+
+export const deleteFile = async (projectId: string, fileId: string): Promise<EditorFile[]> => {
+    const response = await axiosClient.delete<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}`);
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+}

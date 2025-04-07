@@ -53,6 +53,9 @@
 				throw new Error("Please complete the form");
 			}
 			else{
+				if( folderValue == "root" ){
+					folderValue = "" ;
+				}
 				formData = {
 					title: foldername,
 					suffix: '',     	// 文件后缀

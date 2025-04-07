@@ -6,10 +6,13 @@
 	import { success, failure } from '$lib/components/ui/toast';
     import { me, mpp } from '$lib/trans'
 	import type { TreeNode } from '$lib/types/editor';
+	import { getContext } from 'svelte';
+	import { deleteFile as deleteAPI } from '$lib/api/editor';
 
 	let { file } : {file : TreeNode}= $props();
 
 	let open = $state(false);
+	const { reloadFiles } = getContext<EditorFileInfo>('editor-context');
 
 	const handleTriggerClick = (e: MouseEvent) => {
         e.stopPropagation(); // 阻止事件冒泡
@@ -19,6 +22,8 @@
 	const deleteFile = async (e: Event) => {
 		e.preventDefault();
 		// TODO: 接入后端
+		deleteAPI(file.project_id, file.id);
+		reloadFiles(file.project_id);
 		open = false;
 	};
 </script>
