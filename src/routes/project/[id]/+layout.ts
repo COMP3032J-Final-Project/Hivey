@@ -37,19 +37,10 @@ export const load: LayoutLoad = async ({ url, params }) => {
         const project = await getProjectById(params.id);
         // 如果是模板项目，检查是否是创建者
         if (project.type === 'template') {
-            if (project.owner?.username === currentUser.username) {
-                // 如果是模板的创建者，保留权限
-                currentUser = {
-                    ...currentUser,
-                    permission: UserPermissionEnum.Owner
-                };
-            } else {
-                // 其他用户都是viewer
-                currentUser = {
-                    ...currentUser,
-                    permission: UserPermissionEnum.Viewer
-                };
-            }
+            currentUser = {
+                ...currentUser,
+                permission: UserPermissionEnum.Viewer
+            };
         } else {
             currentUser = await getProjectMember(params.id, currentUser.username);
         }

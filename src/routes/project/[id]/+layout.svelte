@@ -115,9 +115,9 @@
 					<Home size={20} />
 				</Button>
 
-				<CreateFileDialog {projectId} />
-
-				<CreateFolderDialog {projectId} />
+				<CreateFileDialog {projectId} currentUser={data.currentUser} />
+				<CreateFolderDialog {projectId} currentUser={data.currentUser} />
+				
 
 				<Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)}>
 					<MessageSquare size={20} />

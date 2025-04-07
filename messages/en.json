@@ -221,7 +221,8 @@
     "error_edit_member_permission": "You don't have permission to edit member permission",
     "error_remove_member": "You don't have permission to remove member",
     "error_add_member": "You don't have permission to add member",
-    "error_add_member_admin_permission": "You don't have permission to add member with Admin permission"
+    "error_add_member_admin_permission": "You don't have permission to add member with Admin permission",
+    "error_no_permission": "You don't have permission to perform this action"
   },
   
 
