@@ -110,17 +110,8 @@
 					<Menubar.Trigger>Edit</Menubar.Trigger>
 					<Menubar.Content>
 						<Menubar.Item>
-							Search & Replace
-							<Menubar.Shortcut>⌘T</Menubar.Shortcut>
-						</Menubar.Item>
-					</Menubar.Content>
-				</Menubar.Menu>
-				<Menubar.Menu>
-					<Menubar.Trigger>View</Menubar.Trigger>
-					<Menubar.Content>
-						<Menubar.Item>
-							Search & Replace
-							<Menubar.Shortcut>⌘T</Menubar.Shortcut>
+							Find & Replace
+							<Menubar.Shortcut>Ctrl+F</Menubar.Shortcut>
 						</Menubar.Item>
 					</Menubar.Content>
 				</Menubar.Menu>
