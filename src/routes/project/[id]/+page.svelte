@@ -63,10 +63,26 @@
 	}
 
 	let editorRef: Editor;
-	let boldRef: ToggleGroup.Item;
-	let italicRef: ToggleGroup.Item;
-	let underlineRef: ToggleGroup.Item;
+	let value: string[] = $state([]);
 	let isBold = $state(false);
+
+	function checkSelection() {
+	  if (editorRef) {
+		isBold = editorRef.hasSurroundingSymbols('**', '**');
+		value = [];
+		if (isBold) {
+		  value.push('bold');
+		}
+	  }
+	}
+
+	onMount(() => {
+      const editorDom = document.querySelector('.editor');
+      if (editorDom) {
+	    editorDom.addEventListener('mouseup', checkSelection);
+	    editorDom.addEventListener('selectionchange', checkSelection);
+      }
+  });
 </script>
 
 <div class="flex size-full flex-col">
@@ -131,7 +147,7 @@
 			<div class="flex h-full flex-col">
 				<div class="flex items-center space-x-2 border-b p-1">
 					<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
-					<ToggleGroup.Root type="multiple">
+					<ToggleGroup.Root type="multiple" bind:value>
 						<ToggleGroup.Item value="bold" aria-label="Toggle bold" onclick={() => editorRef.wrapSelection('**')}>
 							<Bold class="size-4 p-0" />
 						</ToggleGroup.Item>

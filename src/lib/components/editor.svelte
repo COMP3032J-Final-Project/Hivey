@@ -44,6 +44,24 @@
   const undoManager = new UndoManager(doc, {});
 
 
+  export function hasSurroundingSymbols(prefix: string, suffix: string) {
+    if (!editorView) return false;
+
+    const selection = editorView.state.selection;
+    if (selection.main.empty) return false;
+
+    const { from, to } = selection.main;
+    const doc = editorView.state.doc;
+
+    // 检查选中区域前是否有符号
+    const pre = doc.slice(Math.max(0, from - prefix.length), from).toString();
+    // 检查选中区域后是否有符号
+    const suf = doc.slice(to, Math.min(doc.length, to + suffix.length)).toString();
+
+    return pre === prefix && suf === suffix;
+  }
+
+
   export function wrapSelection(wrapText: string) {
     console.log("wrapSelection", wrapText);
     if (!editorView){
