@@ -76,6 +76,19 @@
 	  }
 	}
 
+	function wrapSelection(value: string) {
+	  if (editorRef) {
+		if (value === 'bold') {
+		  if (isBold) {
+			editorRef.unwrapSelection('**', '**');
+			console.log('Unwrap selection');
+		  }
+		  else
+		  	editorRef.wrapSelection('**', '**');
+		}
+	  }
+	}
+
 	onMount(() => {
       const editorDom = document.querySelector('.editor');
       if (editorDom) {
@@ -148,7 +161,7 @@
 				<div class="flex items-center space-x-2 border-b p-1">
 					<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
 					<ToggleGroup.Root type="multiple" bind:value>
-						<ToggleGroup.Item value="bold" aria-label="Toggle bold" onclick={() => editorRef.wrapSelection('**')}>
+						<ToggleGroup.Item value="bold" aria-label="Toggle bold" onclick={() => wrapSelection('bold')}>
 							<Bold class="size-4 p-0" />
 						</ToggleGroup.Item>
 						<ToggleGroup.Item value="italic" aria-label="Toggle italic">
