@@ -81,10 +81,13 @@
 		if (value === 'bold') {
 		  if (isBold) {
 			editorRef.unwrapSelection('**', '**');
+			isBold = false;
 			console.log('Unwrap selection');
 		  }
-		  else
+		  else{
 		  	editorRef.wrapSelection('**', '**');
+			isBold = true;
+		  }
 		}
 	  }
 	}
