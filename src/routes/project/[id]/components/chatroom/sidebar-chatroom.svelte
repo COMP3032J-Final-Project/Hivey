@@ -82,7 +82,6 @@
     if (wsClient) {
       wsClient.disconnect();
       wsClient = null;
-      console.log('WebSocket连接已断开');
     }
   }
   
@@ -123,7 +122,6 @@
   function sendMessage() { // 发送消息
 		  if (!input.trim()) return;
 		  if (!wsClient) { // 验证WebSocket是否连接
-        console.log('Chatroom WebSocket未连接');
 		    return;
 		  }
 		  wsClient.sendMessage(input); // 通过WebSocket发送消息

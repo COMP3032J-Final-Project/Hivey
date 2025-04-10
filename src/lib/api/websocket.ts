@@ -1,6 +1,7 @@
 import { writable, type Writable } from 'svelte/store';
 import type { ChatMessage } from '$lib/types/editor';
 import type { UserAuth, User } from '$lib/types/auth';
+import type { WSRequest, WSResponse } from '$lib/types/websocket';
 
 // WebSocket连接状态枚举
 export enum WebSocketState {
@@ -32,7 +33,7 @@ export class ChatWebSocketClient {
     // 连接到WebSocket服务器
     public connect(): void {
         // 构建WebSocket URL
-        const wsUrl = `ws://127.0.0.1:8000/project/${this.projectId}/ws/chat?access_token=${this.userAuth.access_token}`;
+        const wsUrl = `ws://127.0.0.1:8000/project/${this.projectId}/ws/?access_token=${this.userAuth.access_token}`;
 
         try {
             this.socket = new WebSocket(wsUrl);
@@ -53,7 +54,18 @@ export class ChatWebSocketClient {
         }
 
         try {
-            this.socket.send(content);
+            // 构建符合WSRequest格式的请求
+            const request: WSRequest = {
+                event_scope: "chat",
+                event_type: "message_sent",
+                data: {
+                    message_type: "text",
+                    content: content,
+                }
+            };
+
+            // 以JSON格式发送请求
+            this.socket.send(JSON.stringify(request));
         } catch (error) {
             console.error('消息发送失败:', error);
         }
@@ -82,21 +94,28 @@ export class ChatWebSocketClient {
     // 处理接收消息事件
     private handleMessage(event: MessageEvent): void {
         try {
-            const data = JSON.parse(event.data);
-            const chatMessage: ChatMessage = { // 创建新的聊天消息
-                message_type: data.message_type,
-                user: data.user,
-                content: data.content,
-                timestamp: new Date(data.timestamp)
-            }
+            // 解析响应数据为WSResponse格式
+            const response = JSON.parse(event.data) as WSResponse;
+            
+            // 仅处理聊天消息
+            if (response.event_scope === "chat" && response.event_type === "message_sent") {
+                const messageData = response.data;
+                
+                const chatMessage: ChatMessage = {
+                    message_type: "text", // 假设默认消息类型为text，需要根据实际情况调整
+                    user: messageData.user,
+                    content: messageData.content,
+                    timestamp: new Date(messageData.timestamp)
+                };
 
-            this.messages.update(msgs => {
-                // 更新消息存储，确保新消息添加在列表末尾
-                const updatedMsgs = [...msgs, chatMessage].sort((a, b) =>
-                    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-                );
-                return updatedMsgs;
-            });
+                this.messages.update(msgs => {
+                    // 更新消息存储，确保新消息添加在列表末尾
+                    const updatedMsgs = [...msgs, chatMessage].sort((a, b) =>
+                        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                    );
+                    return updatedMsgs;
+                });
+            }
         } catch (error) {
             console.error('消息解析失败:', error, '原始数据:', event.data);
         }
