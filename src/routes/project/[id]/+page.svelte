@@ -21,9 +21,10 @@
 	import { getContext, onMount } from 'svelte';
 	import type { EditorFileInfo } from '$lib/types/editor';
 	import EditableLabel from '$lib/components/ui/editable-label';
-	import { members, setMembers } from './store.svelte';
+	import { members } from './store.svelte';
+	import type { WebSocketClient } from '$lib/api/websocket';
 
-	let { data }: PageProps = $props();
+	let { data, wsClient }: PageProps & { wsClient?: WebSocketClient | null } = $props();
 
 	let project: Project = $state(data.project);
 	let currentUser: User = $state(data.currentUser);
@@ -174,6 +175,7 @@
 						project_id={data.project.id}
 						access_token={data.authInfo.access_token}
 						permission={data.currentUser.permission ?? UserPermissionEnum.Viewer}
+						wsClient={wsClient}
 					/>
 				</div>
 			</div>

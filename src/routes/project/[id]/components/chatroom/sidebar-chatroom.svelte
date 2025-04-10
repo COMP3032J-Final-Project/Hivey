@@ -1,49 +1,50 @@
 <script lang="ts">
   import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
-	import { writable, get } from 'svelte/store';
 	import { Send } from 'lucide-svelte';
 	import ChatMessage from './chat-message.svelte'
   import { mpp, mpa } from '$lib/trans';
 	import { User, UserAuth } from '$lib/types/auth';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { getHistoryChatMessages } from '$lib/api/project';
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
   import { failure } from '$lib/components/ui/toast';
   import { getUserSession, isSessionExpired } from '$lib/auth';
   import { ArrowUp } from 'lucide-svelte';
-  import { ChatWebSocketClient } from '$lib/api/websocket';
+  import { WebSocketClient } from '$lib/api/websocket';
   import { goto } from '$app/navigation';
+  import { chatMessages, setChatMessages, addChatMessage, addChatMessages } from '../../store.svelte';
 
   // 接收从Layout传入的props
-	let  { currentUser, projectId}: {
+	let  { currentUser, projectId, wsClient }: {
       currentUser: User;
       projectId: string;
+      wsClient: WebSocketClient | null;
   } = $props();
   
-  let wsClient: ChatWebSocketClient | null = null;
-  let messagesList = $state<ChatMessageType[]>([]);
   let input = $state(''); // 新消息内容
   let isLoading = $state(false);
   let isLoadingMore = $state(false);
   let hasMoreMessages = $state(false); // 是否有更多历史消息
   let lastMessageTimestamp = $state<Date>(new Date()); // 最早消息的时间戳
- 
-  onMount(async () => {  // 当组件挂载后加载历史消息并连接WebSocket
+  
+  onMount(async () => {  // 当组件挂载后加载历史消息
     if (isSessionExpired()) { 
       failure(mpa.session_expired());
       goto('/auth/login');
       return;
     }
-    const userSession = getUserSession() as UserAuth;
-    await connectWebSocket(userSession, currentUser); // 创建WebSocket连接
-    console.log('onMount', "projectId", projectId, "currentUser", currentUser, "userSession", userSession);
-  });
-  
-  onDestroy(() => { 
-    disconnectWebSocket(); // 组件销毁时断开WebSocket连接
+    
+    // 设置WebSocketClient的聊天消息处理函数
+    if (wsClient) {
+      wsClient.chatMessageHandler = (message: ChatMessageType) => {
+        addChatMessage(message);
+      }
+    }
+    
+    await loadHistoryMessages(); // 加载历史消息
   });
  
-  async function connectWebSocket(userSession: UserAuth, currentUser: User) {  // 连接WebSocket
+  async function loadHistoryMessages() {  // 加载历史消息
     isLoading = true;
     try {
       const result = await getHistoryChatMessages({ // result.code, result.messages
@@ -58,30 +59,13 @@
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
         lastMessageTimestamp = new Date(sortedMessages[0].timestamp); // 更新最早消息的时间戳 
-        messagesList = sortedMessages;
+        setChatMessages(sortedMessages); // 使用store中的方法设置消息
       } 
       hasMoreMessages = result.code === 200; // 根据状态码确定是否还有更多消息
-
-      // 创建WebSocket客户端
-      wsClient = new ChatWebSocketClient(projectId, currentUser, userSession, messagesList);
-      
-      // 订阅wsClient的消息更新
-      wsClient.messages.subscribe(messages => {
-        messagesList = messages;
-      });
-      
-      wsClient.connect(); // 连接到服务器
     } catch (error) {
-      console.error('WebSocket初始化失败:', error);
+      console.error('Failed to load history messages:', error);
     } finally {
       isLoading = false;
-    }
-  }
-  
-  function disconnectWebSocket() { // 断开WebSocket连接
-    if (wsClient) {
-      wsClient.disconnect();
-      wsClient = null;
     }
   }
   
@@ -100,20 +84,13 @@
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
         lastMessageTimestamp = new Date(sortedMessages[0].timestamp); // 更新最早消息的时间戳     
-        if (wsClient) {
-          // 先将新消息添加到列表前端，然后整体排序
-          wsClient.messages.update(messages => {
-            const combinedMessages = [...sortedMessages, ...messages];
-            // 确保整个列表按时间从旧到新排序
-            return combinedMessages.sort((a, b) => 
-              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-            );
-          });
-        }
+        
+        // 使用store中的方法添加历史消息
+        addChatMessages(sortedMessages);
       } 
       hasMoreMessages = result.code === 200; // 根据状态码确定是否还有更多消息
     } catch (error) {
-      console.error('加载更多消息失败:', error);
+      console.error('Failed to load more messages:', error);
     } finally {
       isLoadingMore = false;
     }
@@ -124,7 +101,7 @@
 		  if (!wsClient) { // 验证WebSocket是否连接
 		    return;
 		  }
-		  wsClient.sendMessage(input); // 通过WebSocket发送消息
+		  wsClient.sendChatMessage(input); // 通过WebSocket发送消息
 		  input = ''; // 清空输入框
 		 
 		  setTimeout(() => {
@@ -179,8 +156,8 @@
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
       </div>
     {:else}
-      {#if messagesList.length > 0}
-        {#each messagesList as msg}
+      {#if $chatMessages.length > 0}
+        {#each $chatMessages as msg}
           <ChatMessage chatMessage={msg} />
         {/each}
       {:else}

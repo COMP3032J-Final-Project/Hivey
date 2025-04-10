@@ -13,7 +13,11 @@
 	import { getFiles, getFileContent, fetchDocData } from '$lib/api/editor';
 	import { goto } from '$app/navigation';
 	import { buildFileTree } from '$lib/utils';
-	import type { User } from '$lib/types/auth';
+	import type { User, UserAuth } from '$lib/types/auth';
+	import { WebSocketClient } from '$lib/api/websocket';
+	import { getUserSession } from '$lib/auth';
+	import { onMount, onDestroy } from 'svelte';
+	import { addChatMessage } from './store.svelte';
 
 	let { data, children } = $props<{
 		data: {
@@ -26,6 +30,7 @@
 	let projectId = data.projectId;
 	let showChat = $state(false);
 	let showHistory = $state(false);
+	let wsClient = $state<WebSocketClient | null>(null);
 
 	const currentFiles = writable<FileType[]>(data.files);
 	const currentFilesStruct = writable<TreeNode[]>(data.filesStruct);
@@ -34,6 +39,31 @@
 	const currentFileType = writable('Format');
 	const docContent = writable('');
 	const currentFilePath = writable('');
+
+  async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
+		try {
+			wsClient = new WebSocketClient( // 创建WebSocket客户端
+				projectId,
+				currentUser,
+				userSession
+			);
+			wsClient.connect(); // 连接到服务器
+		} catch (error) {
+			console.error('Project WebSocket Client init failed:', error);
+		}
+	}
+
+	onMount(async () => {
+		const userSession = getUserSession() as UserAuth;
+		await initWebSocketClient(userSession, data.currentUser);
+	});
+
+	onDestroy(() => {
+		if (wsClient) {
+			wsClient.disconnect();
+			wsClient = null;
+		}
+	});
 
 	setContext<EditorFileInfo>('editor-context', {
 		currentFileId,
@@ -132,7 +162,7 @@
 		<Sidebar.Separator />
 
 		{#if showChat}
-			<ChatRoom projectId={data.projectId} currentUser={data.currentUser} />
+			<ChatRoom projectId={data.projectId} currentUser={data.currentUser} wsClient={wsClient} />
 		{:else if showHistory}
 			<HistoryPanel projectId={data.projectId} />
 		{:else}
@@ -141,6 +171,6 @@
 	</Sidebar.Root>
 
 	<Sidebar.Inset>
-		{@render children()}
+		{@render children({ wsClient })}
 	</Sidebar.Inset>
 </Sidebar.Provider>

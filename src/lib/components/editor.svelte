@@ -14,6 +14,7 @@
   import { Message } from '$lib/types/websocket';
   import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
   import { UserPermissionEnum } from '$lib/types/auth';
+  import type { WebSocketClient } from '$lib/api/websocket';
     
   let {
       value = $bindable(),
@@ -23,13 +24,15 @@
       // TODO handle situation at the first connecting, the access_token is expired and
       // needed to be refershed
       access_token,
-      permission
+      permission,
+      wsClient
   }: {
       value: any,
       username: string,
       project_id: string,
       access_token: string,
-      permission: UserPermissionEnum
+      permission: UserPermissionEnum,
+      wsClient?: WebSocketClient | null
   } = $props();
 
   let editorAreaElem: HTMLElement;

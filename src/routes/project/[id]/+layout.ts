@@ -1,17 +1,13 @@
-import { Folder, File } from 'lucide-svelte';
-import type { ChatMessage } from '$lib/types/editor';
 import { failure } from '$lib/components/ui/toast';
-import { getUserSession } from '$lib/auth';
+import { getUserSession, isSessionExpired } from '$lib/auth';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
 import { me } from '$lib/trans';
 import type { User, UserAuth } from '$lib/types/auth';
 import { getUserInfo } from '$lib/api/auth';
-import { getHistoryChatMessages, getProjectMember } from '$lib/api/project';
+import { getProjectMember } from '$lib/api/project';
 import { getFiles } from '$lib/api/editor';
-import type { FileType } from '$lib/types/editor';
 import { buildFileTree } from '$lib/utils';
-import { file } from 'valibot';
 import { getProjectById } from '$lib/api/dashboard';
 import { UserPermissionEnum } from '$lib/types/auth';
 
@@ -22,7 +18,7 @@ export const prerender = false; // 禁用预渲染
 export const load: LayoutLoad = async ({ url, params }) => {
     const session: UserAuth | null = getUserSession();
     // 如果未登录，立即重定向到登录页面
-    if (!session) {
+    if (!session || isSessionExpired()) {
         // 显示错误提示
         failure(me.user_not_login());
 
