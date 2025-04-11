@@ -207,7 +207,9 @@
 		{/if}
 	</Sidebar.Root>
 
-	<Sidebar.Inset>
+  <!-- Settings an fixed height allow inner element to overflow with scrollbar -->
+  <!-- Please see inset's source code to figure out why I use this height -->
+	<Sidebar.Inset class="h-[calc(100svh-theme(spacing.4))]">
     <div class="size-full flex relative">
       <DragOffsetCalculator
         class="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize z-10"

@@ -189,7 +189,7 @@
 						</ToggleGroup.Item>
 					</ToggleGroup.Root>
 				</div>
-				<div class="flex-1">
+				<div class="flex-1 overflow-auto">
 					<Editor
 						bind:value={docContent}
 						bind:this={editorRef}
