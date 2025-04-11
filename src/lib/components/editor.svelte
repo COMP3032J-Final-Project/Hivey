@@ -1,270 +1,254 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { EditorView, basicSetup } from 'codemirror';
-  import { lineNumbers } from '@codemirror/view';
-  import { EditorState } from '@codemirror/state';
-  import { markdown } from '@codemirror/lang-markdown';
-  import {
-      getTextFromDoc,
-      LoroExtensions,
-  } from "loro-codemirror";
-  import { Awareness, LoroDoc, UndoManager } from "loro-crdt";
-  import { BACKEND_ADDR_WEBSOCKET } from '$lib/constants';
-  import * as v from 'valibot';
-  import { Message } from '$lib/types/websocket';
-  import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
-  import { UserPermissionEnum } from '$lib/types/auth';
-  import type { WebSocketClient } from '$lib/api/websocket';
-    
-  let {
-      value = $bindable(),
-      // TODO pass user type
-      username,
-      project_id,
-      // TODO handle situation at the first connecting, the access_token is expired and
-      // needed to be refershed
-      access_token,
-      permission,
-      wsClient
-  }: {
-      value: any,
-      username: string,
-      project_id: string,
-      access_token: string,
-      permission: UserPermissionEnum,
-      wsClient?: WebSocketClient | null
-  } = $props();
+	import { onMount } from 'svelte';
+	import { EditorView, basicSetup } from 'codemirror';
+	import { lineNumbers } from '@codemirror/view';
+	import { EditorState } from '@codemirror/state';
+	import { markdown } from '@codemirror/lang-markdown';
+	import { getTextFromDoc, LoroExtensions } from 'loro-codemirror';
+	import { Awareness, LoroDoc, UndoManager } from 'loro-crdt';
+	import { BACKEND_ADDR_WEBSOCKET } from '$lib/constants';
+	import * as v from 'valibot';
+	import { Message } from '$lib/types/websocket';
+	import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
+	import { UserPermissionEnum } from '$lib/types/auth';
+	import type { WebSocketClient } from '$lib/api/websocket';
 
-  let editorAreaElem: HTMLElement;
-  let isConnected = $state(false);
-  let editorView: EditorView;
-  let isExternalUpdate = false;
+	let {
+		value = $bindable(),
+		// TODO pass user type
+		username,
+		project_id,
+		// TODO handle situation at the first connecting, the access_token is expired and
+		// needed to be refershed
+		access_token,
+		permission,
+		wsClient
+	}: {
+		value: any;
+		username: string;
+		project_id: string;
+		access_token: string;
+		permission: UserPermissionEnum;
+		wsClient?: WebSocketClient | null;
+	} = $props();
 
-  
-  const doc = new LoroDoc();
-  // TODO setPeerId()
-  const awareness: Awareness = new Awareness(doc.peerIdStr);
-  const undoManager = new UndoManager(doc, {});
+	let editorAreaElem: HTMLElement;
+	let isConnected = $state(false);
+	let editorView: EditorView;
+	let isExternalUpdate = false;
 
+	const doc = new LoroDoc();
+	// TODO setPeerId()
+	const awareness: Awareness = new Awareness(doc.peerIdStr);
+	const undoManager = new UndoManager(doc, {});
 
-  export function hasSurroundingSymbols(prefix: string, suffix: string) {
-    if (!editorView) return false;
+	export function hasSurroundingSymbols(prefix: string, suffix: string) {
+		if (!editorView) return false;
 
-    const selection = editorView.state.selection;
-    if (selection.main.empty) return false;
+		const selection = editorView.state.selection;
+		if (selection.main.empty) return false;
 
-    const { from, to } = selection.main;
-    const doc = editorView.state.doc;
+		const { from, to } = selection.main;
+		const doc = editorView.state.doc;
 
-    // 检查选中区域前是否有符号
-    const pre = doc.slice(Math.max(0, from - prefix.length), from).toString();
-    // 检查选中区域后是否有符号
-    const suf = doc.slice(to, Math.min(doc.length, to + suffix.length)).toString();
+		// 检查选中区域前是否有符号
+		const pre = doc.slice(Math.max(0, from - prefix.length), from).toString();
+		// 检查选中区域后是否有符号
+		const suf = doc.slice(to, Math.min(doc.length, to + suffix.length)).toString();
 
-    return pre === prefix && suf === suffix;
-  }
+		return pre === prefix && suf === suffix;
+	}
 
+	export function wrapSelection(prefix: string, suffix: string) {
+		if (!editorView) {
+			console.error('EditorView is not initialized');
+			return;
+		}
 
-  export function wrapSelection(prefix: string, suffix: string) {
-    if (!editorView){
-        console.error("EditorView is not initialized");
-        return;
-    }
-    
-    const selection = editorView.state.selection;
-    if (selection.main.empty){
-        const cursorPos = selection.main.from;
-        editorView.dispatch({
-            changes:[ 
-                { from: cursorPos, insert: prefix },
-                { from: cursorPos, insert: suffix }
-            ]
-        });
-        console.log("insert into empty editor");
-        return;
-    }
-    
-    const { from, to } = selection.main;
-    console.log("from", from, "to", to);
-    
-    editorView.dispatch({
-      changes: [
-        { from, insert: prefix },
-        { from: to, insert: suffix }
-      ],
-      selection: {
-        anchor: from + prefix.length,
-        head: to + suffix.length
-      }
-    });
-  }
+		const selection = editorView.state.selection;
+		if (selection.main.empty) {
+			const cursorPos = selection.main.from;
+			editorView.dispatch({
+				changes: [
+					{ from: cursorPos, insert: prefix },
+					{ from: cursorPos, insert: suffix }
+				]
+			});
+			console.log('insert into empty editor');
+			return;
+		}
 
+		const { from, to } = selection.main;
+		console.log('from', from, 'to', to);
 
-  export function unwrapSelection(prefix: string, suffix: string) {
-    if (!editorView){
-        console.error("EditorView is not initialized");
-        return;
-    }
-    
-    const selection = editorView.state.selection;
-    if (selection.main.empty){
-        const cursorPos = selection.main.from;
-        editorView.dispatch({
-            changes:[ 
-                { from: cursorPos, insert: prefix },
-                { from: cursorPos, insert: suffix }
-            ]
-        });
-        console.log("insert into empty editor");
-        return;
-    }
-    
-    const { from, to } = selection.main;
-    console.log("from", from, "to", to);
-    
-    editorView.dispatch({
-        changes: [
-          { from: from - prefix.length, to: from, insert: "" },
-          { from: to, to: to + suffix.length, insert: "" }
-        ],
-        selection: {
-          anchor: from - prefix.length,
-          head: to - prefix.length
-        }
-      });
-  }
+		editorView.dispatch({
+			changes: [
+				{ from, insert: prefix },
+				{ from: to, insert: suffix }
+			],
+			selection: {
+				anchor: from + prefix.length,
+				head: to + suffix.length
+			}
+		});
+	}
 
+	export function unwrapSelection(prefix: string, suffix: string) {
+		if (!editorView) {
+			console.error('EditorView is not initialized');
+			return;
+		}
 
-  function handleWsMessage(message: Message) {
-      message = v.parse(Message, message);
-      if (message.action !== "send_message" || message.client_id == username) return;
-      const data = message.message;
-      switch (data.type) {
-          case 'update':
-              // console.log('update', message.client_id, base64ToUint8Array(data.data));
-              doc.import(base64ToUint8Array(data.data))
-              break;
-          case 'awareness':
-               // console.log('awareness', message.client_id, base64ToUint8Array(data.data));
-              awareness.apply(base64ToUint8Array(data.data));
-              break;
-          default:
-              break;
-      }
-  }
+		const selection = editorView.state.selection;
+		if (selection.main.empty) {
+			const cursorPos = selection.main.from;
+			editorView.dispatch({
+				changes: [
+					{ from: cursorPos, insert: prefix },
+					{ from: cursorPos, insert: suffix }
+				]
+			});
+			console.log('insert into empty editor');
+			return;
+		}
 
+		const { from, to } = selection.main;
+		console.log('from', from, 'to', to);
 
-  onMount(async () => {
-      const ws = new WebSocket(new URL(
-          `project/${project_id}/ws/crdt?access_token=${access_token}`,
-          BACKEND_ADDR_WEBSOCKET
-      ));
+		editorView.dispatch({
+			changes: [
+				{ from: from - prefix.length, to: from, insert: '' },
+				{ from: to, to: to + suffix.length, insert: '' }
+			],
+			selection: {
+				anchor: from - prefix.length,
+				head: to - prefix.length
+			}
+		});
+	}
 
-      ws.addEventListener("open", async () => {
-          isConnected = true;
-          console.log("WebSocket connected");
-      });
+	function handleWsMessage(message: Message) {
+		message = v.parse(Message, message);
+		if (message.action !== 'send_message' || message.client_id == username) return;
+		const data = message.message;
+		switch (data.type) {
+			case 'update':
+				// console.log('update', message.client_id, base64ToUint8Array(data.data));
+				doc.import(base64ToUint8Array(data.data));
+				break;
+			case 'awareness':
+				// console.log('awareness', message.client_id, base64ToUint8Array(data.data));
+				awareness.apply(base64ToUint8Array(data.data));
+				break;
+			default:
+				break;
+		}
+	}
 
-      ws.addEventListener("close", () => {
-          isConnected = false;
-          console.log("WebSocket disconnected");
-      });
+	onMount(async () => {
+		const ws = new WebSocket(
+			new URL(`project/${project_id}/ws/crdt?access_token=${access_token}`, BACKEND_ADDR_WEBSOCKET)
+		);
 
-      ws.addEventListener("message", (event) => {
-          const msg = JSON.parse(event.data);
-            
-          switch (msg.type) {
-              case 'batch':
-                  for (const message of msg.messages) 
-                      handleWsMessage(message);
-                  break;
-              case undefined:
-                  handleWsMessage(msg);
-                  break;
-              default:
-                  break;
-          }
-      });
+		ws.addEventListener('open', async () => {
+			isConnected = true;
+			console.log('WebSocket connected');
+		});
 
-      doc.subscribeLocalUpdates((update) => {
-          if (ws.readyState === WebSocket.OPEN) {
-              ws.send(JSON.stringify({
-                  'type': 'update',
-                  'data': uint8ArrayToBase64(update)
-              }));
-          }
-      });
+		ws.addEventListener('close', () => {
+			isConnected = false;
+			console.log('WebSocket disconnected');
+		});
 
-      awareness.addListener((updates, origin) => {
-          if (ws.readyState === WebSocket.OPEN) {
-              const changes = updates.added
-                  .concat(updates.removed)
-                  .concat(updates.updated);
-              if (origin === "local") {
-                  ws.send(JSON.stringify({
-                      'type': 'awareness',
-                      'data': uint8ArrayToBase64(awareness.encode(changes))
-                  }));
-              }
-          }
-      });
+		ws.addEventListener('message', (event) => {
+			const msg = JSON.parse(event.data);
 
-      // basic extensions
-      const extensions = [
-          basicSetup,
-          markdown(), 
-          lineNumbers({}),
-          EditorView.lineWrapping,
-          EditorView.theme({
-              "&": { height: "100%", fontSize: "18px" },
-          }),
-          EditorView.updateListener.of((update) => {
-              if (update.docChanged) {
-                  value = update.state.doc.toString();
-              }
-          }),
-          LoroExtensions(
-              doc,
-              {
-                  user: { name: username, colorClassName: "bg-orange-500 text-orange-500" },
-                  awareness: awareness,
-              },
-              undoManager,
-          ),
-      ];
+			switch (msg.type) {
+				case 'batch':
+					for (const message of msg.messages) handleWsMessage(message);
+					break;
+				case undefined:
+					handleWsMessage(msg);
+					break;
+				default:
+					break;
+			}
+		});
 
-      if (permission === UserPermissionEnum.Viewer) { // 如果用户只有查看权限则配置编辑器为只读
-          extensions.push(
-              EditorState.readOnly.of(true),
-              EditorView.editable.of(false),
-              EditorView.contentAttributes.of({tabindex: "0"})
-          );
-      }
+		doc.subscribeLocalUpdates((update) => {
+			if (ws.readyState === WebSocket.OPEN) {
+				ws.send(
+					JSON.stringify({
+						type: 'update',
+						data: uint8ArrayToBase64(update)
+					})
+				);
+			}
+		});
 
-      const startState = EditorState.create({
-          doc: value,
-          extensions: extensions
-      });
+		awareness.addListener((updates, origin) => {
+			if (ws.readyState === WebSocket.OPEN) {
+				const changes = updates.added.concat(updates.removed).concat(updates.updated);
+				if (origin === 'local') {
+					ws.send(
+						JSON.stringify({
+							type: 'awareness',
+							data: uint8ArrayToBase64(awareness.encode(changes))
+						})
+					);
+				}
+			}
+		});
 
-      editorView = new EditorView({
-          state: startState,
-          parent: editorAreaElem
-      });
-  });
+		// basic extensions
+		const extensions = [
+			basicSetup,
+			markdown(),
+			lineNumbers({}),
+			EditorView.lineWrapping,
+			EditorView.theme({
+				'&': { height: '100%', fontSize: '18px' }
+			}),
+			EditorView.updateListener.of((update) => {
+				if (update.docChanged) {
+					value = update.state.doc.toString();
+				}
+			}),
+			LoroExtensions(
+				doc,
+				{
+					user: { name: username, colorClassName: 'bg-orange-500 text-orange-500' },
+					awareness: awareness
+				},
+				undoManager
+			)
+		];
 
-$effect(() => {
-    console.log('Editor value updated:', value);
-    if (editorView && !isExternalUpdate) {
-        isExternalUpdate = true;
-        const currentValue = editorView!.state.doc.toString();
-        if (value !== currentValue) {
-            editorView.dispatch({
-                changes: { from: 0, to: currentValue.length, insert: value }
-            });
-        }
-        isExternalUpdate = false;
-    }
-});
+		if (permission === UserPermissionEnum.Viewer) {
+			// 如果用户只有查看权限则配置编辑器为只读
+			extensions.push(
+				EditorState.readOnly.of(true),
+				EditorView.editable.of(false),
+				EditorView.contentAttributes.of({ tabindex: '0' })
+			);
+		}
+
+		const startState = EditorState.create({
+			doc: value,
+			extensions: extensions
+		});
+
+		editorView = new EditorView({
+			state: startState,
+			parent: editorAreaElem
+		});
+
+		$: if (editorView && value !== editorView.state.doc.toString()) {
+			editorView.dispatch({
+				changes: { from: 0, to: editorView.state.doc.length, insert: value }
+			});
+		}
+	});
 </script>
 
 <div bind:this={editorAreaElem} class="editor size-full"></div>
