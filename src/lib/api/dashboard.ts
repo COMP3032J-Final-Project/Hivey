@@ -40,10 +40,13 @@ export const updateProject = async (project: { id: string; name: string }): Prom
         name: project.name
     });
     
-    if (response.data.code === 200 || response.data.code === 201) {
+    // 根据后端API，当成功更新时返回code=200，但可能不包含data
+    if (response.data.code === 200) {
+        // 如果有返回data则使用后端返回的数据
         if (response.data.data) {
             return response.data.data;
         }
+        // 否则构建一个项目对象返回
         return {
             id: project.id,
             name: project.name,
@@ -59,8 +62,9 @@ export const updateProject = async (project: { id: string; name: string }): Prom
 export const deleteProject = async (id: string): Promise<void> => {
     const response = await axiosClient.delete<APIResponse<void>>(`/project/${id}`);
     if (response.data.code !== 200) {
-        throw new Error(response.data.msg);
+        throw new Error(response.data.msg || 'Failed to delete project');
     }
+    return;
 };
 
 export const deleteProjects = async (projectIds: string[]): Promise<void> => {
@@ -68,6 +72,7 @@ export const deleteProjects = async (projectIds: string[]): Promise<void> => {
         data: { project_ids: projectIds }
     });
     if (response.data.code !== 200) {
-        throw new Error(response.data.msg);
+        throw new Error(response.data.msg || 'Failed to delete projects');
     }
+    return;
 };
