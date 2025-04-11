@@ -8,7 +8,7 @@
 	import Editor from '$lib/components/editor.svelte';
 	import Previewer from '$lib/components/previewer.svelte';
 	import InviteButton from './components/button/invite-button.svelte';
-	import Exportbutton from './components/button/export-button.svelte';
+	import ExportButton from './components/button/export-button.svelte';
 	import MembersDialog from './components/members-dialog.svelte';
 	import Bold from '@lucide/svelte/icons/bold';
 	import Italic from '@lucide/svelte/icons/italic';
@@ -54,11 +54,25 @@
 				id: project.id,
 				name: projectName
 			});
-			project.name = updatedProject.name;
-			success('Project name modified success');
+			
+			// 更新本地项目名称
+			project.name = projectName;
+			success('Project name updated successfully');
+            
+			// 通过WebSocket广播项目名称更新
+			if (wsClient) {
+				try {
+					wsClient.updateProjectName(projectName);
+				} catch (wsError) {
+					console.error('WebSocket update failed but API succeeded:', wsError);
+					// WebSocket错误不影响API成功，继续返回成功
+				}
+			}
+            
 			return projectName;
 		} catch (error) {
-			failure('Project name modified failed');
+			console.error('Project update error:', error);
+			failure('Project name update failed');
 			return null;
 		}
 	}
@@ -199,7 +213,7 @@
 							<p class="flex h-10 items-center justify-center p-3">Preview</p>
 						</div>
 						<div class="flex">
-							<Exportbutton />
+							<ExportButton />
 						</div>
 					</div>
 				</div>

@@ -26,15 +26,15 @@ export class WebSocketClient {
     // chat
     public chatMessageHandler: ((message: ChatMessage) => void) | null = null;
     // TODO project
-    public projectUpdateHandler: ((data: any) => void) | null = null;
-    public projectDeletedHandler: ((data: any) => void) | null = null;
+    public projectUpdateHandler: ((data: { name: string }) => void) | null = null;
+    public projectDeletedHandler: ((data: { id: string }) => void) | null = null;
     // TODO member
     public memberJoinedHandler: ((username: string) => void) | null = null;
     public memberUpdateHandler: ((data: any) => void) | null = null;
 
     constructor(
-        projectId: string, 
-        currentUser: User, 
+        projectId: string,
+        currentUser: User,
         userAuth: UserAuth
     ) {
         this.projectId = projectId;
@@ -108,7 +108,7 @@ export class WebSocketClient {
                     break;
             }
         } catch (error) {
-            console.error('Failed to parse message:', error, 'original data:', event.data);
+            console.error('Failed to parse WebSocket message:', error, 'original data:', event.data);
         }
     }
 
@@ -143,15 +143,18 @@ export class WebSocketClient {
 
     // 处理项目相关事件
     private handleProjectEvent(response: WSResponse): void {
+        console.log('Handling project event:', response.action, response.payload);
+        
         switch (response.action) {
-            case "updated_name":
+            case "update_name":
                 if (!this.projectUpdateHandler) {
                     console.warn("Project update handler not set");
                     return;
                 }
+                console.log('Calling project update handler with payload:', response.payload);
                 this.projectUpdateHandler(response.payload);
                 break;
-            case "deleted_project":
+            case "delete_project":
                 if (!this.projectDeletedHandler) {
                     console.warn("Project deleted handler not set");
                     return;
@@ -174,7 +177,7 @@ export class WebSocketClient {
                     console.warn("Member joined handler not set");
                     return;
                 }
-                const username = response.payload.username || "Unknown";
+                const username = response.payload?.username || "Unknown";
                 this.memberJoinedHandler(username);
                 break;
             case "left":
@@ -286,10 +289,43 @@ export class WebSocketClient {
     }
 
     // EventScope: project
-    // TODO: project: 更新项目名称
     // project: 处理项目删除事件的方法
-    public onProjectDeleted(callback: (data: any) => void): void {
+    public onProjectDeleted(callback: (data: { id: string }) => void): void {
         this.projectDeletedHandler = callback;
+    }
+
+    // project: 处理项目更新事件的方法
+    public onProjectUpdate(callback: (data: { name: string }) => void): void {
+        this.projectUpdateHandler = callback;
+    }
+
+    // project: 更新项目名称的方法
+    public updateProjectName(newName: string): void {
+        if (!this.socket) {
+            console.error('WebSocket not initialized');
+            return;
+        }
+        
+        if (this.socket.readyState !== WebSocketState.OPEN) {
+            console.error('WebSocket not open, current state:', this.socket.readyState);
+            return;
+        }
+        
+        try {
+            const request: WSRequest = {
+                scope: "project",
+                action: "update_name",
+                payload: {
+                    name: newName
+                }
+            };
+            console.log('Sending project name update via WebSocket:', request);
+            this.socket.send(JSON.stringify(request));
+            console.log('Project name update sent successfully');
+        } catch (error) {
+            console.error('Failed to update project name:', error);
+            throw error;
+        }
     }
 
 }

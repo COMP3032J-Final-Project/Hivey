@@ -1,6 +1,7 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
 import type { Project, CreateProjectForm, ProjectsDeleteForm } from '$lib/types/dashboard';
+import { ProjectType } from '$lib/types/dashboard';
 
 
 export const getUserProjects = async (): Promise<Project[]> => {
@@ -38,10 +39,21 @@ export const updateProject = async (project: { id: string; name: string }): Prom
     const response = await axiosClient.put<APIResponse<Project>>(`/project/${project.id}`, {
         name: project.name
     });
-    if (!response.data.data) {
-        throw new Error(response.data.msg);
+    
+    if (response.data.code === 200 || response.data.code === 201) {
+        if (response.data.data) {
+            return response.data.data;
+        }
+        return {
+            id: project.id,
+            name: project.name,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            type: ProjectType.Project
+        };
     }
-    return response.data.data;
+    
+    throw new Error(response.data.msg || 'Failed to update project');
 };
 
 export const deleteProject = async (id: string): Promise<void> => {

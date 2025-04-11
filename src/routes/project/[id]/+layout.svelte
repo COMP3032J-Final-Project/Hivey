@@ -19,12 +19,14 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { getProjectMember } from '$lib/api/project';
 	import { notification } from '$lib/components/ui/toast';
+	import type { Project } from '$lib/types/dashboard';
 
 	let { data, children } = $props<{
 		data: {
 			filesStruct: TreeNode[];
 			currentUser: User;
 			projectId: string;
+			project: Project;
 		};
 		children: any;
 	}>();
@@ -32,6 +34,7 @@
 	let showChat = $state(false);
 	let showHistory = $state(false);
 	let wsClient = $state<WebSocketClient | null>(null);
+	let project = $state<Project>(data.project);
 
 	const currentFiles = writable<FileType[]>(data.files);
 	const currentFilesStruct = writable<TreeNode[]>(data.filesStruct);
@@ -49,16 +52,28 @@
 				userSession
 			);
 			wsClient.connect(); // 连接到服务器
+			
+			console.log('WebSocket connection state:', wsClient.getState());
+			
 			wsClient.memberJoinedHandler = (username: string) => {
-        if (username !== currentUser.username) {
-            notification(`${username} entered the project.`);
-          }
-      }
+				if (username !== currentUser.username) {
+					notification(`${username} entered the project.`);
+				}
+			}
 
 			// 添加项目删除事件的处理
 			wsClient.onProjectDeleted((data) => {
 				console.log('Project deleted:', data);
 				goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
+			});
+			
+			// 添加项目名称更新事件的处理
+			wsClient.onProjectUpdate((data) => {
+				console.log('Project name updated event received:', data);
+				if (data.name) {
+					project.name = data.name;
+					notification(`Project name updated to: ${data.name}`);
+				}
 			});
 		} catch (error) {
 			console.error('Project WebSocket Client init failed:', error);
