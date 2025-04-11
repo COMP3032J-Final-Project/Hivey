@@ -20,6 +20,7 @@
 	import { getProjectMember } from '$lib/api/project';
 	import { notification } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
+  import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
 
 	let { data, children } = $props<{
 		data: {
@@ -43,6 +44,15 @@
 	const currentFileType = writable('Format');
 	const docContent = writable('');
 	const currentFilePath = writable('');
+
+  let sidebarResizeOffset = $state({x: 0, y: 0});
+  let sidebarWidth = $derived.by(() => {
+      const minWidth = 250;
+      const maxWidth = 600;
+      let initialWidth = 300;
+      let curWidth = initialWidth + sidebarResizeOffset.x;
+      return curWidth > minWidth ?  (curWidth < maxWidth ? curWidth : maxWidth) : minWidth;
+  });
 
   async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
 		try {
@@ -160,7 +170,7 @@
 	});
 </script>
 
-<Sidebar.Provider>
+<Sidebar.Provider style="--sidebar-width: {String(sidebarWidth) + 'px'};">
 	<Sidebar.Root collapsible="offcanvas" variant="inset">
 		<Sidebar.Header>
 			<div class="flex pb-1">
@@ -198,6 +208,15 @@
 	</Sidebar.Root>
 
 	<Sidebar.Inset>
-		{@render children({ wsClient })}
+    <div class="size-full flex relative">
+      <DragOffsetCalculator
+        class="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize z-10"
+        bind:offset={sidebarResizeOffset}
+      />
+      <div class="flex-grow size-full overflow-auto">
+        {@render children({ wsClient })}
+      </div>
+    </div>
+
 	</Sidebar.Inset>
 </Sidebar.Provider>
