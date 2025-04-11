@@ -17,7 +17,8 @@
 	import { WebSocketClient } from '$lib/api/websocket';
 	import { getUserSession } from '$lib/auth';
 	import { onMount, onDestroy } from 'svelte';
-	import { addChatMessage } from './store.svelte';
+	import { getProjectMember } from '$lib/api/project';
+	import { notification } from '$lib/components/ui/toast';
 
 	let { data, children } = $props<{
 		data: {
@@ -48,12 +49,16 @@
 				userSession
 			);
 			wsClient.connect(); // 连接到服务器
+			wsClient.memberJoinedHandler = (username: string) => {
+        if (username !== currentUser.username) {
+            notification(`${username} entered the project.`);
+          }
+      }
 
 			// 添加项目删除事件的处理
 			wsClient.onProjectDeleted((data) => {
-				console.log('项目已被删除:', data);
-				// 重定向到项目列表页面
-				goto('/dashboard/repository/projects/all');
+				console.log('Project deleted:', data);
+				goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
 			});
 		} catch (error) {
 			console.error('Project WebSocket Client init failed:', error);

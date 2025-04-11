@@ -11,7 +11,6 @@ import { buildFileTree } from '$lib/utils';
 import { getProjectById } from '$lib/api/dashboard';
 import { UserPermissionEnum } from '$lib/types/auth';
 
-
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
 export const prerender = false; // 禁用预渲染
 

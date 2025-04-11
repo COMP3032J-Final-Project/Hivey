@@ -29,6 +29,7 @@ export class WebSocketClient {
     public projectUpdateHandler: ((data: any) => void) | null = null;
     public projectDeletedHandler: ((data: any) => void) | null = null;
     // TODO member
+    public memberJoinedHandler: ((username: string) => void) | null = null;
     public memberUpdateHandler: ((data: any) => void) | null = null;
 
     constructor(
@@ -83,7 +84,7 @@ export class WebSocketClient {
             const response = JSON.parse(event.data) as WSResponse;
             
             // 使用switch-case结构处理不同的event_scope
-            switch (response.event_scope) {
+            switch (response.scope) {
                 case "chat":
                     this.handleChatEvent(response);
                     break;
@@ -96,11 +97,14 @@ export class WebSocketClient {
                 case "file":
                     this.handleFileEvent(response);
                     break;
+                case "crdt":
+                    this.handleCRDTEvent(response);
+                    break;
                 case "error":
                     this.handleErrorEvent(response);
                     break;
                 default:
-                    console.warn("Unknown event scope:", response.event_scope);
+                    console.warn("Unknown event scope:", response.scope);
                     break;
             }
         } catch (error) {
@@ -110,13 +114,13 @@ export class WebSocketClient {
 
     // 处理聊天相关事件
     private handleChatEvent(response: WSResponse): void {
-        switch (response.event_type) {
-            case "message_sent":
+        switch (response.action) {
+            case "send_message":
                 if (!this.chatMessageHandler) {
                     console.warn("Chat message handler not set");
                     return;
                 }
-                const messageData = response.data;
+                const messageData = response.payload;
                 const chatMessage: ChatMessage = {
                     message_type: "text", // 假设默认消息类型为text，需要根据实际情况调整
                     user: messageData.user,
@@ -132,85 +136,101 @@ export class WebSocketClient {
                 // TODO: 处理消息撤回事件
                 break;
             default:
-                console.warn("Unknown chat event type:", response.event_type);
+                console.warn("Unknown chat event type:", response.action);
                 break;
         }
     }
 
     // 处理项目相关事件
     private handleProjectEvent(response: WSResponse): void {
-        switch (response.event_type) {
-            case "project_updated":
-                // TODO: 处理项目更新事件
+        switch (response.action) {
+            case "updated_name":
                 if (!this.projectUpdateHandler) {
                     console.warn("Project update handler not set");
                     return;
                 }
-                this.projectUpdateHandler(response.data);
+                this.projectUpdateHandler(response.payload);
                 break;
-            case "project_deleted":
+            case "deleted_project":
                 if (!this.projectDeletedHandler) {
                     console.warn("Project deleted handler not set");
                     return;
                 }
-                this.projectDeletedHandler(response.data);
+                this.projectDeletedHandler(response.payload);
                 // 项目被删除后自动断开连接
                 this.disconnect();
                 break;
             default:
-                console.warn("Unknown project event type:", response.event_type);
+                console.warn("Unknown project event type:", response.action);
                 break;
         }
     }
 
     // 处理成员相关事件
     private handleMemberEvent(response: WSResponse): void {
-        switch (response.event_type) {
-            case "member_added":
+        switch (response.action) {
+            case "joined":
+                if (!this.memberJoinedHandler) {
+                    console.warn("Member joined handler not set");
+                    return;
+                }
+                const username = response.payload.username || "Unknown";
+                this.memberJoinedHandler(username);
+                break;
+            case "left":
+                // TODO: 处理离开项目事件
+                break;
+            case "add_member":
                 // TODO: 处理成员添加事件
                 break;
-            case "member_updated":
+            case "update_member":
                 // TODO: 处理成员更新事件
                 break;
-            case "member_removed":
+            case "remove_member":
                 // TODO: 处理成员移除事件
                 break;
-            case "ownership_transferred":
+            case "transfer_ownership":
                 // TODO: 处理所有权转移事件
                 break;
-            case "member_status_changed":
-                // TODO: 处理成员状态变更事件
-                break;
             default:
-                console.warn("Unknown member event type:", response.event_type);
+                console.warn("Unknown member event type:", response.action);
                 break;
         }
     }
 
     // 处理文件相关事件
     private handleFileEvent(response: WSResponse): void {
-        switch (response.event_type) {
-            case "file_added":
+        switch (response.action) {
+            case "added":
                 // TODO: 处理文件添加事件
                 break;
-            case "file_renamed":
+            case "renamed":
                 // TODO: 处理文件重命名事件
                 break;
-            case "file_moved":
+            case "moved":
                 // TODO: 处理文件移动事件
                 break;
-            case "file_deleted":
+            case "deleted":
                 // TODO: 处理文件删除事件
                 break;
             default:
-                console.warn("Unknown file event type:", response.event_type);
+                console.warn("Unknown file event type:", response.action);
+                break;
+        }
+    }
+
+    // 处理协同编辑相关事件
+    private handleCRDTEvent(response: WSResponse): void {
+        switch (response.action) {
+            case "broadcast":
+                // TODO: 处理协同编辑广播事件
                 break;
         }
     }
 
     // 处理错误相关事件
     private handleErrorEvent(response: WSResponse): void {
-        console.error("Server error:", response.data);
+        console.error("Server error:", response.payload);
         // 可以根据具体错误类型做不同处理
     }
 
@@ -252,9 +272,9 @@ export class WebSocketClient {
         try {
             // 构建符合WSRequest格式的请求
             const request: WSRequest = {
-                event_scope: "chat",
-                event_type: "message_sent",
-                data: {
+                scope: "chat",
+                action: "send_message",
+                payload: {
                     message_type: "text",
                     content: content
                 }

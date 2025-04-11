@@ -3,12 +3,12 @@
 	import { Send } from 'lucide-svelte';
 	import ChatMessage from './chat-message.svelte'
   import { mpp, mpa } from '$lib/trans';
-	import { User, UserAuth } from '$lib/types/auth';
+	import { User } from '$lib/types/auth';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { getHistoryChatMessages } from '$lib/api/project';
   import { onMount } from 'svelte';
   import { failure } from '$lib/components/ui/toast';
-  import { getUserSession, isSessionExpired } from '$lib/auth';
+  import { isSessionExpired } from '$lib/auth';
   import { ArrowUp } from 'lucide-svelte';
   import { WebSocketClient } from '$lib/api/websocket';
   import { goto } from '$app/navigation';
@@ -40,7 +40,6 @@
         addChatMessage(message);
       }
     }
-    
     await loadHistoryMessages(); // 加载历史消息
   });
  
