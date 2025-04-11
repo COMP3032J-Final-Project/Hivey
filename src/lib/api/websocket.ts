@@ -25,8 +25,9 @@ export class WebSocketClient {
 
     // chat
     public chatMessageHandler: ((message: ChatMessage) => void) | null = null;
-    // TOOD project
+    // TODO project
     public projectUpdateHandler: ((data: any) => void) | null = null;
+    public projectDeletedHandler: ((data: any) => void) | null = null;
     // TODO member
     public memberUpdateHandler: ((data: any) => void) | null = null;
 
@@ -148,7 +149,13 @@ export class WebSocketClient {
                 this.projectUpdateHandler(response.data);
                 break;
             case "project_deleted":
-                // TODO: 处理项目删除事件
+                if (!this.projectDeletedHandler) {
+                    console.warn("Project deleted handler not set");
+                    return;
+                }
+                this.projectDeletedHandler(response.data);
+                // 项目被删除后自动断开连接
+                this.disconnect();
                 break;
             default:
                 console.warn("Unknown project event type:", response.event_type);
@@ -260,6 +267,10 @@ export class WebSocketClient {
 
     // EventScope: project
     // TODO: project: 更新项目名称
+    // project: 处理项目删除事件的方法
+    public onProjectDeleted(callback: (data: any) => void): void {
+        this.projectDeletedHandler = callback;
+    }
 
 }
 

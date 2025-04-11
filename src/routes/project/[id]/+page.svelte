@@ -17,7 +17,7 @@
 	import { success, failure } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
 	import type { PageProps } from './$types';
-	import  {type User, UserPermissionEnum } from '$lib/types/auth';
+	import { type User, UserPermissionEnum } from '$lib/types/auth';
 	import { getContext, onMount } from 'svelte';
 	import type { EditorFileInfo } from '$lib/types/editor';
 	import EditableLabel from '$lib/components/ui/editable-label';
@@ -68,38 +68,37 @@
 	let isBold = $state(false);
 
 	function checkSelection() {
-	  if (editorRef) {
-		isBold = editorRef.hasSurroundingSymbols('**', '**');
-		value = [];
-		if (isBold) {
-		  value.push('bold');
+		if (editorRef) {
+			isBold = editorRef.hasSurroundingSymbols('**', '**');
+			value = [];
+			if (isBold) {
+				value.push('bold');
+			}
 		}
-	  }
 	}
 
 	function wrapSelection(value: string) {
-	  if (editorRef) {
-		if (value === 'bold') {
-		  if (isBold) {
-			editorRef.unwrapSelection('**', '**');
-			isBold = false;
-			console.log('Unwrap selection');
-		  }
-		  else{
-		  	editorRef.wrapSelection('**', '**');
-			isBold = true;
-		  }
+		if (editorRef) {
+			if (value === 'bold') {
+				if (isBold) {
+					editorRef.unwrapSelection('**', '**');
+					isBold = false;
+					console.log('Unwrap selection');
+				} else {
+					editorRef.wrapSelection('**', '**');
+					isBold = true;
+				}
+			}
 		}
-	  }
 	}
 
 	onMount(() => {
-      const editorDom = document.querySelector('.editor');
-      if (editorDom) {
-	    editorDom.addEventListener('mouseup', checkSelection);
-	    editorDom.addEventListener('selectionchange', checkSelection);
-      }
-  });
+		const editorDom = document.querySelector('.editor');
+		if (editorDom) {
+			editorDom.addEventListener('mouseup', checkSelection);
+			editorDom.addEventListener('selectionchange', checkSelection);
+		}
+	});
 </script>
 
 <div class="flex size-full flex-col">
@@ -124,8 +123,8 @@
 		</div>
 
 		<div class="hidden items-center gap-4 md:flex">
-			<button 
-				class="cursor-pointer" 
+			<button
+				class="cursor-pointer"
 				onclick={() => (membersDialogOpen = true)}
 				onkeydown={(e) => e.key === 'Enter' && (membersDialogOpen = true)}
 			>
@@ -143,12 +142,17 @@
 					{/if}
 				</AvatarGroup.Root>
 			</button>
-      
+
 			<InviteButton {currentUser} projectId={project.id} />
 		</div>
 	</header>
 
-  <MembersDialog currentUser={currentUser} projectId={project.id} open={membersDialogOpen} onOpenChange={(open) => (membersDialogOpen = open)} />
+	<MembersDialog
+		{currentUser}
+		projectId={project.id}
+		open={membersDialogOpen}
+		onOpenChange={(open) => (membersDialogOpen = open)}
+	/>
 
 	<Resizable.PaneGroup direction="horizontal" autoSaveId="project">
 		<Resizable.Pane defaultSize={50}>
@@ -156,7 +160,11 @@
 				<div class="flex items-center space-x-2 border-b p-1">
 					<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
 					<ToggleGroup.Root type="multiple" bind:value>
-						<ToggleGroup.Item value="bold" aria-label="Toggle bold" onclick={() => wrapSelection('bold')}>
+						<ToggleGroup.Item
+							value="bold"
+							aria-label="Toggle bold"
+							onclick={() => wrapSelection('bold')}
+						>
 							<Bold class="size-4 p-0" />
 						</ToggleGroup.Item>
 						<ToggleGroup.Item value="italic" aria-label="Toggle italic">
@@ -175,7 +183,7 @@
 						project_id={data.project.id}
 						access_token={data.authInfo.access_token}
 						permission={data.currentUser.permission ?? UserPermissionEnum.Viewer}
-						wsClient={wsClient}
+						{wsClient}
 					/>
 				</div>
 			</div>

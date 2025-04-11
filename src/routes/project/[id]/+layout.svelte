@@ -48,6 +48,13 @@
 				userSession
 			);
 			wsClient.connect(); // 连接到服务器
+
+			// 添加项目删除事件的处理
+			wsClient.onProjectDeleted((data) => {
+				console.log('项目已被删除:', data);
+				// 重定向到项目列表页面
+				goto('/dashboard/repository/projects/all');
+			});
 		} catch (error) {
 			console.error('Project WebSocket Client init failed:', error);
 		}
