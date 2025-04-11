@@ -31,6 +31,7 @@ export class WebSocketClient {
     // TODO member
     public memberJoinedHandler: ((username: string) => void) | null = null;
     public memberUpdateHandler: ((data: any) => void) | null = null;
+    public memberLeftHandler: ((username: string) => void) | null = null;
 
     constructor(
         projectId: string,
@@ -62,29 +63,106 @@ export class WebSocketClient {
     // 关闭WebSocket连接
     public disconnect(): void {
         if (this.socket) {
-            this.socket.close();
-            this.socket = null;
+            try {
+                if (this.socket.readyState === WebSocketState.OPEN) {
+                    // 发送用户离开的消息
+                    try {
+                        const leaveMessage: WSRequest = {
+                            scope: "member",
+                            action: "left",
+                            payload: {
+                                username: this.currentUser.username,
+                                email: this.currentUser.email
+                            }
+                        };
+                        this.socket.send(JSON.stringify(leaveMessage));
+                        console.log('Sent leave message');
+                    } catch (error) {
+                        console.error('Failed to send leave message:', error);
+                    }
+                    
+                    this.socket.close();
+                } else if (this.socket.readyState === WebSocketState.CONNECTING) {
+                    this.socket.close();
+                }
+            } catch (error) {
+                console.error('Error closing WebSocket connection:', error);
+            } finally {
+                this.socket = null;
+            }
         }
+        
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
         }
+        
+        console.log('WebSocket disconnected');
     }
 
     // 处理连接打开事件
     private handleOpen(event: Event): void {
         console.log('Project WebSocket connected');
         this.reconnectAttempts = 0;
+        
+        // 发送用户加入项目的消息
+        if (this.socket && this.socket.readyState === WebSocketState.OPEN) {
+            try {
+                // 发送加入消息，通知其他用户
+                const joinMessage: WSRequest = {
+                    scope: "member",
+                    action: "joined",
+                    payload: {
+                        username: this.currentUser.username,
+                        email: this.currentUser.email,
+                        avatar: this.currentUser.avatar
+                    }
+                };
+                this.socket.send(JSON.stringify(joinMessage));
+                console.log('Sent join message');
+            } catch (error) {
+                console.error('Failed to send join message:', error);
+            }
+        }
     }
 
     // 处理WebSocket的消息事件
     private handleMessage(event: MessageEvent): void {
         try {
             // 解析响应数据为WSResponse格式
-            const response = JSON.parse(event.data) as WSResponse;
+            const response = JSON.parse(event.data);
+            
+            // 调试日志
+            console.log('Received WebSocket message:', response);
+            
+            // 检查消息格式
+            if (!response || typeof response !== 'object') {
+                console.error('Invalid WebSocket message format:', response);
+                return;
+            }
+            
+            // 检查是否为服务器错误消息
+            if (response.error) {
+                console.error('Server error:', response.error);
+                return;
+            }
+            
+            // 尝试获取scope和action
+            const scope = response.scope;
+            const action = response.action;
+            
+            if (!scope) {
+                console.error('WebSocket message missing scope:', response);
+                return;
+            }
+            
+            if (!action) {
+                console.error('WebSocket message missing action:', response);
+                return;
+            }
             
             // 使用switch-case结构处理不同的event_scope
-            switch (response.scope) {
+            switch (scope) {
                 case "chat":
                     this.handleChatEvent(response);
                     break;
@@ -104,7 +182,7 @@ export class WebSocketClient {
                     this.handleErrorEvent(response);
                     break;
                 default:
-                    console.warn("Unknown event scope:", response.scope);
+                    console.warn("Unknown event scope:", scope);
                     break;
             }
         } catch (error) {
@@ -159,9 +237,17 @@ export class WebSocketClient {
                     console.warn("Project deleted handler not set");
                     return;
                 }
-                this.projectDeletedHandler(response.payload);
-                // 项目被删除后自动断开连接
-                this.disconnect();
+                try {
+                    // 根据后端的 payload 结构提取 project_id
+                    const projectId = response.payload?.project_id || this.projectId;
+                    console.log('Project deleted:', projectId);
+                    this.projectDeletedHandler({ id: projectId });
+                    
+                    // 项目被删除后自动断开连接，防止重连
+                    this.disconnect();
+                } catch (error) {
+                    console.error('Error handling project deletion:', error);
+                }
                 break;
             default:
                 console.warn("Unknown project event type:", response.action);
@@ -178,10 +264,17 @@ export class WebSocketClient {
                     return;
                 }
                 const username = response.payload?.username || "Unknown";
+                console.log(`Member joined: ${username}`);
                 this.memberJoinedHandler(username);
                 break;
             case "left":
-                // TODO: 处理离开项目事件
+                if (!this.memberLeftHandler) {
+                    console.warn("Member left handler not set");
+                    return;
+                }
+                const leftUsername = response.payload?.username || "Unknown";
+                console.log(`Member left: ${leftUsername}`);
+                this.memberLeftHandler(leftUsername);
                 break;
             case "add_member":
                 // TODO: 处理成员添加事件
@@ -279,10 +372,17 @@ export class WebSocketClient {
                 action: "send_message",
                 payload: {
                     message_type: "text",
-                    content: content
+                    content: content,
+                    user: {
+                        username: this.currentUser.username,
+                        email: this.currentUser.email,
+                        avatar: this.currentUser.avatar
+                    },
+                    timestamp: new Date().toISOString()
                 }
             };
-            this.socket.send(JSON.stringify(request)); // 以JSON格式发送请求
+            console.log('Sending chat message:', request);
+            this.socket.send(JSON.stringify(request));
         } catch (error) {
             console.error('Failed to send chat message:', error);
         }
@@ -299,6 +399,16 @@ export class WebSocketClient {
         this.projectUpdateHandler = callback;
     }
 
+    // member: 处理成员加入事件的方法
+    public onMemberJoined(callback: (username: string) => void): void {
+        this.memberJoinedHandler = callback;
+    }
+
+    // member: 处理成员离开事件的方法
+    public onMemberLeft(callback: (username: string) => void): void {
+        this.memberLeftHandler = callback;
+    }
+
     // project: 更新项目名称的方法
     public updateProjectName(newName: string): void {
         if (!this.socket) {
@@ -312,11 +422,13 @@ export class WebSocketClient {
         }
         
         try {
+            // 根据后端格式，更新请求结构
             const request: WSRequest = {
                 scope: "project",
                 action: "update_name",
                 payload: {
-                    name: newName
+                    name: newName,
+                    project_id: this.projectId
                 }
             };
             console.log('Sending project name update via WebSocket:', request);
