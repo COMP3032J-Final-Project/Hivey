@@ -10,5 +10,5 @@
 <div>
 	<Button variant="ghost" size="icon" onclick={() => exportPDF()}>
         <Download />
-    </Button>
+  </Button>
 </div>

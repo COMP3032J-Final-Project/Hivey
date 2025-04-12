@@ -5,10 +5,7 @@
 	import * as AvatarGroup from '$lib/components/ui/avatar-group';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
-	import Editor from '$lib/components/editor.svelte';
-	import Previewer from '$lib/components/previewer.svelte';
 	import InviteButton from './components/button/invite-button.svelte';
-	import ExportButton from './components/button/export-button.svelte';
 	import MembersDialog from './components/members-dialog.svelte';
 	import Bold from '@lucide/svelte/icons/bold';
 	import Italic from '@lucide/svelte/icons/italic';
@@ -23,6 +20,9 @@
 	import EditableLabel from '$lib/components/ui/editable-label';
 	import { members } from './store.svelte';
 	import type { WebSocketClient } from '$lib/api/websocket';
+  
+	import Editor from './components/editor.svelte';
+	import Previewer from './components/previewer.svelte';
 
 	let { data, wsClient }: PageProps & { wsClient?: WebSocketClient | null } = $props();
 
@@ -206,21 +206,7 @@
 		<Resizable.Handle />
 
 		<Resizable.Pane defaultSize={50}>
-			<div class="flex h-full flex-1 flex-col">
-				<div class="border-b p-1">
-					<div class="flex items-center justify-between">
-						<div class="flex">
-							<p class="flex h-10 items-center justify-center p-3">Preview</p>
-						</div>
-						<div class="flex">
-							<ExportButton />
-						</div>
-					</div>
-				</div>
-				<div class="flex-1 overflow-y-auto">
-					<Previewer fileType="markdown" content={docContent} />
-				</div>
-			</div>
+			<Previewer fileType="markdown" content={docContent} />
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>
