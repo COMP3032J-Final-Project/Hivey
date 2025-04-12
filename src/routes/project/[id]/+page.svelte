@@ -10,6 +10,7 @@
 	import Bold from '@lucide/svelte/icons/bold';
 	import Italic from '@lucide/svelte/icons/italic';
 	import Underline from '@lucide/svelte/icons/underline';
+	import { Command, ArrowBigUp } from 'lucide-svelte';
 	import { updateProject } from '$lib/api/dashboard';
 	import { success, failure } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
@@ -20,7 +21,7 @@
 	import EditableLabel from '$lib/components/ui/editable-label';
 	import { members } from './store.svelte';
 	import type { WebSocketClient } from '$lib/api/websocket';
-  
+
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
 
@@ -54,11 +55,11 @@
 				id: project.id,
 				name: projectName
 			});
-			
+
 			// 更新本地项目名称
 			project.name = projectName;
 			success('Project name updated successfully');
-            
+
 			// 通过WebSocket广播项目名称更新
 			if (wsClient) {
 				try {
@@ -68,7 +69,7 @@
 					// WebSocket错误不影响API成功，继续返回成功
 				}
 			}
-            
+
 			return projectName;
 		} catch (error) {
 			console.error('Project update error:', error);
@@ -106,6 +107,27 @@
 		}
 	}
 
+	// Menu action handlers
+	function handleUndo() {
+		if (editorRef) editorRef.undo();
+	}
+
+	function handleRedo() {
+		if (editorRef) editorRef.redo();
+	}
+
+	function handleCut() {
+		if (editorRef) editorRef.cutSelection();
+	}
+
+	function handleCopy() {
+		if (editorRef) editorRef.copySelection();
+	}
+
+	function handlePaste() {
+		if (editorRef) editorRef.pasteAtCursor();
+	}
+
 	onMount(() => {
 		const editorDom = document.querySelector('.editor');
 		if (editorDom) {
@@ -123,9 +145,60 @@
 				<Menubar.Menu>
 					<Menubar.Trigger>Edit</Menubar.Trigger>
 					<Menubar.Content>
-						<Menubar.Item>
-							Find & Replace
-							<Menubar.Shortcut>Ctrl+F</Menubar.Shortcut>
+						<Menubar.Item onclick={handleUndo}>
+							Undo
+							<Menubar.Shortcut class="flex items-center gap-1"
+								><Command class="size-4" />Z</Menubar.Shortcut
+							>
+						</Menubar.Item>
+						<Menubar.Item onclick={handleRedo}>
+							Redo
+							<Menubar.Shortcut class="flex items-center gap-1"
+								><Command class="size-4" /><ArrowBigUp class="size-4" />Z</Menubar.Shortcut
+							>
+						</Menubar.Item>
+						<Menubar.Separator />
+						<Menubar.Sub>
+							<Menubar.SubTrigger>Find & Replace</Menubar.SubTrigger>
+							<Menubar.SubContent class="w-48">
+								<Menubar.Item>
+									Find & Replace
+									<Menubar.Shortcut class="flex items-center gap-1"
+										><Command class="size-4" />F</Menubar.Shortcut
+									>
+								</Menubar.Item>
+								<Menubar.Item>
+									Find Next
+									<Menubar.Shortcut class="flex items-center gap-1"
+										><Command class="size-4" />G</Menubar.Shortcut
+									>
+								</Menubar.Item>
+								<Menubar.Item>
+									Find Previous
+									<Menubar.Shortcut class="flex items-center gap-1"
+										><Command class="size-4" /><ArrowBigUp class="size-4" />G</Menubar.Shortcut
+									>
+								</Menubar.Item>
+							</Menubar.SubContent>
+						</Menubar.Sub>
+						<Menubar.Separator />
+						<Menubar.Item onclick={handleCut}>
+							Cut
+							<Menubar.Shortcut class="flex items-center gap-1"
+								><Command class="size-4" />X</Menubar.Shortcut
+							>
+						</Menubar.Item>
+						<Menubar.Item onclick={handleCopy}>
+							Copy
+							<Menubar.Shortcut class="flex items-center gap-1"
+								><Command class="size-4" />C</Menubar.Shortcut
+							>
+						</Menubar.Item>
+						<Menubar.Item onclick={handlePaste}>
+							Paste
+							<Menubar.Shortcut class="flex items-center gap-1"
+								><Command class="size-4" />V</Menubar.Shortcut
+							>
 						</Menubar.Item>
 					</Menubar.Content>
 				</Menubar.Menu>

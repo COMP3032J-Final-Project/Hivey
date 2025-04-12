@@ -12,6 +12,7 @@
 	import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
 	import type { WebSocketClient } from '$lib/api/websocket';
+	import { search } from '@codemirror/search';
 
 	let {
 		value = $bindable(),
@@ -127,6 +128,51 @@
 		});
 	}
 
+	export function undo() {
+		if (!editorView) return;
+		undoManager.undo();
+	}
+
+	export function redo() {
+		if (!editorView) return;
+		undoManager.redo();
+	}
+
+	export function cutSelection() {
+		if (!editorView) return;
+		const { state } = editorView;
+		const { selection } = state;
+		if (selection.main.empty) return;
+
+		const text = state.sliceDoc(selection.main.from, selection.main.to);
+		navigator.clipboard.writeText(text).then(() => {
+			editorView.dispatch({
+				changes: { from: selection.main.from, to: selection.main.to, insert: '' }
+			});
+		});
+	}
+
+	export function copySelection() {
+		if (!editorView) return;
+		const { state } = editorView;
+		const { selection } = state;
+		if (selection.main.empty) return;
+
+		const text = state.sliceDoc(selection.main.from, selection.main.to);
+		navigator.clipboard.writeText(text);
+	}
+
+	export function pasteAtCursor() {
+		if (!editorView) return;
+		navigator.clipboard.readText().then((text) => {
+			const { state } = editorView;
+			const { selection } = state;
+			editorView.dispatch({
+				changes: { from: selection.main.from, to: selection.main.to, insert: text }
+			});
+		});
+	}
+
 	function handleWsMessage(message: Message) {
 		message = v.parse(Message, message);
 		if (message.action !== 'send_message' || message.client_id == username) return;
@@ -206,6 +252,7 @@
 			markdown(),
 			lineNumbers({}),
 			EditorView.lineWrapping,
+			search(),
 			EditorView.theme({
 				'&': { height: '100%', fontSize: '18px' }
 			}),
