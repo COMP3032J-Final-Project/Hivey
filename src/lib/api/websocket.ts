@@ -150,7 +150,6 @@ export class WebSocketClient {
                 console.error('WebSocket message missing scope:', response);
                 return;
             }
-            
             if (!action) {
                 console.error('WebSocket message missing action:', response);
                 return;
@@ -173,9 +172,6 @@ export class WebSocketClient {
                 case "crdt":
                     this.handleCRDTEvent(response);
                     break;
-                case "crdt":
-                    this.handleCRDTEvent(response);
-                    break;
                 case "error":
                     this.handleErrorEvent(response);
                     break;
@@ -192,13 +188,10 @@ export class WebSocketClient {
     private handleChatEvent(response: WSResponse): void {
         switch (response.action) {
             case "send_message":
-        switch (response.action) {
-            case "send_message":
                 if (!this.chatMessageHandler) {
                     console.warn("Chat message handler not set");
                     return;
                 }
-                const messageData = response.payload;
                 const messageData = response.payload;
                 const chatMessage: ChatMessage = {
                     message_type: "text", // 假设默认消息类型为text，需要根据实际情况调整
@@ -215,7 +208,6 @@ export class WebSocketClient {
                 // TODO: 处理消息撤回事件
                 break;
             default:
-                console.warn("Unknown chat event type:", response.action);
                 console.warn("Unknown chat event type:", response.action);
                 break;
         }
@@ -253,7 +245,6 @@ export class WebSocketClient {
                 break;
             default:
                 console.warn("Unknown project event type:", response.action);
-                console.warn("Unknown project event type:", response.action);
                 break;
         }
     }
@@ -283,19 +274,15 @@ export class WebSocketClient {
                 // TODO: 处理成员添加事件
                 break;
             case "update_member":
-            case "update_member":
                 // TODO: 处理成员更新事件
                 break;
-            case "remove_member":
             case "remove_member":
                 // TODO: 处理成员移除事件
                 break;
             case "transfer_ownership":
-            case "transfer_ownership":
                 // TODO: 处理所有权转移事件
                 break;
             default:
-                console.warn("Unknown member event type:", response.action);
                 console.warn("Unknown member event type:", response.action);
                 break;
         }
@@ -305,19 +292,14 @@ export class WebSocketClient {
     private handleFileEvent(response: WSResponse): void {
         switch (response.action) {
             case "added":
-        switch (response.action) {
-            case "added":
                 // TODO: 处理文件添加事件
                 break;
-            case "renamed":
             case "renamed":
                 // TODO: 处理文件重命名事件
                 break;
             case "moved":
-            case "moved":
                 // TODO: 处理文件移动事件
                 break;
-            case "deleted":
             case "deleted":
                 // TODO: 处理文件删除事件
                 break;
@@ -401,20 +383,15 @@ export class WebSocketClient {
                 scope: "chat",
                 action: "send_message",
                 payload: {
-                scope: "chat",
-                action: "send_message",
-                payload: {
                     message_type: "text",
                     content: content,
                     user: {
                         username: this.currentUser.username,
                         email: this.currentUser.email,
-                        avatar: this.currentUser.avatar
                     },
                     timestamp: new Date().toISOString()
                 }
             };
-            console.log('Sending chat message:', request);
             this.socket.send(JSON.stringify(request));
         } catch (error) {
             console.error('Failed to send chat message:', error);
@@ -437,9 +414,7 @@ export class WebSocketClient {
                     project_id: this.projectId
                 }
             };
-            console.log('Sending project name update via WebSocket:', request);
             this.socket.send(JSON.stringify(request));
-            console.log('Project name update sent successfully');
         } catch (error) {
             console.error('Failed to update project name:', error);
             throw error;
