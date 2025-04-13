@@ -20,7 +20,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { notification } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
-  import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
+    import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
 	import { getProjectMember } from '$lib/api/project';
 
 	let { data, children } = $props<{

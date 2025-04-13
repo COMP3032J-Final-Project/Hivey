@@ -118,144 +118,85 @@ export function buildFileTree(files: FileType[]): TreeNode[] {
     files.forEach(file => {
         fileMap.set(file.id, {
             ...file,
-            filetype: file.filetype as 'file' | 'folder',
-            children: file.filetype === 'folder' ? [] : null,
+            filetype: 'file',
+            children: null,
             project_id: file.project_id,
         });
     });
 
-    // Create a root object to hold top-level items
     interface TreeLevel { children: TreeNode[] }
     const root: TreeLevel = { children: [] };
     
-    // Helper function to get or create path segments
-    const getPathParts = (path: string): string[] => path ? path.split('/') : [];
+    // 辅助函数获取路径部分
+    const getPathParts = (path: string): string[] => path ? path.split('/').filter(part => part !== '') : [];
     
-    // First, add all folders to the tree structure
+    // 处理所有文件，构建文件夹结构
     fileMap.forEach((file) => {
-        if (file.filetype === 'folder') {
-            const pathParts = getPathParts(file.filepath);
-            let currentLevel: TreeLevel = root;
+        const pathParts = getPathParts(file.filepath);
+        let currentLevel: TreeLevel = root;
+        
+        // 遍历路径，创建必要的文件夹结构
+        for (let i = 0; i < pathParts.length; i++) {
+            const part = pathParts[i];
+            const isLastPart = i === pathParts.length - 1;
             
-            // Traverse or create the folder structure
-            for (const part of pathParts) {
-                let found = currentLevel.children.find(
-                    child => child.filename === part && child.filetype === 'folder'
-                );
-                
-                if (!found) {
-                    // Only create placeholder if no real folder exists
-                    found = {
-                        id: `placeholder-${part}`,
-                        filename: part,
-                        filepath: pathParts.slice(0, pathParts.indexOf(part)).join('/'),
-                        filetype: 'folder' as const,
-                        children: [],
-                        project_id: file.project_id,
-                    };
-                    currentLevel.children.push(found);
-                }
+            // 查找是否已存在这个文件夹
+            let found = currentLevel.children.find(
+                child => child.filename === part && child.filetype === 'folder'
+            );
+            
+            if (!found && !isLastPart) {
+                // 创建文件夹节点
+                found = {
+                    id: `folder-${file.filepath}-${i}`, // 生成唯一ID
+                    filename: part,
+                    filepath: pathParts.slice(0, i + 1).join('/'),
+                    filetype: 'folder',
+                    children: [],
+                    project_id: file.project_id,
+                };
+                currentLevel.children.push(found);
+            }
+            
+            if (found) {
                 currentLevel = found as TreeLevel;
             }
-            
-            // Check if folder already exists at this level
-            const existingFolder = currentLevel.children.find(
-                child => child.id === file.id
-            );
-            if (!existingFolder) {
-                currentLevel.children.push(file);
-            }
         }
-    });
-    
-    // Then, add all files to the tree structure
-    fileMap.forEach((file) => {
-        if (file.filetype === 'file') {
-            const pathParts = getPathParts(file.filepath);
-            let currentLevel: TreeLevel = root;
-            
-            // Traverse the folder structure
-            for (const part of pathParts) {
-                const found = currentLevel.children.find(
-                    child => child.filename === part && child.filetype === 'folder'
-                );
-                
-                if (!found) {
-                    // Shouldn't happen as folders were added first
-                    const placeholder = {
-                        id: `placeholder-${part}`,
-                        project_id: file.project_id,
-                        filename: part,
-                        filepath: pathParts.slice(0, pathParts.indexOf(part)).join('/'),
-                        filetype: 'folder' as const,
-                        children: []
-                    };
-                    currentLevel.children.push(placeholder);
-                    currentLevel = placeholder;
-                } else {
-                    currentLevel = found as TreeLevel;
-                }
-            }
-            
-            // Add the file to the appropriate level
-            currentLevel.children.push({
-                ...file,
-                filetype: 'file' as const,
-                children: null
-            });
-        }
-    });
-    
-    // Clean up placeholder folders by replacing them with real folders when found
-    function replacePlaceholders(node: TreeNode): void {
-        if (!node.children) return;
         
-        for (let i = 0; i < node.children.length; i++) {
-            const child = node.children[i];
-            if (child.id.startsWith('placeholder-')) {
-                // Look for a real folder with the same name
-                const realFolder = node.children.find(
-                    (c): c is TreeNode & { children: TreeNode[] } => 
-                        !c.id.startsWith('placeholder-') && 
-                        c.filename === child.filename && 
-                        c.filetype === 'folder'
-                );
-                
-                if (realFolder) {
-                    // Merge children from placeholder to real folder
-                    if (child.children) {
-                        realFolder.children.push(...child.children);
-                    }
-                    // Replace placeholder with real folder
-                    node.children[i] = realFolder;
-                    // Remove the duplicate real folder
-                    const realFolderIndex = node.children.indexOf(realFolder);
-                    if (realFolderIndex > i) {
-                        node.children.splice(realFolderIndex, 1);
-                    }
-                }
-            }
-            
-            // Recursively process children
-            if (node.children[i].children) {
-                replacePlaceholders(node.children[i]);
-            }
+        // 如果是最后一部分且不是文件夹（即文件本身），添加到当前层级
+        if (pathParts.length > 0) {
+            currentLevel.children.push(file);
+        } else {
+            // 如果没有路径，直接添加到根
+            root.children.push(file);
         }
-    }
+    });
     
-    root.children.forEach(replacePlaceholders);
-    
-    // Update filepaths to include 'root' prefix
-    function updatePaths(node: TreeNode, currentPath: string = ''): void {
-        node.filepath = currentPath;
+    // 清理可能的空文件夹（如果有需要）
+    function cleanEmptyFolders(node: TreeNode): boolean {
+        if (node.filetype === 'file') return false;
+        
         if (node.children) {
-            node.children.forEach(child => {
-                updatePaths(child, `${currentPath}/${child.filename}`);
+            // 过滤子节点，递归清理
+            node.children = node.children.filter(child => {
+                if (child.filetype === 'folder') {
+                    return cleanEmptyFolders(child);
+                }
+                return true; // 保留文件
             });
+            
+            // 如果文件夹为空，且不是根，则删除
+            return node.children.length > 0;
         }
+        
+        return false;
     }
     
-    root.children.forEach(child => updatePaths(child));
+    root.children.forEach(child => {
+        if (child.filetype === 'folder') {
+            cleanEmptyFolders(child);
+        }
+    });
     
     return root.children;
 }
