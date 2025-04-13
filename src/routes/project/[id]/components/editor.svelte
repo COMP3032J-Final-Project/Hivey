@@ -13,6 +13,7 @@
 	import { UserPermissionEnum } from '$lib/types/auth';
 	import type { WebSocketClient } from '$lib/api/websocket';
 	import { search } from '@codemirror/search';
+	import { getContext } from 'svelte';
 
 	let {
 		value = $bindable(),
@@ -23,7 +24,6 @@
 		// TODO handle situation at the first connecting, the access_token is expired and needed to be refershed
 		access_token,
 		permission,
-		wsClient
 	}: {
 		value: any;
         fileType: string;
@@ -31,9 +31,10 @@
 		project_id: string;
 		access_token: string;
 		permission: UserPermissionEnum;
-		wsClient?: WebSocketClient | null;
 	} = $props();
 
+  const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
+	let wsClient = $derived(getWsClient ? getWsClient() : null); // 获取当前的wsClient实例
 	let editorAreaElem: HTMLElement;
 	let isConnected = $state(false);
 	let editorView: EditorView;
@@ -193,102 +194,6 @@
 	}
 
 	onMount(async () => {
-		if (wsClient) {
-			// 为wsClinet设置crdtEventHandler的回调函数
-			wsClient.crdtEventHandler = (response: WSResponse) => {
-        try {
-          if (response.payload.type === 'update') {
-            // 处理文档更新
-            const updateData = base64ToUint8Array(response.payload.data);
-            doc.import(updateData);
-          } else if (response.payload.type === 'awareness') {
-            // 处理awareness更新
-            const awarenessData = base64ToUint8Array(response.payload.data);
-            awareness.apply(awarenessData);
-          }
-        } catch (error) {
-          console.error('Error handling CRDT event:', error);
-        }
-      }
-
-			isConnected = true; 
-
-			// 订阅文档更新
-			doc.subscribeLocalUpdates((update) => {
-				if (wsClient && isConnected) {
-					// 使用WebSocketClient发送CRDT更新
-					const updateData = uint8ArrayToBase64(update);
-					wsClient.sendCRDTUpdateMessage(updateData);
-				}
-			});
-			
-			// 订阅awareness更新
-			awareness.addListener((updates, origin) => {
-				if (isConnected && origin === 'local') {
-          // 使用WebSocketClient发送awareness更新
-					const changes = updates.added.concat(updates.removed).concat(updates.updated);
-					const awarenessData = uint8ArrayToBase64(awareness.encode(changes));
-					wsClient.sendAwarenessUpdateMessage(awarenessData);
-				}
-			});
-		} else {
-			// 如果没有传入WebSocketClient，使用旧的WebSocket连接（兼容性保留）
-			console.warn('No shared WebSocketClient provided, using direct WebSocket connection');
-			const ws = new WebSocket(
-				new URL(`project/${project_id}/ws/access_token=${access_token}`, BACKEND_ADDR_WEBSOCKET)
-			);
-
-			ws.addEventListener('open', async () => {
-				isConnected = true;
-				console.log('WebSocket connected');
-			});
-
-			ws.addEventListener('close', () => {
-				isConnected = false;
-				console.log('WebSocket disconnected');
-			});
-
-			ws.addEventListener('message', (event) => {
-				const msg = JSON.parse(event.data);
-
-				switch (msg.type) {
-					case 'batch':
-						for (const message of msg.messages) handleWsMessage(message);
-						break;
-					case undefined:
-						handleWsMessage(msg);
-						break;
-					default:
-						break;
-				}
-			});
-
-			doc.subscribeLocalUpdates((update) => {
-				if (ws.readyState === WebSocket.OPEN) {
-					ws.send(
-						JSON.stringify({
-							type: 'update',
-							data: uint8ArrayToBase64(update)
-						})
-					);
-				}
-			});
-
-			awareness.addListener((updates, origin) => {
-				if (ws.readyState === WebSocket.OPEN) {
-					const changes = updates.added.concat(updates.removed).concat(updates.updated);
-					if (origin === 'local') {
-						ws.send(
-							JSON.stringify({
-								type: 'awareness',
-								data: uint8ArrayToBase64(awareness.encode(changes))
-							})
-						);
-					}
-				}
-			});
-		}
-
 		// basic extensions
 		const extensions = [
 			basicSetup,
@@ -341,6 +246,49 @@
 			}
 		});
 	});
+
+  $effect(() => {
+    // 由于wsClient在+layout.svelte中的初始化是异步的, 因此需要使用$effect来确保wsClient在初始化后才进行回调函数设置
+    if (wsClient) {
+			// 为wsClinet设置crdtEventHandler的回调函数
+			wsClient.crdtEventHandler = (response: WSResponse) => {
+        try {
+          if (response.payload.type === 'update') {
+            // 处理文档更新
+            const updateData = base64ToUint8Array(response.payload.data);
+            doc.import(updateData);
+          } else if (response.payload.type === 'awareness') {
+            // 处理awareness更新
+            const awarenessData = base64ToUint8Array(response.payload.data);
+            awareness.apply(awarenessData);
+          }
+        } catch (error) {
+          console.error('Error handling CRDT event:', error);
+        }
+      }
+
+			isConnected = true; 
+
+			// 订阅文档更新
+			doc.subscribeLocalUpdates((update) => {
+				if (wsClient && isConnected) {
+					// 使用WebSocketClient发送CRDT更新
+					const updateData = uint8ArrayToBase64(update);
+					wsClient.sendCRDTUpdateMessage(updateData);
+				}
+			});
+			
+			// 订阅awareness更新
+			awareness.addListener((updates, origin) => {
+				if (isConnected && origin === 'local') {
+          // 使用WebSocketClient发送awareness更新
+					const changes = updates.added.concat(updates.removed).concat(updates.updated);
+					const awarenessData = uint8ArrayToBase64(awareness.encode(changes));
+					wsClient.sendAwarenessUpdateMessage(awarenessData);
+				}
+			});
+		}
+  });
 </script>
 
 {#if fileType!='pdf'}

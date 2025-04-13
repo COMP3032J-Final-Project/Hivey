@@ -76,7 +76,7 @@ export type WSRequest = v.InferOutput<typeof WSRequest>;
 
 export const WSResponse = v.object({
     scope: v.picklist(["project", "member", "file", "chat", "error", "crdt"]),
-    action: v.string(),
+    action: v.optional(v.string()),
     payload: v.any(),
     client_id: v.string(),
 });

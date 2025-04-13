@@ -94,12 +94,10 @@ export class WebSocketClient {
                 this.socket = null;
             }
         }
-        
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
         }
-        
         console.log('WebSocket disconnected');
     }
 
@@ -118,11 +116,9 @@ export class WebSocketClient {
                     payload: {
                         username: this.currentUser.username,
                         email: this.currentUser.email,
-                        avatar: this.currentUser.avatar
                     }
                 };
                 this.socket.send(JSON.stringify(joinMessage));
-                console.log('Sent join message');
             } catch (error) {
                 console.error('Failed to send join message:', error);
             }
@@ -132,11 +128,7 @@ export class WebSocketClient {
     // 处理WebSocket的消息事件
     private handleMessage(event: MessageEvent): void {
         try {
-            // 解析响应数据为WSResponse格式
-            const response = JSON.parse(event.data);
-            
-            // 调试日志
-            console.log('Received WebSocket message:', response);
+            const response = JSON.parse(event.data); // 解析响应数据为WSResponse格式
             
             // 检查消息格式
             if (!response || typeof response !== 'object') {
@@ -152,7 +144,7 @@ export class WebSocketClient {
             
             // 尝试获取scope和action
             const scope = response.scope;
-            const action = response.action;
+            const action = scope ==='error' ? 'error' : response.action;  // 如果scope为'error'则action也为'error'
             
             if (!scope) {
                 console.error('WebSocket message missing scope:', response);

@@ -21,19 +21,12 @@
 	import EditableLabel from '$lib/components/ui/editable-label';
 	import { members } from './store.svelte';
 	import type { WebSocketClient } from '$lib/api/websocket';
-
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
 
-	let { data, wsClient }: PageProps & { wsClient?: WebSocketClient | null } = $props();
-
-	// 检查wsClient是否正确传递
-	if (wsClient) {
-		console.log('+page.svelte received wsClient:', wsClient);
-	} else {
-		console.warn('+page.svelte did NOT receive wsClient, it is undefined');
-	}
-
+	let { data }: PageProps = $props();
+	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
+	let wsClient = $derived(getWsClient ? getWsClient() : null); // 获取当前的wsClient实例
 	let project: Project = $state(data.project);
 	let currentUser: User = $state(data.currentUser);
 	let membersDialogOpen = $state(false);
@@ -278,7 +271,6 @@
 						project_id={data.project.id}
 						access_token={data.authInfo.access_token}
 						permission={data.currentUser.permission ?? UserPermissionEnum.Viewer}
-						{wsClient}
 					/>
 				</div>
 			</div>

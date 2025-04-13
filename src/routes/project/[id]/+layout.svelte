@@ -56,7 +56,9 @@
       return curWidth > minWidth ?  (curWidth < maxWidth ? curWidth : maxWidth) : minWidth;
   });
 
-  async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
+  setContext('websocket-client', () => wsClient); // 传入一个获取wsClient的函数而不是wsClient本身这样可以保证访问到最新的wsClient值
+
+	async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
 		try {
 			wsClient = new WebSocketClient( // 创建WebSocket客户端
 				projectId,
@@ -205,7 +207,7 @@
         bind:offset={sidebarResizeOffset}
       />
       <div class="flex-grow size-full overflow-auto">
-        {@render children({ wsClient })}
+        {@render children()}
       </div>
     </div>
 
