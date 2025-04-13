@@ -118,20 +118,9 @@
 				currentFileType.set(fileType);
 				currentFileName.set(fileName);
 				currentFilePath.set('1');
-				if (fileType === 'tex' || fileType === 'md') {
-					try {
-						const content = await getFileContent(projectId, fileId);
-						const fileData = await fetchDocData(content.url);
-						docContent.set(fileData);
-					} catch (error) {
-						console.error('Failed to fetch file content:', error);
-						docContent.set('Error loading file content');
-					}
-				} else if (fileType === 'png') {
-					docContent.set('Loading JSON content...');
-				} else {
-					docContent.set('Unsupported file type');
-				}
+				const content = await getFileContent(projectId, fileId);
+				const fileData = await fetchDocData(fileType, content.url);
+				docContent.set(fileData);
 				return true;
 			} catch (error) {
 				console.error('Failed to load file:', error);

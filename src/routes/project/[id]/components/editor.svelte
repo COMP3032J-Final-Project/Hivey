@@ -16,6 +16,8 @@
 
 	let {
 		value = $bindable(),
+        fileType = $bindable(),
+		// TODO pass user type
 		username,
 		project_id,
 		// TODO handle situation at the first connecting, the access_token is expired and needed to be refershed
@@ -24,6 +26,7 @@
 		wsClient
 	}: {
 		value: any;
+        fileType: string;
 		username: string;
 		project_id: string;
 		access_token: string;
@@ -340,4 +343,8 @@
 	});
 </script>
 
-<div bind:this={editorAreaElem} class="editor size-full"></div>
+{#if fileType!='pdf'}
+    <div bind:this={editorAreaElem} class="editor size-full"></div>
+{:else}
+    <div></div>
+{/if}

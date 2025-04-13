@@ -18,15 +18,22 @@ export const getFileContent = async (projectId: string, fileId: string): Promise
     return response.data.data;
 }
 
-export async function fetchDocData(url: string): Promise<any> {
+export async function fetchDocData(fileType: string, url: string): Promise<any> {
     console.log("Fetching data from URL:", url);
     const response = await fetch(url);
     if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const text = await response.text(); 
-    console.log(text);
-    return text;
+    let result;
+    if (fileType === 'pdf') {
+        result = await response.blob(); // 或者 response.arrayBuffer()，视需求而定
+    } else if (['md', 'tex', 'bib', 'typ'].includes(fileType || '')) {
+        result = await response.text();
+    } else {
+        throw new Error('Unsupported file type');
+    }
+    console.log(result);
+    return result;
 }
 
 export const createFile = async (projectId: string, fileForm: createFileFrom): Promise<EditorFile[]> => {

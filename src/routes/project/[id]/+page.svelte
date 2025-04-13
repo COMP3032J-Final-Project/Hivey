@@ -272,6 +272,7 @@
 				<div class="flex-1 overflow-auto">
 					<Editor
 						bind:value={docContent}
+						bind:fileType={currentFileType}
 						bind:this={editorRef}
 						username={data.currentUser.username}
 						project_id={data.project.id}
