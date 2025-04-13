@@ -1,19 +1,19 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm, AddProjectMemberForm } from '$lib/types/editor';
+import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm, AddProjectMemberForm, ShareProject2TemplateForm } from '$lib/types/editor';
 import { type User, UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
 
 // 获取项目聊天室的聊天记录
-export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{code: number, messages: ChatMessage[]}> => {
+export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{ code: number, messages: ChatMessage[] }> => {
     const { projectId, max_num, last_timestamp } = form;
 
     // 将Date转换为本地ISO格式字符串
-    const formattedTimestamp = last_timestamp instanceof Date ? 
-    new Date(last_timestamp.getTime() - last_timestamp.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 19) : last_timestamp;
-        
+    const formattedTimestamp = last_timestamp instanceof Date ?
+        new Date(last_timestamp.getTime() - last_timestamp.getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, 19) : last_timestamp;
+
     const response = await axiosClient.get<APIResponse<ChatMessage[]>>(`/project/${projectId}/chat/history`, {
         params: {
             max_num: max_num,
@@ -21,7 +21,7 @@ export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): 
         }
     });
     // 如果状态码不是200或201
-    if (response.data.code !== 200 && response.data.code !== 201){
+    if (response.data.code !== 200 && response.data.code !== 201) {
         throw new Error(response.data.msg);
     }
     return {
@@ -35,7 +35,7 @@ export const getProjectMember = async (projectId: string, memberName: string): P
     const response = await axiosClient.get<APIResponse<User>>(`/project/${projectId}/members/${memberName}`);
     if (response.data.code !== 200 || !response.data.data) {
         throw new Error(response.data.msg);
-    }   
+    }
     return response.data.data;
 }
 
@@ -102,7 +102,7 @@ export const removeProjectMember = async (form: RemoveProjectMemberForm): Promis
     // 验证当前用户是否有权限移除成员
     const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
     // 只有admin和owner可以移除成员, 或者成员自己可以移除自己
-    if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner && currentUser.username !== memberName) { 
+    if (currentUserPermission !== UserPermissionEnum.Admin && currentUserPermission !== UserPermissionEnum.Owner && currentUser.username !== memberName) {
         throw new Error(mpp.error_remove_member());
     }
     // 避免被移除的成员是项目所有者
@@ -113,6 +113,23 @@ export const removeProjectMember = async (form: RemoveProjectMemberForm): Promis
     console.log('removeProjectMember', form);
     // 在字段中添加project_id 和 member_name
     const response = await axiosClient.delete<APIResponse<void>>(`/project/${projectId}/members/${memberName}`);
+    if (response.data.code !== 200) {
+        throw new Error(response.data.msg);
+    }
+}
+
+// 将Project导出为Template
+export const shareProject2Template = async (form: ShareProject2TemplateForm): Promise<void> => {
+    const { projectId, currentUser, templateName, isPublic } = form;
+
+    // 验证当前用户是否为项目的所有者
+    const currentUserPermission = await getProjectMemberPermission(projectId, currentUser.username);
+    if (currentUserPermission !== UserPermissionEnum.Owner) {
+        throw new Error("You are not the owner of this project!");
+    }
+
+    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/export`, 
+        { is_public: isPublic, template_name: templateName }); // TODO 路由暂时不确定, 待后端实现
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }

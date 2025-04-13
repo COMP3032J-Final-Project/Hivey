@@ -263,8 +263,8 @@ export class WebSocketClient {
                     console.warn("Member joined handler not set");
                     return;
                 }
+                console.log('Member joined:', response.payload);
                 const username = response.payload?.username || "Unknown";
-                console.log(`Member joined: ${username}`);
                 this.memberJoinedHandler(username);
                 break;
             case "left":
@@ -326,8 +326,8 @@ export class WebSocketClient {
 
     // 处理错误相关事件
     private handleErrorEvent(response: WSResponse): void {
-        console.error("Server error:", response.payload);
-        // 可以根据具体错误类型做不同处理
+        const errorMessage = response.payload.message;
+        console.error("Project WebSocket error:", errorMessage);
     }
 
     // 处理连接关闭事件

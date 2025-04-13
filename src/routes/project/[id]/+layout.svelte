@@ -2,6 +2,7 @@
 	import { MessageSquare, Home, History } from 'lucide-svelte';
 	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
 	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
+	import ShareProjectDialog from './components/share-project2template-modal.svelte';
 	import type { EditorFileInfo, FileType, TreeNode } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/chatroom/sidebar-chatroom.svelte';
@@ -17,17 +18,19 @@
 	import { WebSocketClient } from '$lib/api/websocket';
 	import { getUserSession } from '$lib/auth';
 	import { onMount, onDestroy } from 'svelte';
-	import { getProjectMember } from '$lib/api/project';
+  import { getProjectById } from '$lib/api/dashboard';
 	import { notification } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
 
 	let { data, children } = $props<{
 		data: {
+			files: FileType[];
 			filesStruct: TreeNode[];
 			currentUser: User;
 			projectId: string;
 			project: Project;
+			authInfo: UserAuth;
 		};
 		children: any;
 	}>();
@@ -61,23 +64,20 @@
 				currentUser,
 				userSession
 			);
-			wsClient.connect(); // 连接到服务器
-			
-			console.log('WebSocket connection state:', wsClient.getState());
-			
+       // 设置成员进入事件的处理
 			wsClient.memberJoinedHandler = (username: string) => {
-				if (username !== currentUser.username) {
+				if (username !== currentUser.username && username !== 'Unknown') {
 					notification(`${username} entered the project.`);
 				}
 			}
 
-			// 添加项目删除事件的处理
+			// 设置项目删除事件的处理
 			wsClient.onProjectDeleted((data) => {
 				console.log('Project deleted:', data);
 				goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
 			});
 			
-			// 添加项目名称更新事件的处理
+			// 设置项目名称更新事件的处理
 			wsClient.onProjectUpdate((data) => {
 				console.log('Project name updated event received:', data);
 				if (data.name) {
@@ -85,6 +85,8 @@
 					notification(`Project name updated to: ${data.name}`);
 				}
 			});
+			wsClient.connect(); // 连接到服务器
+			console.log('WebSocket connection state:', wsClient.getState());
 		} catch (error) {
 			console.error('Project WebSocket Client init failed:', error);
 		}
@@ -182,10 +184,12 @@
 					<Home size={20} />
 				</Button>
 
+        <ShareProjectDialog {projectId} currentUser={data.currentUser} project={data.project} />
+
 				<CreateFileDialog {projectId} currentUser={data.currentUser} />
+
 				<CreateFolderDialog {projectId} currentUser={data.currentUser} />
 				
-
 				<Button variant="ghost" size="icon" onclick={() => (showChat = !showChat)}>
 					<MessageSquare size={20} />
 				</Button>

@@ -10,6 +10,7 @@ import { getFiles } from '$lib/api/editor';
 import { buildFileTree } from '$lib/utils';
 import { getProjectById } from '$lib/api/dashboard';
 import { UserPermissionEnum } from '$lib/types/auth';
+import type { Project } from '$lib/types/dashboard';
 
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
 export const prerender = false; // 禁用预渲染
@@ -43,7 +44,7 @@ export const load: LayoutLoad = async ({ url, params }) => {
         failure(me.session_expired());
         redirect(302, '/auth/signin');
     }
-
+    const project: Project = await getProjectById(params.id);
     const filesdata = await getFiles(params.id);
     console.log("files:", filesdata);
     const filesStruct = buildFileTree(filesdata);
@@ -56,6 +57,7 @@ export const load: LayoutLoad = async ({ url, params }) => {
         filesStruct: filesStruct,
         currentUser: currentUser,
         projectId: params.id,
+        project: project,
         authInfo: session
     };
 };

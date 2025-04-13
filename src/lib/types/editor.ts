@@ -80,13 +80,20 @@ export interface RemoveProjectMemberForm {
       memberName: string;
 }
 
+export const ShareProject2TemplateForm = v.object({
+    projectId: v.string(),
+    currentUser: User,
+    templateName: v.string(),
+    isPublic: v.boolean(),
+})
+export type ShareProject2TemplateForm = v.InferOutput<typeof ShareProject2TemplateForm>;
+
 export const createFileFrom = v.object({
 	title: v.string(),
 	suffix: v.string(),
 	path: v.string(),
 	filetype: v.string(),
 });
-
 export type createFileFrom = v.InferOutput<typeof createFileFrom>;
 
 export const updateFileFrom = v.object({
@@ -95,5 +102,4 @@ export const updateFileFrom = v.object({
 	path: v.string(),
 	filetype: v.string(),
 });
-
 export type updateFileFrom = v.InferOutput<typeof updateFileFrom>;
