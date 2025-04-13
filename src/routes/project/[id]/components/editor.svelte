@@ -12,8 +12,8 @@
 	import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
 	import type { WebSocketClient } from '$lib/api/websocket';
-	import { search } from '@codemirror/search';
-	import { getContext } from 'svelte';
+	import { search, openSearchPanel, findNext as cmFindNext, findPrevious as cmFindPrevious } from '@codemirror/search';
+  import { getContext } from 'svelte';
 
 	let {
 		value = $bindable(),
@@ -139,6 +139,21 @@
 		if (!editorView) return;
 		undoManager.redo();
 	}
+
+	export function findReplace() {
+		if (!editorView) return;
+		openSearchPanel(editorView);
+	}
+
+	export function findNext() {
+		if (!editorView) return;
+		cmFindNext(editorView); 
+	}
+
+export function findPrevious() {
+	if (!editorView) return;
+  cmFindPrevious(editorView);
+}
 
 	export function cutSelection() {
 		if (!editorView) return;
