@@ -75,11 +75,9 @@
 				goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
 			}
 
-			// 设置项目名称更新事件的处理
 			wsClient.projectUpdateHandler = (data) => {
 				if (data.name) {
 					project.name = data.name;
-					notification(`Project name updated to: ${data.name}`);
 				}
 			}
 
