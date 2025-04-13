@@ -21,6 +21,7 @@
 	import { notification } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
+	import { getProjectMember } from '$lib/api/project';
 
 	let { data, children } = $props<{
 		data: {
@@ -84,7 +85,6 @@
 			}
 
 			wsClient.connect(); // 连接到服务器
-			console.log('WebSocket connection state:', wsClient.getState());
 		} catch (error) {
 			console.error('Project WebSocket Client init failed:', error);
 		}
