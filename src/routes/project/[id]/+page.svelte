@@ -116,6 +116,18 @@
 		if (editorRef) editorRef.redo();
 	}
 
+	function handleFindReplace() {
+		if (editorRef) editorRef.findReplace();
+	}
+
+	function handleFindNext() {
+		if (editorRef) editorRef.findNext();
+	}
+
+	function handleFindPrevious() {
+		if (editorRef) editorRef.findPrevious();
+	}
+
 	function handleCut() {
 		if (editorRef) editorRef.cutSelection();
 	}
@@ -161,19 +173,19 @@
 						<Menubar.Sub>
 							<Menubar.SubTrigger>Find & Replace</Menubar.SubTrigger>
 							<Menubar.SubContent class="w-48">
-								<Menubar.Item>
+								<Menubar.Item onclick={handleFindReplace}>
 									Find & Replace
 									<Menubar.Shortcut class="flex items-center gap-1"
 										><Command class="size-4" />F</Menubar.Shortcut
 									>
 								</Menubar.Item>
-								<Menubar.Item>
+								<Menubar.Item onclick={handleFindNext}>
 									Find Next
 									<Menubar.Shortcut class="flex items-center gap-1"
 										><Command class="size-4" />G</Menubar.Shortcut
 									>
 								</Menubar.Item>
-								<Menubar.Item>
+								<Menubar.Item onclick={handleFindPrevious}>
 									Find Previous
 									<Menubar.Shortcut class="flex items-center gap-1"
 										><Command class="size-4" /><ArrowBigUp class="size-4" />G</Menubar.Shortcut
