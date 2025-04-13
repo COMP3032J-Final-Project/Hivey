@@ -27,6 +27,13 @@
 
 	let { data, wsClient }: PageProps & { wsClient?: WebSocketClient | null } = $props();
 
+	// 检查wsClient是否正确传递
+	if (wsClient) {
+		console.log('+page.svelte received wsClient:', wsClient);
+	} else {
+		console.warn('+page.svelte did NOT receive wsClient, it is undefined');
+	}
+
 	let project: Project = $state(data.project);
 	let currentUser: User = $state(data.currentUser);
 	let membersDialogOpen = $state(false);
@@ -63,7 +70,7 @@
 			// 通过WebSocket广播项目名称更新
 			if (wsClient) {
 				try {
-					wsClient.updateProjectName(projectName);
+					wsClient.sendUpdateProjectNameMessage(projectName);
 				} catch (wsError) {
 					console.error('WebSocket update failed but API succeeded:', wsError);
 					// WebSocket错误不影响API成功，继续返回成功

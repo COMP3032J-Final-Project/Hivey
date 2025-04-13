@@ -18,7 +18,6 @@
 	import { WebSocketClient } from '$lib/api/websocket';
 	import { getUserSession } from '$lib/auth';
 	import { onMount, onDestroy } from 'svelte';
-  import { getProjectById } from '$lib/api/dashboard';
 	import { notification } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
@@ -72,19 +71,18 @@
 			}
 
 			// 设置项目删除事件的处理
-			wsClient.onProjectDeleted((data) => {
-				console.log('Project deleted:', data);
+			wsClient.projectDeletedHandler = () => {
 				goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
-			});
-			
+			}
+
 			// 设置项目名称更新事件的处理
-			wsClient.onProjectUpdate((data) => {
-				console.log('Project name updated event received:', data);
+			wsClient.projectUpdateHandler = (data) => {
 				if (data.name) {
 					project.name = data.name;
 					notification(`Project name updated to: ${data.name}`);
 				}
-			});
+			}
+
 			wsClient.connect(); // 连接到服务器
 			console.log('WebSocket connection state:', wsClient.getState());
 		} catch (error) {

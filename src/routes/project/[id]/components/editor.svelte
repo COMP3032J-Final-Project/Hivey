@@ -8,7 +8,7 @@
 	import { Awareness, LoroDoc, UndoManager } from 'loro-crdt';
 	import { BACKEND_ADDR_WEBSOCKET } from '$lib/constants';
 	import * as v from 'valibot';
-	import { Message } from '$lib/types/websocket';
+	import { Message, type WSRequest, type WSResponse } from '$lib/types/websocket';
 	import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
 	import type { WebSocketClient } from '$lib/api/websocket';
@@ -16,11 +16,9 @@
 
 	let {
 		value = $bindable(),
-		// TODO pass user type
 		username,
 		project_id,
-		// TODO handle situation at the first connecting, the access_token is expired and
-		// needed to be refershed
+		// TODO handle situation at the first connecting, the access_token is expired and needed to be refershed
 		access_token,
 		permission,
 		wsClient
@@ -192,59 +190,101 @@
 	}
 
 	onMount(async () => {
-		const ws = new WebSocket(
-			new URL(`project/${project_id}/ws/crdt?access_token=${access_token}`, BACKEND_ADDR_WEBSOCKET)
-		);
+		if (wsClient) {
+			// 为wsClinet设置crdtEventHandler的回调函数
+			wsClient.crdtEventHandler = (response: WSResponse) => {
+        try {
+          if (response.payload.type === 'update') {
+            // 处理文档更新
+            const updateData = base64ToUint8Array(response.payload.data);
+            doc.import(updateData);
+          } else if (response.payload.type === 'awareness') {
+            // 处理awareness更新
+            const awarenessData = base64ToUint8Array(response.payload.data);
+            awareness.apply(awarenessData);
+          }
+        } catch (error) {
+          console.error('Error handling CRDT event:', error);
+        }
+      }
 
-		ws.addEventListener('open', async () => {
-			isConnected = true;
-			console.log('WebSocket connected');
-		});
+			isConnected = true; 
 
-		ws.addEventListener('close', () => {
-			isConnected = false;
-			console.log('WebSocket disconnected');
-		});
+			// 订阅文档更新
+			doc.subscribeLocalUpdates((update) => {
+				if (wsClient && isConnected) {
+					// 使用WebSocketClient发送CRDT更新
+					const updateData = uint8ArrayToBase64(update);
+					wsClient.sendCRDTUpdateMessage(updateData);
+				}
+			});
+			
+			// 订阅awareness更新
+			awareness.addListener((updates, origin) => {
+				if (isConnected && origin === 'local') {
+          // 使用WebSocketClient发送awareness更新
+					const changes = updates.added.concat(updates.removed).concat(updates.updated);
+					const awarenessData = uint8ArrayToBase64(awareness.encode(changes));
+					wsClient.sendAwarenessUpdateMessage(awarenessData);
+				}
+			});
+		} else {
+			// 如果没有传入WebSocketClient，使用旧的WebSocket连接（兼容性保留）
+			console.warn('No shared WebSocketClient provided, using direct WebSocket connection');
+			const ws = new WebSocket(
+				new URL(`project/${project_id}/ws/access_token=${access_token}`, BACKEND_ADDR_WEBSOCKET)
+			);
 
-		ws.addEventListener('message', (event) => {
-			const msg = JSON.parse(event.data);
+			ws.addEventListener('open', async () => {
+				isConnected = true;
+				console.log('WebSocket connected');
+			});
 
-			switch (msg.type) {
-				case 'batch':
-					for (const message of msg.messages) handleWsMessage(message);
-					break;
-				case undefined:
-					handleWsMessage(msg);
-					break;
-				default:
-					break;
-			}
-		});
+			ws.addEventListener('close', () => {
+				isConnected = false;
+				console.log('WebSocket disconnected');
+			});
 
-		doc.subscribeLocalUpdates((update) => {
-			if (ws.readyState === WebSocket.OPEN) {
-				ws.send(
-					JSON.stringify({
-						type: 'update',
-						data: uint8ArrayToBase64(update)
-					})
-				);
-			}
-		});
+			ws.addEventListener('message', (event) => {
+				const msg = JSON.parse(event.data);
 
-		awareness.addListener((updates, origin) => {
-			if (ws.readyState === WebSocket.OPEN) {
-				const changes = updates.added.concat(updates.removed).concat(updates.updated);
-				if (origin === 'local') {
+				switch (msg.type) {
+					case 'batch':
+						for (const message of msg.messages) handleWsMessage(message);
+						break;
+					case undefined:
+						handleWsMessage(msg);
+						break;
+					default:
+						break;
+				}
+			});
+
+			doc.subscribeLocalUpdates((update) => {
+				if (ws.readyState === WebSocket.OPEN) {
 					ws.send(
 						JSON.stringify({
-							type: 'awareness',
-							data: uint8ArrayToBase64(awareness.encode(changes))
+							type: 'update',
+							data: uint8ArrayToBase64(update)
 						})
 					);
 				}
-			}
-		});
+			});
+
+			awareness.addListener((updates, origin) => {
+				if (ws.readyState === WebSocket.OPEN) {
+					const changes = updates.added.concat(updates.removed).concat(updates.updated);
+					if (origin === 'local') {
+						ws.send(
+							JSON.stringify({
+								type: 'awareness',
+								data: uint8ArrayToBase64(awareness.encode(changes))
+							})
+						);
+					}
+				}
+			});
+		}
 
 		// basic extensions
 		const extensions = [
@@ -290,11 +330,13 @@
 			parent: editorAreaElem
 		});
 
-		$: if (editorView && value !== editorView.state.doc.toString()) {
-			editorView.dispatch({
-				changes: { from: 0, to: editorView.state.doc.length, insert: value }
-			});
-		}
+		$effect(() => {
+			if (editorView && value !== editorView.state.doc.toString()) {
+				editorView.dispatch({
+					changes: { from: 0, to: editorView.state.doc.length, insert: value }
+				});
+			}
+		});
 	});
 </script>
 

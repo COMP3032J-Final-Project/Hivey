@@ -23,15 +23,18 @@ export class WebSocketClient {
     private currentUser: User;
     private userAuth: UserAuth;
 
+    // 以下是事件处理函数
     // chat
     public chatMessageHandler: ((message: ChatMessage) => void) | null = null;
-    // TODO project
+    // project
     public projectUpdateHandler: ((data: { name: string }) => void) | null = null;
     public projectDeletedHandler: ((data: { id: string }) => void) | null = null;
-    // TODO member
+    // member
     public memberJoinedHandler: ((username: string) => void) | null = null;
     public memberUpdateHandler: ((data: any) => void) | null = null;
     public memberLeftHandler: ((username: string) => void) | null = null;
+    // CRDT
+    public crdtEventHandler: ((response: WSResponse) => void) | null = null;
 
     constructor(
         projectId: string,
@@ -315,11 +318,15 @@ export class WebSocketClient {
         }
     }
 
-    // 处理协同编辑相关事件
+    // 处理CRDT相关事件
     private handleCRDTEvent(response: WSResponse): void {
         switch (response.action) {
             case "broadcast":
-                // TODO: 处理协同编辑广播事件
+                if (!this.crdtEventHandler) {
+                    console.warn("CRDT event handler not set");
+                    return;
+                }
+                this.crdtEventHandler(response);
                 break;
         }
     }
@@ -359,7 +366,21 @@ export class WebSocketClient {
         return this.socket ? this.socket.readyState : WebSocketState.CLOSED;
     }
 
-    // EventScope: chat
+    // 以下是消息发送方法
+
+    // 通用消息发送方法，用于发送任何类型的消息
+    public sendMessage(message: WSRequest): void {
+        if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
+            console.error('WebSocket not connected, current state:', this.socket ? this.socket.readyState : 'null');
+            return;
+        }
+        try {
+            this.socket.send(JSON.stringify(message));
+        } catch (error) {
+            console.error('Failed to send message:', error);
+        }
+    }
+
     // chat: 发送聊天消息
     public sendChatMessage(content: string): void {
         if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
@@ -388,36 +409,9 @@ export class WebSocketClient {
         }
     }
 
-    // EventScope: project
-    // project: 处理项目删除事件的方法
-    public onProjectDeleted(callback: (data: { id: string }) => void): void {
-        this.projectDeletedHandler = callback;
-    }
-
-    // project: 处理项目更新事件的方法
-    public onProjectUpdate(callback: (data: { name: string }) => void): void {
-        this.projectUpdateHandler = callback;
-    }
-
-    // member: 处理成员加入事件的方法
-    public onMemberJoined(callback: (username: string) => void): void {
-        this.memberJoinedHandler = callback;
-    }
-
-    // member: 处理成员离开事件的方法
-    public onMemberLeft(callback: (username: string) => void): void {
-        this.memberLeftHandler = callback;
-    }
-
     // project: 更新项目名称的方法
-    public updateProjectName(newName: string): void {
-        if (!this.socket) {
-            console.error('WebSocket not initialized');
-            return;
-        }
-        
-        if (this.socket.readyState !== WebSocketState.OPEN) {
-            console.error('WebSocket not open, current state:', this.socket.readyState);
+    public sendUpdateProjectNameMessage(newName: string): void {
+        if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
             return;
         }
         
@@ -439,6 +433,51 @@ export class WebSocketClient {
             throw error;
         }
     }
+
+    // crdt: 发送CRDT更新消息
+    public sendCRDTUpdateMessage(data: string ): void {
+		if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
+            console.error('WebSocket not connected for CRDT update, current state:', this.socket ? this.socket.readyState : 'null');
+            return;
+        }
+        
+        try {
+            const request: WSRequest = {
+                scope: "crdt",
+                action: "broadcast",
+                payload: {
+                    type: "update",
+                    data: data,
+                    client_id: this.currentUser.username
+                }
+            };
+            this.socket.send(JSON.stringify(request));
+        } catch (error) {
+            console.error('Failed to send CRDT update message:', error);
+        }
+	}
+
+    // crdt: 发送awareness更新消息
+    public sendAwarenessUpdateMessage(data: string ): void {
+		if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
+            console.error('WebSocket not connected for awareness update, current state:', this.socket ? this.socket.readyState : 'null');
+            return;
+        }
+        try {
+            const request: WSRequest = {
+                scope: "crdt",
+                action: "broadcast",
+                payload: {
+                    type: "awareness",
+                    data: data,
+                    client_id: this.currentUser.username
+                }
+            };
+            this.socket.send(JSON.stringify(request));
+        } catch (error) {
+            console.error('Failed to send awareness update message:', error);
+        }
+	}
 
 }
 
