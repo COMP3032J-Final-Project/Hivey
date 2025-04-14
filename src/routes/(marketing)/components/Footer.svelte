@@ -1,11 +1,11 @@
 <script lang="ts">
   import { m, mpm } from '$lib/trans';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { getLocale } from '$lib/paraglide/runtime';
   import { localizeHref } from '$lib/paraglide/runtime';
 </script>
 
-{#key getLocale() + $page.url.pathname}
+{#key getLocale() + page.url.pathname}
     <footer class="py-12">
         <div class="max-w-7xl mx-auto px-6 md:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center">

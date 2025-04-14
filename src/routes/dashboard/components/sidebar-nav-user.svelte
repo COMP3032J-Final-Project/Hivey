@@ -6,7 +6,7 @@
   import { Settings, ChevronsUpDown, LogOut } from 'lucide-svelte';
   import type { User } from '$lib/types/auth';
   import { goto } from '$app/navigation';
-  import { postLogoutUserAuth } from '$lib/api/auth';
+  import { logoutUser } from '$lib/api/auth';
   import { failure, success } from '$lib/components/ui/toast';
   import { m, me, mpd } from '$lib/trans';
   import { updateNav } from '../store.svelte';
@@ -20,7 +20,7 @@
   // 处理登出
   async function handleLogout() {
       try {
-          await postLogoutUserAuth();
+          await logoutUser();
           success(m.logout());
           goto('/auth/signin');
       } catch (error) {

@@ -6,7 +6,7 @@ import type {
     InternalAxiosRequestConfig
 } from 'axios';
 import { goto } from '$app/navigation';
-import { postRefreshUserAuth } from './auth';
+import { refreshUserAuth } from './auth';
 import {
     getUserSession,
     isSessionExpired,
@@ -83,7 +83,7 @@ axiosClient.interceptors.request.use(
                 refresh_token: refreshToken
             };
 
-            const newUserAuth = await postRefreshUserAuth(refreshForm);
+            const newUserAuth = await refreshUserAuth(refreshForm);
 
             saveUserSession(newUserAuth);
 
@@ -156,7 +156,7 @@ axiosClient.interceptors.response.use(
                 refresh_token: refreshToken
             };
 
-            const newUserAuth = await postRefreshUserAuth(refreshForm);
+            const newUserAuth = await refreshUserAuth(refreshForm);
 
             saveUserSession(newUserAuth);
 

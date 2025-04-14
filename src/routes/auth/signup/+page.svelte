@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { postUserRegister } from '$lib/api/auth';
+	import { registerUser } from '$lib/api/auth';
 	import { type RegisterForm } from '$lib/types/auth';
 	import { goto } from '$app/navigation';
 	import { success, failure } from '$lib/components/ui/toast';
@@ -25,13 +25,13 @@
 		try {
 			formData = v.parse(RawRegisterForm, formData);
 
-			const registerForm: RegisterForm = {
+			const registerForm = {
 				username: formData.username,
 				email: formData.email,
 				password: formData.password
 			};
 
-			await postUserRegister(registerForm);
+			await registerUser(registerForm);
 
 			// 注册成功处理
 			success(mpa.success_sign_up());

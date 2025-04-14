@@ -1,12 +1,14 @@
+<!-- TODO remember functionality -->
+
 <script lang="ts">
-	import { postUserLogin } from '$lib/api/auth';
+	import { login } from '$lib/api/auth';
   import { saveUserSession } from '$lib/auth';
 	import type { LoginForm, UserAuth } from '$lib/types/auth';
 	import { goto } from '$app/navigation';
 	import { success, failure } from '$lib/components/ui/toast';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-    import { localizeHref } from '$lib/paraglide/runtime';
+  import { localizeHref } from '$lib/paraglide/runtime';
 
   import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -17,79 +19,56 @@
 
 	// 表单数据
 	let formData: LoginForm = {
-		 email: '',
-		 password: ''
+		  email: '',
+		  password: ''
 	};
 
 	
 	let rememberMe = true; // 记住我选项
 	let isLoading = false; // 加载状态
-
 	
 	onMount(() => { 
-    // 从注册页面跳转过来时自动填充表单
-		 const state = $page.state as { email?: string; password?: string };
-		 if (state && state.email && state.password) {
-			  formData = {
-				   email: state.email,
-				   password: state.password
-			  };
-		 }
-
-		 // 检查本地存储的登录信息
-		 const savedUser = localStorage.getItem('rememberedUser');
-		 if (savedUser && !formData.email) {
-			  const userData = JSON.parse(savedUser);
-			  formData.email = userData.email;
-			  formData.password = userData.password;
-			  rememberMe = true;
-		 }
+      // 从注册页面跳转过来时自动填充表单
+		  const state = page.state as { email?: string; password?: string };
+		  if (state && state.email && state.password) {
+			    formData = {
+				      email: state.email,
+				      password: state.password
+			    };
+		  }
 	});
 
 	const handleSubmit = async (e: Event) => {
-		 e.preventDefault();
+		  e.preventDefault();
 		    
-		 // 设置加载状态
-		 isLoading = true;
+		  // 设置加载状态
+		  isLoading = true;
 		    
-		 try {
-			  // 前端验证
-			  if (!/^\S+@\S+\.\S+$/.test(formData.email)) throw new Error(mpae.invalid_email());
-			  if (!formData.password) throw new Error(mpae.empty_password());
+		  try {
+			    // 前端验证
+			    if (!/^\S+@\S+\.\S+$/.test(formData.email)) throw new Error(mpae.invalid_email());
+			    if (!formData.password) throw new Error(mpae.empty_password());
 
-			  // 调用登录接口
-			  const userAuth: UserAuth = await postUserLogin(formData);
+			    // 调用登录接口
+			    const userAuth: UserAuth = await login(formData);
 			      
-			  // 记住我功能
-			  if (rememberMe) {
-				   localStorage.setItem(
-					    'rememberedUser',
-					    JSON.stringify({
-						     email: formData.email,
-						     password: formData.password
-					    })
-				   );
-			  } else {
-				   localStorage.removeItem('rememberedUser');
-			  }
+			    // 使用 Token 管理功能保存 Token
+			    saveUserSession(userAuth);
 
-			  // 使用 Token 管理功能保存 Token
-			  saveUserSession(userAuth);
+			    success(mpa.success_sign_in());
 
-			  success(mpa.success_sign_in());
-
-			  // 延迟跳转到首页
-			  setTimeout(() => {
-				   goto('/dashboard/repository/projects/all');
-			  }, 500);
-		 } catch (error) {
-			  // 直接使用错误消息
-			  const errorMessage = (error as Error).message;
-			  failure(errorMessage || me.unknown());
-		 } finally {
-			  // 重置加载状态
-			  isLoading = false;
-		 }
+			    // 延迟跳转到首页
+			    setTimeout(() => {
+				      goto('/dashboard/repository/projects/all');
+			    }, 500);
+		  } catch (error) {
+			    // 直接使用错误消息
+			    const errorMessage = (error as Error).message;
+			    failure(errorMessage || me.unknown());
+		  } finally {
+			    // 重置加载状态
+			    isLoading = false;
+		  }
 	};
 </script>
 
