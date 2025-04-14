@@ -24,6 +24,9 @@
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
   import ToggleableToolbar from './components/toggleable-toolbar.svelte'
+  import ShareProjectDialog from './components/share-project2template-modal.svelte';
+	import { goto } from '$app/navigation';
+
 
 	let { data }: PageProps = $props();
 	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
@@ -155,6 +158,25 @@
 		<div class="hidden items-center md:flex">
 			<Sidebar.Trigger class="-ml-1" />
 			<Menubar.Root class="border-0 bg-transparent">
+        <Menubar.Menu>
+					<Menubar.Trigger>Project</Menubar.Trigger>
+          <Menubar.Content>
+            <!-- TODO localize href -->
+            <Menubar.Item
+              onclick={() => goto('/dashboard/repository/projects/all')}>
+              Home page
+						</Menubar.Item>
+            <Menubar.Item onclick={handleRedo}>
+              <!-- FIXME share project dialog here is not working correctly -->
+              <ShareProjectDialog
+                projectId={project.id}
+                currentUser={currentUser}
+                project={project}
+                iconSize={20}
+              />
+						</Menubar.Item>
+          </Menubar.Content>
+        </Menubar.Menu>
 				<Menubar.Menu>
 					<Menubar.Trigger>Edit</Menubar.Trigger>
 					<Menubar.Content>

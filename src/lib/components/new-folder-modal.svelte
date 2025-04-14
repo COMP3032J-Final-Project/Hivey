@@ -13,7 +13,15 @@
 	import { getFolders } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
 
-	let { projectId, currentUser }: { projectId: string; currentUser: any } = $props();
+	let {
+      projectId,
+      currentUser,
+      iconSize = 24
+  }: {
+      projectId: string,
+      currentUser: any,
+      iconSize?: number
+  } = $props();
 	const { currentFiles: latestFiles, reloadFiles } = getContext<EditorFileInfo>('editor-context');
 
 	const project_id = projectId;
@@ -92,7 +100,7 @@
 		class={buttonVariants({ variant: 'ghost', size: 'icon' })}
 		onclick={handleTriggerClick}
 	>
-		<FolderPlus />
+		<FolderPlus size={iconSize} />
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>

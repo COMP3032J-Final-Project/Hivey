@@ -9,7 +9,17 @@
 	import { UserPermissionEnum } from '$lib/types/auth';
 	import type { Project } from '$lib/types/dashboard';
 	import type { ShareProject2TemplateForm } from '$lib/types/editor';
-	let { projectId, currentUser, project }: { projectId: string; currentUser: any; project: Project } = $props();
+	let {
+      projectId,
+      currentUser,
+      project,
+      iconSize = 24,
+  }: {
+      projectId: string,
+      currentUser: any,
+      project: Project,
+      iconSize?: number
+  } = $props();
 
 	let dialogOpen = $state(false);
 	let templateNameValue = $state(project?.name || '');
@@ -64,8 +74,9 @@
 		aria-label="Share as Template"
 		onclick={handleTriggerClick}
 	>
-		<Share size={20} />
+		<Share size={iconSize} />
 	</Dialog.Trigger>
+  
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Share as Template</Dialog.Title>
