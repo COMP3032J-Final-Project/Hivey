@@ -1,5 +1,4 @@
 <!-- TODO remember functionality -->
-
 <script lang="ts">
 	import { login } from '$lib/api/auth';
   import { saveUserSession } from '$lib/auth';
@@ -16,6 +15,7 @@
 	import { Label } from "$lib/components/ui/label/index.js";
   import { Checkbox } from "$lib/components/ui/checkbox/index.js";
   import { m, me, mpa, mpae } from '$lib/trans';
+  import { isAxiosError } from 'axios';
 
 	// 表单数据
 	let formData: LoginForm = {
@@ -62,11 +62,13 @@
 				      goto('/dashboard/repository/projects/all');
 			    }, 500);
 		  } catch (error) {
-			    // 直接使用错误消息
-			    const errorMessage = (error as Error).message;
-			    failure(errorMessage || me.unknown());
+          if (!isAxiosError(error)) {
+			        const errorMessage = (error as Error).message;
+			        failure(errorMessage || me.unknown());
+          } else {
+              failure(error.response?.data.msg || me.unknown())
+          }
 		  } finally {
-			    // 重置加载状态
 			    isLoading = false;
 		  }
 	};

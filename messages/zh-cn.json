@@ -121,9 +121,7 @@
       "empty_username":"用户名不能为空",
       "invalid_email":"无效的电子邮件",
       "invalid_user":"无效的用户名或密码",
-      "logout_failed":"登出失败，请重试",
       "password_mismatch":"密码不匹配",
-      "session_expired":"您的登录会话已过期，请重新登录",
       "user_exists":"用户已存在",
       "weak_password":"密码太弱"
     },
@@ -246,7 +244,8 @@
   "__error": {
     "network":"网络错误",
     "unknown":"未知错误",
-    "user_not_login":"用户未登录"
+    "user_not_login":"用户未登录",
+    "session_expired":"您的登录会话已过期，请重新登录",
+    "logout_failed":"登出失败，请重试"
   }
-
 }

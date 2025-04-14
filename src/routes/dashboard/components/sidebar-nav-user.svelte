@@ -24,7 +24,7 @@
           success(m.logout());
           goto('/auth/signin');
       } catch (error) {
-          failure(me.error_logout_failed());
+          failure(me.logout_failed());
       }
   }
 

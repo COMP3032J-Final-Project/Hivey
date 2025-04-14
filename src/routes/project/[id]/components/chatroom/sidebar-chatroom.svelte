@@ -2,7 +2,7 @@
   import type { ChatMessage as ChatMessageType } from '$lib/types/editor';
 	import { Send } from 'lucide-svelte';
 	import ChatMessage from './chat-message.svelte'
-  import { mpp, mpa } from '$lib/trans';
+  import { mpp, me } from '$lib/trans';
 	import { User } from '$lib/types/auth';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { getHistoryChatMessages } from '$lib/api/project';
@@ -29,7 +29,7 @@
   
   onMount(async () => {  // 当组件挂载后加载历史消息
     if (isSessionExpired()) { 
-      failure(mpa.session_expired());
+      failure(me.session_expired());
       goto('/auth/login');
       return;
     }

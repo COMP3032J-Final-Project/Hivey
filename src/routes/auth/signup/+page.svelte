@@ -12,43 +12,44 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import * as v from 'valibot';
 	import { RawRegisterForm } from '$lib/types/auth';
+  import { isAxiosError } from 'axios';
 
 	let formData = {
-		username: '',
-		email: '',
-		password: '',
-		confirm_password: ''
+		  username: '',
+		  email: '',
+		  password: '',
+		  confirm_password: ''
 	};
 
 	const handleSubmit = async (e: Event) => {
-		e.preventDefault();
-		try {
+		  e.preventDefault();
 			formData = v.parse(RawRegisterForm, formData);
-
 			const registerForm = {
-				username: formData.username,
-				email: formData.email,
-				password: formData.password
+				  username: formData.username,
+				  email: formData.email,
+				  password: formData.password
 			};
 
-			await registerUser(registerForm);
+		  try {
+			    await registerUser(registerForm);
 
-			// 注册成功处理
-			success(mpa.success_sign_up());
-			setTimeout(() => {
-				// 带着用户信息跳转到登录页并自动填充用户邮箱和密码
-				goto(`/auth/signin`, {
-					state: {
-						email: formData.email,
-						password: formData.password
-					}
-				});
-			}, 2000);
-		} catch (error) {
-			// 直接使用错误消息
-			const errorMessage = (error as Error).message;
-			failure(errorMessage || me.unknown());
-		}
+			    success(mpa.success_sign_up());
+			    setTimeout(() => {
+				      // 带着用户信息跳转到登录页并自动填充用户邮箱和密码
+				      goto(`/auth/signin`, {
+					        state: {
+						          email: formData.email,
+						          password: formData.password
+					        }
+				      });
+			    }, 2000);
+		  } catch (error) {
+          if (!isAxiosError(error)) {
+			        failure((error as Error).message || me.unknown());
+          } else {
+              failure(error.response?.data.msg || me.unknown());
+          }
+		  }
 	};
 </script>
 
@@ -106,7 +107,7 @@
 				/>
 				{#if formData.confirm_password && formData.password !== formData.confirm_password}
 					<div class="mt-1 text-red-500">
-						{mpae.error_password_mismatch()}
+						{mpae.password_mismatch()}
 					</div>
 				{/if}
 			</div>

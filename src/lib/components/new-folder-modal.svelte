@@ -81,7 +81,7 @@
 		} catch (error) {
 			// 直接使用错误消息
 			const errorMessage = (error as Error).message;
-			failure(errorMessage || me.error_unknown());
+			failure(errorMessage || me.unknown());
 		}
 	};
 
