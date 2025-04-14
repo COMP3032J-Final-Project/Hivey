@@ -23,6 +23,7 @@
 	import type { WebSocketClient } from '$lib/api/websocket';
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
+  import ToggleableToolbar from './components/toggleable-toolbar.svelte'
 
 	let { data }: PageProps = $props();
 	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
@@ -256,24 +257,28 @@
 	<Resizable.PaneGroup direction="horizontal" autoSaveId="project">
 		<Resizable.Pane defaultSize={50}>
 			<div class="flex h-full flex-col">
-				<div class="flex items-center space-x-2 border-b p-1">
-					<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
-					<ToggleGroup.Root type="multiple" bind:value>
-						<ToggleGroup.Item
-							value="bold"
-							aria-label="Toggle bold"
-							onclick={() => wrapSelection('bold')}
-						>
-							<Bold class="size-4 p-0" />
-						</ToggleGroup.Item>
-						<ToggleGroup.Item value="italic" aria-label="Toggle italic">
-							<Italic class="size-4 p-0" />
-						</ToggleGroup.Item>
-						<ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
-							<Underline class="size-4 p-0" />
-						</ToggleGroup.Item>
-					</ToggleGroup.Root>
-				</div>
+        <!-- TODO make overflowed area float above editor -->
+        <ToggleableToolbar class="border-b p-1">
+          {#snippet children()}
+					  <Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
+            <!-- TODO don't use grouped item, use single buttons instead to better suit ToggleableToolbar -->
+					  <ToggleGroup.Root class="w-[120px]" type="multiple" bind:value>
+						  <ToggleGroup.Item
+							  value="bold"
+							  aria-label="Toggle bold"
+							  onclick={() => wrapSelection('bold')}
+						  >
+							  <Bold class="size-4 p-0" />
+						  </ToggleGroup.Item>
+						  <ToggleGroup.Item value="italic" aria-label="Toggle italic">
+							  <Italic class="size-4 p-0" />
+						  </ToggleGroup.Item>
+						  <ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
+							  <Underline class="size-4 p-0" />
+						  </ToggleGroup.Item>
+					  </ToggleGroup.Root>
+          {/snippet}
+        </ToggleableToolbar>
 				<div class="flex-1 overflow-auto">
 					<Editor
 						bind:value={docContent}
