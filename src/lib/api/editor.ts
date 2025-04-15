@@ -55,9 +55,6 @@ const createEmptyFile = async (fileName: string, fileType: string): Promise<File
     }
 }
 
-const uploadFiletoR2 = async (upload_url: string, file: File) => {
-
-}
 
 export const createFile = async (projectId: string, fileForm: createFileFrom) => {
     if(fileForm.filetype=="folder") {
