@@ -81,10 +81,11 @@
 					}
 			}
 
-			// 设置项目删除事件的处理
-			wsClient.projectDeletedHandler = () => {
-					goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
-			}
+			    // 设置项目删除事件的处理
+			    wsClient.projectDeletedHandler = () => {
+              // TODO notify user
+				      goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
+			    }
 
 			wsClient.projectUpdateHandler = (data) => {
 					if (data.name) {
