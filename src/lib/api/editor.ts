@@ -89,6 +89,7 @@ export const createFile = async (projectId: string, fileForm: createFileFrom) =>
 };
 
 export const deleteFile = async (projectId: string, fileId: string): Promise<EditorFile[]> => {
+    console.log("Deleting file with ID:", fileId);
     const response = await axiosClient.delete<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}`);
     if (!response.data.data) {
         throw new Error(response.data.msg);

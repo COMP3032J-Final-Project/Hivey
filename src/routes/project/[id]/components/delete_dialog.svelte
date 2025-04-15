@@ -21,8 +21,8 @@
 
 	const deleteFile = async (e: Event) => {
 		e.preventDefault();
-		// TODO: 接入后端
 		deleteAPI(file.project_id, file.id);
+		await new Promise((resolve) => setTimeout(resolve, 200));
 		reloadFiles(file.project_id);
 		open = false;
 	};
