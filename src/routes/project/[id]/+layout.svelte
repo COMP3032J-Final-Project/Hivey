@@ -21,7 +21,6 @@
 	import { notification } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
-	import { getProjectMember } from '$lib/api/project';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
 	let { data, children } = $props<{

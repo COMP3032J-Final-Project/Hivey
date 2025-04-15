@@ -5,7 +5,7 @@ import type { LayoutLoad } from './$types';
 import { me } from '$lib/trans';
 import type { User, UserAuth } from '$lib/types/auth';
 import { getUserInfo } from '$lib/api/auth';
-import { getProjectMember } from '$lib/api/project';
+import { getProjectMemberInfo } from '$lib/api/project';
 import { getFiles } from '$lib/api/editor';
 import { buildFileTree } from '$lib/utils';
 import { getProjectById } from '$lib/api/dashboard';
@@ -45,7 +45,7 @@ export const load: LayoutLoad = async ({ url, params }) => {
                 permission: UserPermissionEnum.Viewer
             };
         } else {
-            currentUser = await getProjectMember(params.id, currentUser.username);
+            currentUser = await getProjectMemberInfo(params.id, currentUser.username);
         }
     } catch (error) {
         failure(me.session_expired());

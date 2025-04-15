@@ -31,7 +31,7 @@ export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): 
 }
 
 // 获取项目下的某个成员的所有信息(包括其权限)
-export const getProjectMember = async (projectId: string, memberName: string): Promise<User> => {
+export const getProjectMemberInfo = async (projectId: string, memberName: string): Promise<User> => {
     const response = await axiosClient.get<APIResponse<User>>(`/project/${projectId}/members/${memberName}`);
     if (response.data.code !== 200 || !response.data.data) {
         throw new Error(response.data.msg);
