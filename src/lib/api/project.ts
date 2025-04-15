@@ -128,9 +128,19 @@ export const shareProject2Template = async (form: ShareProject2TemplateForm): Pr
         throw new Error("You are not the owner of this project!");
     }
 
-    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/export`, 
-        { is_public: isPublic, template_name: templateName }); // TODO 路由暂时不确定, 待后端实现
+    const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/create_template`, 
+        { is_public: isPublic, name: templateName });
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }
+}
+
+// 从Template开始一个Project
+export const createProjectFromTemplate = async (templateId: string, projectName: string): Promise<string> => {
+    const response = await axiosClient.post<APIResponse<{ project_id: string }>>(`/project/${templateId}/create_project`, 
+        {name: projectName });
+    if (response.data.code !== 200) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data?.project_id || "";
 }
