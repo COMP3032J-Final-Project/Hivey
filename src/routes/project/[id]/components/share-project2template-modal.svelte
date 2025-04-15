@@ -14,14 +14,18 @@
       currentUser,
       project,
       iconSize = 24,
+      open,
+      onOpenChange
   }: {
       projectId: string,
       currentUser: any,
       project: Project,
-      iconSize?: number
+      iconSize?: number,
+      open?: boolean,
+      onOpenChange?: (open: boolean) => void
   } = $props();
 
-	let dialogOpen = $state(false);
+	let dialogOpen = $state(open || false);
 	let templateNameValue = $state(project?.name || '');
 	let isPublicValue = $state('public');
 
@@ -50,7 +54,14 @@
 			};
       await shareProject2Template(form);
 			success('Share Template Success!');
-			document.getElementById('share-dialog-close-btn')?.click();
+			
+			// 使用onOpenChange关闭对话框
+			if (onOpenChange) {
+				dialogOpen = false;
+				onOpenChange(false);
+			} else {
+				document.getElementById('share-dialog-close-btn')?.click();
+			}
 		} catch (error) {
 			const errorMessage = (error as Error).message;
 			failure(errorMessage || 'Unknown Error');
@@ -66,9 +77,27 @@
 		templateNameValue = project?.name || ''; // 设置默认模板名称为当前项目名称
 		dialogOpen = true;
 	};
+
+	$effect(() => {
+		if (open !== undefined) {
+			dialogOpen = open;
+			
+			// 当对话框打开时，设置模板名称为项目名称
+			if (open) {
+				templateNameValue = project?.name || '';
+			}
+		}
+	});
+
+	$effect(() => {
+		if (onOpenChange && dialogOpen !== open) {
+			onOpenChange(dialogOpen);
+		}
+	});
 </script>
 
 <Dialog.Root bind:open={dialogOpen}>
+	{#if !onOpenChange}
 	<Dialog.Trigger
 		class={buttonVariants({ variant: 'ghost', size: 'icon' })}
 		aria-label="Share as Template"
@@ -76,6 +105,7 @@
 	>
 		<Share size={iconSize} />
 	</Dialog.Trigger>
+	{/if}
   
 	<Dialog.Content>
 		<Dialog.Header>

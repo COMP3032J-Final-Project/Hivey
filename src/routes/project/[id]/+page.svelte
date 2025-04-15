@@ -10,7 +10,7 @@
 	import Bold from '@lucide/svelte/icons/bold';
 	import Italic from '@lucide/svelte/icons/italic';
 	import Underline from '@lucide/svelte/icons/underline';
-	import { Command, ArrowBigUp } from 'lucide-svelte';
+	import { Command, ArrowBigUp, House, Share } from 'lucide-svelte';
 	import { updateProject } from '$lib/api/dashboard';
 	import { success, failure } from '$lib/components/ui/toast';
 	import type { Project } from '$lib/types/dashboard';
@@ -23,10 +23,9 @@
 	import type { WebSocketClient } from '$lib/api/websocket';
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
-  import ToggleableToolbar from './components/toggleable-toolbar.svelte'
-  import ShareProjectDialog from './components/share-project2template-modal.svelte';
+	import ToggleableToolbar from './components/toggleable-toolbar.svelte';
+	import ShareProjectDialog from './components/share-project2template-modal.svelte';
 	import { goto } from '$app/navigation';
-
 
 	let { data }: PageProps = $props();
 	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
@@ -34,6 +33,7 @@
 	let project: Project = $state(data.project);
 	let currentUser: User = $state(data.currentUser);
 	let membersDialogOpen = $state(false);
+	let shareTemplateDialogOpen = $state(false); // 新增：控制对话框显示状态
 
 	let docContent = $state('');
 	let currentFileType = $state('Format');
@@ -158,25 +158,28 @@
 		<div class="hidden items-center md:flex">
 			<Sidebar.Trigger class="-ml-1" />
 			<Menubar.Root class="border-0 bg-transparent">
-        <Menubar.Menu>
+				<Menubar.Menu>
 					<Menubar.Trigger>Project</Menubar.Trigger>
-          <Menubar.Content>
-            <!-- TODO localize href -->
-            <Menubar.Item
-              onclick={() => goto('/dashboard/repository/projects/all')}>
-              Home page
+					<Menubar.Content>
+						<!-- TODO localize href -->
+						<Menubar.Item onclick={() => goto('/dashboard/repository/projects/all')}>
+							Home page
+							<Menubar.Shortcut><House class="size-4" /></Menubar.Shortcut>
 						</Menubar.Item>
-            <Menubar.Item onclick={handleRedo}>
-              <!-- FIXME share project dialog here is not working correctly -->
-              <ShareProjectDialog
-                projectId={project.id}
-                currentUser={currentUser}
-                project={project}
-                iconSize={20}
-              />
+						<Menubar.Item
+							onclick={() => {
+								if (currentUser.permission !== UserPermissionEnum.Owner) {
+									failure('Only owner can share project as template');
+									return;
+								}
+								shareTemplateDialogOpen = true;
+							}}
+						>
+							Share as Template
+							<Menubar.Shortcut><Share class="size-4" /></Menubar.Shortcut>
 						</Menubar.Item>
-          </Menubar.Content>
-        </Menubar.Menu>
+					</Menubar.Content>
+				</Menubar.Menu>
 				<Menubar.Menu>
 					<Menubar.Trigger>Edit</Menubar.Trigger>
 					<Menubar.Content>
@@ -276,31 +279,39 @@
 		onOpenChange={(open) => (membersDialogOpen = open)}
 	/>
 
+	<ShareProjectDialog
+		projectId={project.id}
+		{currentUser}
+		{project}
+		open={shareTemplateDialogOpen}
+		onOpenChange={(open) => (shareTemplateDialogOpen = open)}
+	/>
+
 	<Resizable.PaneGroup direction="horizontal" autoSaveId="project">
 		<Resizable.Pane defaultSize={50}>
 			<div class="flex h-full flex-col">
-        <!-- TODO make overflowed area float above editor -->
-        <ToggleableToolbar class="border-b p-1">
-          {#snippet children()}
-					  <Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
-            <!-- TODO don't use grouped item, use single buttons instead to better suit ToggleableToolbar -->
-					  <ToggleGroup.Root class="w-[120px]" type="multiple" bind:value>
-						  <ToggleGroup.Item
-							  value="bold"
-							  aria-label="Toggle bold"
-							  onclick={() => wrapSelection('bold')}
-						  >
-							  <Bold class="size-4 p-0" />
-						  </ToggleGroup.Item>
-						  <ToggleGroup.Item value="italic" aria-label="Toggle italic">
-							  <Italic class="size-4 p-0" />
-						  </ToggleGroup.Item>
-						  <ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
-							  <Underline class="size-4 p-0" />
-						  </ToggleGroup.Item>
-					  </ToggleGroup.Root>
-          {/snippet}
-        </ToggleableToolbar>
+				<!-- TODO make overflowed area float above editor -->
+				<ToggleableToolbar class="border-b p-1">
+					{#snippet children()}
+						<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
+						<!-- TODO don't use grouped item, use single buttons instead to better suit ToggleableToolbar -->
+						<ToggleGroup.Root class="w-[120px]" type="multiple" bind:value>
+							<ToggleGroup.Item
+								value="bold"
+								aria-label="Toggle bold"
+								onclick={() => wrapSelection('bold')}
+							>
+								<Bold class="size-4 p-0" />
+							</ToggleGroup.Item>
+							<ToggleGroup.Item value="italic" aria-label="Toggle italic">
+								<Italic class="size-4 p-0" />
+							</ToggleGroup.Item>
+							<ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
+								<Underline class="size-4 p-0" />
+							</ToggleGroup.Item>
+						</ToggleGroup.Root>
+					{/snippet}
+				</ToggleableToolbar>
 				<div class="flex-1 overflow-auto">
 					<Editor
 						bind:value={docContent}
