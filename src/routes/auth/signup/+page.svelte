@@ -2,7 +2,7 @@
 	import { registerUser } from '$lib/api/auth';
 	import { type RegisterForm } from '$lib/types/auth';
 	import { goto } from '$app/navigation';
-	import { success, failure } from '$lib/components/ui/toast';
+	import { success, failure, failureError } from '$lib/components/ui/toast';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -44,11 +44,7 @@
 				      });
 			    }, 2000);
 		  } catch (error) {
-          if (!isAxiosError(error)) {
-			        failure((error as Error).message || me.unknown());
-          } else {
-              failure(error.response?.data.msg || me.unknown());
-          }
+          failureError(error);
 		  }
 	};
 </script>

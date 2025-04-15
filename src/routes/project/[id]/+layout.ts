@@ -1,4 +1,4 @@
-import { failure } from '$lib/components/ui/toast';
+import { failure, failureError } from '$lib/components/ui/toast';
 import { getUserSession, isSessionExpired } from '$lib/auth';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
@@ -22,7 +22,6 @@ export const load: LayoutLoad = async ({ url, params }) => {
         // 显示错误提示
         failure(me.user_not_login());
 
-        // 将当前URL路径添加到重定向URL中，以便登录后可以返回
         const returnUrl = encodeURIComponent(url.pathname + url.search);
         redirect(302, `/auth/signin?returnUrl=${returnUrl}`);
     }
@@ -30,6 +29,14 @@ export const load: LayoutLoad = async ({ url, params }) => {
     let currentUser: User;
     try {
         currentUser = await getUserInfo();
+    } catch (error) {
+        failureError(error);
+        
+        const returnUrl = encodeURIComponent(url.pathname + url.search);
+        redirect(302, `/auth/signin?returnUrl=${returnUrl}`)
+    }
+    
+    try {
         const project = await getProjectById(params.id);
         // 如果是模板项目，检查是否是创建者
         if (project.type === 'template') {
@@ -46,9 +53,9 @@ export const load: LayoutLoad = async ({ url, params }) => {
     }
     const project: Project = await getProjectById(params.id);
     const filesdata = await getFiles(params.id);
-    console.log("files:", filesdata);
+    console.debug("files:", filesdata);
     const filesStruct = buildFileTree(filesdata);
-    console.log("filesStruct:", filesStruct);
+    console.debug("filesStruct:", filesStruct);
     //const files: SidebarFile[] = _loadSidebarFiles(filesdata);
     //const folders: SidebarFolder[] = _loadSidebarFolder(filesdata);
 

@@ -1,1 +1,1 @@
-export { success, failure, notification } from './toast'; 
+export { success, failure, notification, failureError } from './toast'; 

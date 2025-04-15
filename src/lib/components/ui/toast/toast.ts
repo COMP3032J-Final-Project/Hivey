@@ -1,4 +1,6 @@
 import { toast } from '@zerodevx/svelte-toast';
+import { isAxiosError } from 'axios';
+import { me } from '$lib/trans';
 
 /**
  * 显示成功提示的toast
@@ -68,4 +70,17 @@ export function notification(message: string): void {
     },
     duration: 3000,
   });
-} 
+}
+
+
+/**
+ * Toast Error Message
+ */
+export function failureError(error: any) {
+    if (!isAxiosError(error)) {
+			  const errorMessage = (error as Error).message;
+			  failure(errorMessage || me.unknown());
+    } else {
+        failure(error.response?.data.msg || me.unknown())
+    }
+}

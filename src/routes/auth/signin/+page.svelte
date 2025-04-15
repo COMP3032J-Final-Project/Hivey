@@ -3,8 +3,8 @@
 	import { login } from '$lib/api/auth';
   import { saveUserSession } from '$lib/auth';
 	import type { LoginForm, UserAuth } from '$lib/types/auth';
-	import { goto } from '$app/navigation';
-	import { success, failure } from '$lib/components/ui/toast';
+	import { goto } from '$app/navigation'
+	import { success, failure, failureError } from '$lib/components/ui/toast';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
   import { localizeHref } from '$lib/paraglide/runtime';
@@ -62,12 +62,7 @@
 				      goto('/dashboard/repository/projects/all');
 			    }, 500);
 		  } catch (error) {
-          if (!isAxiosError(error)) {
-			        const errorMessage = (error as Error).message;
-			        failure(errorMessage || me.unknown());
-          } else {
-              failure(error.response?.data.msg || me.unknown())
-          }
+          failureError(error);
 		  } finally {
 			    isLoading = false;
 		  }
