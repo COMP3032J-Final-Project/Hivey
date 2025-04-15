@@ -9,17 +9,28 @@
   import { UserPermissionEnum } from '$lib/types/auth';
   import type { User } from '$lib/types/auth';
   import { getProjectMembers } from '$lib/api/project';
-  import { setMembers } from '../../store.svelte';
-  
+  import { setMembers, addMember } from '../../store.svelte';
+  import { getContext } from 'svelte';
+  import type { WebSocketClient } from '$lib/api/websocket';
+
   let { currentUser, projectId } = $props();
+  const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
+	let wsClient = $derived(getWsClient ? getWsClient() : null); // 获取当前的wsClient实例
   let isOpen = $state(false);
   let inviteeName = $state('');
   let inviteePermission = $state<UserPermissionEnum>(UserPermissionEnum.Writer);
   let errorMessage = $state('');
-  
   let permissionOptions = $state<Array<{value: UserPermissionEnum, label: string}>>([]);
-  
+
   $effect(() => {
+    if (wsClient) {
+      if (!wsClient.memberInvitedHandler) {
+        wsClient.memberInvitedHandler = (invitee: User) => {
+          addMember(invitee);
+        }
+      }
+    }
+
     // 根据当前用户权限设置可选的权限选项
     if (currentUser.permission === UserPermissionEnum.Owner) {
       permissionOptions = [

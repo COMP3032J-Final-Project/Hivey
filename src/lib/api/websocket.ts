@@ -1,5 +1,6 @@
 import type { ChatMessage, FileType } from '$lib/types/editor';
-import type { UserAuth, User } from '$lib/types/auth';
+import type { UserAuth, User} from '$lib/types/auth';
+import { UserPermissionEnum} from '$lib/types/auth';
 import type { WSRequest, WSResponse } from '$lib/types/websocket';
 
 // WebSocket连接状态枚举
@@ -31,7 +32,10 @@ export class WebSocketClient {
     public projectDeletedHandler: ((data: { id: string }) => void) | null = null;
     // member
     public memberJoinedHandler: ((username: string) => void) | null = null;
-    public memberUpdateHandler: ((data: any) => void) | null = null;
+    public memberInvitedHandler: ((invitee: User) => void) | null = null;
+    public memberUpdateHandler: ((username: string, permission: UserPermissionEnum) => void) | null = null;
+    public memberRemoveHandler: ((username: string) => void) | null = null;
+    public memberTransferHandler: ((data: any) => void) | null = null;
     public memberLeftHandler: ((username: string) => void) | null = null;
     // CRDT
     public crdtEventHandler: ((response: WSResponse) => void) | null = null;
@@ -277,13 +281,30 @@ export class WebSocketClient {
                 this.memberLeftHandler(leftUsername);
                 break;
             case "add_member":
-                // TODO: 处理成员添加事件
+                if (!this.memberInvitedHandler) {
+                    console.warn("Member invited handler not set");
+                    return;
+                }
+                const invitee : User = {
+                    username: response.payload?.username || "Unknown",
+                    email: response.payload?.email || "Unknown",
+                    permission: response.payload?.permission || UserPermissionEnum.Viewer,
+                }
+                this.memberInvitedHandler(invitee);
                 break;
             case "update_member":
-                // TODO: 处理成员更新事件
+                if (!this.memberUpdateHandler) {
+                    console.warn("Member update handler not set");
+                    return;
+                }
+                this.memberUpdateHandler(response.payload?.username, response.payload?.permission);
                 break;
             case "remove_member":
-                // TODO: 处理成员移除事件
+                if (!this.memberRemoveHandler) {
+                    console.warn("Member remove handler not set");
+                    return;
+                }
+                this.memberRemoveHandler(response.payload?.username);
                 break;
             case "transfer_ownership":
                 // TODO: 处理所有权转移事件

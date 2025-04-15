@@ -3,13 +3,10 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import * as Dialog from '$lib/components/ui/dialog';
-  import * as Select from '$lib/components/ui/select';
   import { removeMember, updateMember } from "../../store.svelte";
-  import { mpp } from '$lib/trans';
   import { getProjectMemberPermission, removeProjectMember, updateProjectMemberPermission } from '$lib/api/project';
   import { UserPermissionEnum } from '$lib/types/auth';
-  import { page } from '$app/stores';
-  import { success, failure, notification } from '$lib/components/ui/toast';
+  import { failure, notification } from '$lib/components/ui/toast';
   
   let { id, projectId, currentUser }: { id: string; projectId: string; currentUser: any } = $props();
   let isDeleting = $state(false);

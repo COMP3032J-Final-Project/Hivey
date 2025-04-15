@@ -11,7 +11,11 @@ export function addMember(member: User) { // 添加新成员
   members.update(currentMembers => {
     // 检查成员是否已存在
     const exists = currentMembers.some(m => m.username === member.username);
-    if (!exists) {
+    if (!exists) { // 如果成员不存在则添加成员
+      // 如果成员没有头像，则将用户名的前两个字母作为头像
+      if (!member.avatar) {
+        member.avatar = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
+      }
       return [...currentMembers, member];
     }
     return currentMembers;
