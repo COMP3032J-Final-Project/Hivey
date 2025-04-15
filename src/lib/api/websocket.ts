@@ -57,9 +57,7 @@ export class WebSocketClient {
         this.userAuth = userAuth;
     }
 
-    // 连接到WebSocket服务器
     public connect(): void {
-        // 构建WebSocket URL
         const wsUrl = new URL(
             `project/${this.projectId}/ws/?access_token=${this.userAuth.access_token}`,
             `${BACKEND_ADDR_WEBSOCKET}`
@@ -67,7 +65,6 @@ export class WebSocketClient {
 
         try {
             this.socket = new WebSocket(wsUrl);
-            // 设置事件处理程序
             this.socket.onopen = this.handleOpen.bind(this);
             this.socket.onmessage = this.handleMessage.bind(this);
             this.socket.onclose = this.handleClose.bind(this);
@@ -112,31 +109,13 @@ export class WebSocketClient {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
         }
-        console.log('WebSocket disconnected');
+        console.debug('WebSocket disconnected');
     }
 
     // 处理连接打开事件
     private handleOpen(event: Event): void {
-        console.log('Project WebSocket connected');
+        console.debug('Project WebSocket connected');
         this.reconnectAttempts = 0;
-        
-        // 发送用户加入项目的消息
-        if (this.socket && this.socket.readyState === WebSocketState.OPEN) {
-            try {
-                // 发送加入消息，通知其他用户
-                const joinMessage: WSRequest = {
-                    scope: "member",
-                    action: "joined",
-                    payload: {
-                        username: this.currentUser.username,
-                        email: this.currentUser.email,
-                    }
-                };
-                this.socket.send(JSON.stringify(joinMessage));
-            } catch (error) {
-                console.error('Failed to send join message:', error);
-            }
-        }
     }
 
     // 处理WebSocket的消息事件
@@ -403,7 +382,6 @@ export class WebSocketClient {
     private handleClose(event: CloseEvent): void {
         console.log('Project WebSocket connection closed:', event.code, event.reason);
 
-        // 尝试重连
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             const timeout = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
