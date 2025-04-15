@@ -201,26 +201,25 @@ export function buildFileTree(files: FileType[]): TreeNode[] {
     return root.children;
 }
 
-export function getFolders(fileData: FileType[]) {
-    // 筛选出文件夹类型的数据
-    const folders = fileData.filter(item => item.filetype === 'folder');
+export function getFolders(files: FileType[]){
+    const folderInfoMap = new Map<string, { value: string, label: string }>(); // 用于存储不重复的文件夹路径及其名称
     
-    // 创建结果数组
-    const result: { value: string; label: string }[] = [];
-
-    result.push({
-        value: "root",
-        label: "root"
-    });
+    folderInfoMap.set('/', { value: '/', label: 'root' });
+    files.forEach(file => {
+        const pathParts = file.filepath.split('/'); // 将文件路径按 '/' 拆分成部分
+        let currentPath = '';
     
-    // 处理每个文件夹
-    folders.forEach(folder => {
-        const fullPath = folder.filepath ? `${folder.filepath}/${folder.filename}` : folder.filename;
-        result.push({
-            value: fullPath,
-            label: folder.filename
+        // 遍历每一部分，逐层构建路径
+        pathParts.forEach((part, index) => {
+          // 构建路径
+          currentPath += `/${part}`;
+    
+          // 如果该路径尚未添加到 Map 中，则加入 Map
+          if (!folderInfoMap.has(currentPath)) {
+            folderInfoMap.set(currentPath, { value: currentPath, label: part });
+          }
         });
-    });
+      });
     
-    return result;
+    return Array.from(folderInfoMap.values());
 }

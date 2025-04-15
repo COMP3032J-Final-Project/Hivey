@@ -38,27 +38,57 @@ export async function fetchDocData(fileType: string, url: string): Promise<any> 
     return result;
 }
 
-export const createFile = async (projectId: string, fileForm: createFileFrom): Promise<EditorFile[]> => {
-    let tempForm;
+const createEmptyFile = async (fileName: string, fileType: string): Promise<File> => {
+    switch (fileType) {
+        case 'pdf':
+            return new File([new Blob()], fileName, { type: 'application/pdf' });
+        case 'md':
+            return new File([new Blob()], fileName, { type: 'text/markdown' });
+        case 'tex':
+            return new File([new Blob()], fileName, { type: 'text/x-tex' });
+        case 'bib':
+            return new File([new Blob()], fileName, { type: 'application/x-bibtex' });
+        case 'typ':
+            return new File([new Blob()], fileName, { type: 'application/x-typ' });
+        default:
+            return new File([new Blob()], fileName, { type: 'text/plain' });
+    }
+}
+
+const uploadFiletoR2 = async (upload_url: string, file: File) => {
+
+}
+
+export const createFile = async (projectId: string, fileForm: createFileFrom) => {
     if(fileForm.filetype=="folder") {
-        tempForm = {
-            filename: fileForm.title,
-            filepath: fileForm.path,
-            filetype: fileForm.filetype,
-        };
+        return [];
     }
     else{
+        let tempForm;
         tempForm = {
             filename: fileForm.title + "." + fileForm.suffix,
             filepath: fileForm.path,
-            filetype: fileForm.filetype,
         };
+        const response = await axiosClient.post<APIResponse<EditorFile[]>>(`/project/${projectId}/files/create_update`, tempForm);
+        if (!response.data.data) {
+            throw new Error(response.data.msg);
+        }
+        console.log("[API]", response.data.data);
+
+        // 创建一个空的文本文件
+        const emptyFile = await createEmptyFile(tempForm.filename, fileForm.suffix);
+        console.log("Uploading file:", emptyFile);
+        console.log("File size:", emptyFile.size);
+        const uploadResponse = await fetch(response.data.data.url, {
+            method: 'PUT',
+            body: emptyFile,
+        });
+        if (uploadResponse.ok) {
+            console.log('文件上传成功');
+        } else {
+            console.error('上传失败', await uploadResponse.text());
+        }
     }
-    const response = await axiosClient.post<APIResponse<EditorFile[]>>(`/project/${projectId}/files/create`, tempForm);
-    if (!response.data.data) {
-        throw new Error(response.data.msg);
-    }
-    return response.data.data;
 };
 
 export const deleteFile = async (projectId: string, fileId: string): Promise<EditorFile[]> => {

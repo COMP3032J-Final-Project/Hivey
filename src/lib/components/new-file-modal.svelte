@@ -72,7 +72,7 @@
 				console.log('Please complete the form', folderValue, fileTypeValue, filename);
 				throw new Error('Please complete the form');
 			} else {
-				if (folderValue == 'root') {
+				if (folderValue == '/') {
 					folderValue = '';
 				}
 				formData = {
