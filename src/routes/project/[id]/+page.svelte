@@ -329,7 +329,7 @@
 		<Resizable.Handle />
 
 		<Resizable.Pane defaultSize={50}>
-			<Previewer fileType="markdown" content={docContent} />
+			<Previewer fileType={currentFileType} content={docContent} />
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>

@@ -68,29 +68,61 @@
   setContext('websocket-client', () => wsClient); // 传入一个获取wsClient的函数而不是wsClient本身这样可以保证访问到最新的wsClient值
 
 	async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
-		  try {
-			    wsClient = new WebSocketClient( // 创建WebSocket客户端
-				      projectId,
-				      currentUser,
-				      userSession
-			    );
-          // 设置成员进入事件的处理
-			    wsClient.memberJoinedHandler = (username: string) => {
-				      if (username !== currentUser.username && username !== 'Unknown') {
-					        notification(`${username} entered the project.`);
-				      }
-			    }
+		try {
+			wsClient = new WebSocketClient( // 创建WebSocket客户端
+					projectId,
+					currentUser,
+					userSession
+			);
+		// 设置成员进入事件的处理
+			wsClient.memberJoinedHandler = (username: string) => {
+					if (username !== currentUser.username && username !== 'Unknown') {
+						notification(`${username} entered the project.`);
+					}
+			}
 
-			    // 设置项目删除事件的处理
-			    wsClient.projectDeletedHandler = () => {
-				      goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
-			    }
+			// 设置项目删除事件的处理
+			wsClient.projectDeletedHandler = () => {
+					goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
+			}
 
-			    wsClient.projectUpdateHandler = (data) => {
-				      if (data.name) {
-					        project.name = data.name;
-				      }
-			    }
+			wsClient.projectUpdateHandler = (data) => {
+					if (data.name) {
+						project.name = data.name;
+					}
+			}
+
+			wsClient.fileAddedHandler = (file) => {
+				currentFiles.update((files) => [ ...files, file ]); // 更新当前文件列表
+				currentFilesStruct.set(buildFileTree($currentFiles));
+			}
+
+			wsClient.fileDeletedHandler = (fileId) => {
+				currentFiles.update((files) => files.filter((file) => file.id !== fileId)); // 更新当前文件列表
+				currentFilesStruct.set(buildFileTree($currentFiles));
+			}
+
+			wsClient.fileRenamedHandler = (data) => {
+				currentFiles.update((files) => {
+					const file = files.find((file) => file.id === data.id);
+					if (file) {
+						file.filename = data.name; // 更新文件名称
+					}
+					return files;
+				});
+				currentFilesStruct.set(buildFileTree($currentFiles));
+			}
+
+			wsClient.fileMoveHandler = (data) => {
+				currentFiles.update((files) => {
+					const file = files.find((file) => file.id === data.id);
+					if (file) {
+						file.filepath = data.path; // 更新文件父级ID
+					}
+					return files;
+				});
+				currentFilesStruct.set(buildFileTree($currentFiles));
+			}
 
 			    wsClient.connect(); // 连接到服务器
 		  } catch (error) {

@@ -1,6 +1,7 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
 import type { FileType as EditorFile, createFileFrom, FileURLResponse } from '$lib/types/editor';
+import { uint8ArrayToBase64 } from '$lib/utils';
 
 export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
     const response = await axiosClient.get<APIResponse<EditorFile[]>>(`/project/${projectId}/files/`);
@@ -26,7 +27,8 @@ export async function fetchDocData(fileType: string, url: string): Promise<any> 
     }
     let result;
     if (fileType === 'pdf') {
-        result = await response.blob(); // 或者 response.arrayBuffer()，视需求而定
+        const temp = await response.arrayBuffer(); // 或者 response.arrayBuffer()，视需求而定
+        result = uint8ArrayToBase64(new Uint8Array(temp));
     } else if (['md', 'tex', 'bib', 'typ'].includes(fileType || '')) {
         result = await response.text();
     } else {

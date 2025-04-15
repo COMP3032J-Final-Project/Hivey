@@ -1,4 +1,4 @@
-import type { ChatMessage } from '$lib/types/editor';
+import type { ChatMessage, FileType } from '$lib/types/editor';
 import type { UserAuth, User } from '$lib/types/auth';
 import type { WSRequest, WSResponse } from '$lib/types/websocket';
 
@@ -35,6 +35,12 @@ export class WebSocketClient {
     public memberLeftHandler: ((username: string) => void) | null = null;
     // CRDT
     public crdtEventHandler: ((response: WSResponse) => void) | null = null;
+    // file
+    public fileAddedHandler: ((file: FileType ) => void) | null = null;
+    public fileRenamedHandler: ((data: { id: string, name: string }) => void) | null = null;
+    public fileDeletedHandler: ((id: string ) => void) | null = null;
+    public fileMoveHandler: ((data: { id: string, path: string }) => void) | null = null;
+
 
     constructor(
         projectId: string,
@@ -293,15 +299,55 @@ export class WebSocketClient {
         switch (response.action) {
             case "added":
                 // TODO: 处理文件添加事件
+                if (!this.fileAddedHandler) {
+                    console.warn("File added handler not set");
+                    return;
+                }
+                try {
+                    console.log('Calling file add handler with payload:', response.payload);
+                    this.fileAddedHandler(response.payload);
+                } catch (error) {
+                    console.error('Error handling file add:', error);
+                }
                 break;
             case "renamed":
                 // TODO: 处理文件重命名事件
+                if (!this.fileRenamedHandler) {
+                    console.warn("File rename handler not set");
+                    return;
+                }
+                try {
+                    console.log('Calling file rename handler with payload:', response.payload);
+                    this.fileRenamedHandler(response.payload);
+                } catch (error) {
+                    console.error('Error handling file rename:', error);
+                }
                 break;
             case "moved":
                 // TODO: 处理文件移动事件
+                if (!this.fileMoveHandler) {
+                    console.warn("File moved handler not set");
+                    return;
+                }
+                try {
+                    console.log('Calling file move handler with payload:', response.payload);
+                    this.fileMoveHandler(response.payload);
+                } catch (error) {
+                    console.error('Error handling file move:', error);
+                }
                 break;
             case "deleted":
                 // TODO: 处理文件删除事件
+                if (!this.fileDeletedHandler) {
+                    console.warn("File deleted handler not set");
+                    return;
+                }
+                try {
+                    console.log('Calling file delete handler with payload:', response.payload);
+                    this.fileDeletedHandler(response.payload);
+                } catch (error) {
+                    console.error('Error handling file deletion:', error);
+                }
                 break;
             default:
                 console.warn("Unknown file event type:", response.action);
@@ -463,6 +509,28 @@ export class WebSocketClient {
             this.socket.send(JSON.stringify(request));
         } catch (error) {
             console.error('Failed to send awareness update message:', error);
+        }
+	}
+
+    // file: 发送文件添加消息
+    public sendFileAddedMessage(file: FileType ): void {
+		if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
+            return;
+        }
+        try {
+            // 根据后端格式，更新请求结构
+            const request: WSRequest = {
+                scope: "file",
+                action: "added",
+                payload: {
+                    file_info: file,
+                    project_id: this.projectId
+                }
+            };
+            this.socket.send(JSON.stringify(request));
+        } catch (error) {
+            console.error('Failed to add new file:', error);
+            throw error;
         }
 	}
 

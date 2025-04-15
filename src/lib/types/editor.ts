@@ -17,7 +17,6 @@ export const File = v.object({
 	project_id: v.string(), 
 	filename: v.string(),
 	filepath: v.string(),
-	filetype: v.string(),
 	created_at: v.string(),
 	updated_at: v.string(),
 });

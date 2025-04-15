@@ -64,8 +64,7 @@
     <div class="prose lg:prose-md overflow-y-auto p-2 break-words">
       {@html renenderedHTML}
     </div>
-  {/if}
-  {#if fileType === 'pdf'}
+  {:else if fileType === 'pdf'}
     <canvas bind:this={canvas}></canvas>
   {/if}
 </div>
