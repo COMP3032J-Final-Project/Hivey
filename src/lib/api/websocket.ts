@@ -2,6 +2,7 @@ import type { ChatMessage, FileType } from '$lib/types/editor';
 import type { UserAuth, User} from '$lib/types/auth';
 import { UserPermissionEnum} from '$lib/types/auth';
 import type { WSRequest, WSResponse } from '$lib/types/websocket';
+import { BACKEND_ADDR_WEBSOCKET } from '$lib/constants';
 
 // WebSocket连接状态枚举
 export enum WebSocketState {
@@ -59,7 +60,10 @@ export class WebSocketClient {
     // 连接到WebSocket服务器
     public connect(): void {
         // 构建WebSocket URL
-        const wsUrl = `ws://127.0.0.1:8000/project/${this.projectId}/ws/?access_token=${this.userAuth.access_token}`;
+        const wsUrl = new URL(
+            `project/${this.projectId}/ws/?access_token=${this.userAuth.access_token}`,
+            `${BACKEND_ADDR_WEBSOCKET}`
+        );
 
         try {
             this.socket = new WebSocket(wsUrl);
