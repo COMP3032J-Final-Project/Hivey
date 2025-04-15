@@ -89,7 +89,6 @@ export type ShareProject2TemplateForm = v.InferOutput<typeof ShareProject2Templa
 
 export const createFileFrom = v.object({
 	title: v.string(),
-	suffix: v.string(),
 	path: v.string(),
 	filetype: v.string(),
 });

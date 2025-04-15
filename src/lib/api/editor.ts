@@ -29,16 +29,15 @@ export async function fetchDocData(fileType: string, url: string): Promise<any> 
     if (fileType === 'pdf') {
         const temp = await response.arrayBuffer(); // 或者 response.arrayBuffer()，视需求而定
         result = uint8ArrayToBase64(new Uint8Array(temp));
-    } else if (['md', 'tex', 'bib', 'typ'].includes(fileType || '')) {
-        result = await response.text();
     } else {
-        throw new Error('Unsupported file type');
+        result = await response.text();
     }
     console.log(result);
     return result;
 }
 
-const createEmptyFile = async (fileName: string, fileType: string): Promise<File> => {
+const createEmptyFile = async (fileName: string): Promise<File> => {
+    const fileType = fileName.split(".")[-1];
     switch (fileType) {
         case 'pdf':
             return new File([new Blob()], fileName, { type: 'application/pdf' });
@@ -63,7 +62,7 @@ export const createFile = async (projectId: string, fileForm: createFileFrom) =>
     else{
         let tempForm;
         tempForm = {
-            filename: fileForm.title + "." + fileForm.suffix,
+            filename: fileForm.title,
             filepath: fileForm.path,
         };
         const response = await axiosClient.post<APIResponse<EditorFile[]>>(`/project/${projectId}/files/create_update`, tempForm);
@@ -73,7 +72,7 @@ export const createFile = async (projectId: string, fileForm: createFileFrom) =>
         console.log("[API]", response.data.data);
 
         // 创建一个空的文本文件
-        const emptyFile = await createEmptyFile(tempForm.filename, fileForm.suffix);
+        const emptyFile = await createEmptyFile(tempForm.filename);
         console.log("Uploading file:", emptyFile);
         console.log("File size:", emptyFile.size);
         const uploadResponse = await fetch(response.data.data.url, {

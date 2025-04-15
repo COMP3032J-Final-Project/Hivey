@@ -30,8 +30,7 @@
 	let dialogOpen = $state(false);
 
 	let folderValue = $state('');
-	let fileTypeValue = $state('');
-	let foldersData = $state([{ value: 'root', label: 'root' }]);
+	let foldersData = $state([{ value: 'root', label: '/' }]);
 
 	latestFiles?.subscribe((value) => {
 		foldersData = getFolders(value);
@@ -41,22 +40,10 @@
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
 	);
-
-	const fileTypes = [
-		{ value: 'md', label: 'md' },
-		{ value: 'tex', label: 'tex' },
-		{ value: 'typ', label: 'typ' }
-	];
-
-	const triggerContent1 = $derived(
-		fileTypes.find((f) => f.value === fileTypeValue)?.label ?? mpp.choose_file_type()
-	);
-
 	let formData: createFileFrom = {
-		title: '', // 文件标题
-		suffix: '', // 文件后缀
+		title: '', // 文件名
 		path: '', // 文件路径
-		filetype: 'file' // 文件类型
+		filetype: 'file', // 文件类型
 	};
 
 	const createFile = async (e: Event) => {
@@ -68,8 +55,7 @@
 		const filename = filenameInput.value.trim();
 
 		try {
-			if (!folderValue || !fileTypeValue || !filename) {
-				console.log('Please complete the form', folderValue, fileTypeValue, filename);
+			if (!folderValue || !filename) {
 				throw new Error('Please complete the form');
 			} else {
 				if (folderValue == '/') {
@@ -77,9 +63,8 @@
 				}
 				formData = {
 					title: filename, // 文件标题
-					suffix: fileTypeValue, // 文件后缀
 					path: folderValue, // 文件路径
-					filetype: 'file' // 文件类型
+					filetype: 'file',
 				};
 				console.log(formData);
 				createNewFile(project_id, formData);
@@ -140,23 +125,6 @@
 								placeholder={mpp.enter_file_name()}
 								class="w-[250px]"
 							/>
-						</div>
-						<div class="flex items-center justify-center gap-4">
-							<Label for="filetype" class="w-1/4 text-right">{mpp.file_type()}</Label>
-							<Select.Root type="single" name="filetype" bind:value={fileTypeValue}>
-								<Select.Trigger id="filetype" class="w-[250px]">
-									{triggerContent1}
-								</Select.Trigger>
-								<Select.Content>
-									<Select.Group>
-										{#each fileTypes as fileType}
-											<Select.Item value={fileType.value} label={fileType.label}
-												>{fileType.label}</Select.Item
-											>
-										{/each}
-									</Select.Group>
-								</Select.Content>
-							</Select.Root>
 						</div>
 						<div class="flex items-center justify-center gap-4">
 							<Label for="folder-select" class="w-1/4 text-right">{mpp.file_path()}</Label>
