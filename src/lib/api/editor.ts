@@ -56,21 +56,19 @@ const createEmptyFile = async (fileName: string): Promise<File> => {
 
 
 export const createFile = async (projectId: string, fileForm: createFileFrom) => {
-    if(fileForm.filetype=="folder") {
+    const { title, path, filetype } = fileForm;
+    if (fileForm.filetype=="folder") {
         return [];
-    }
-    else{
+    } else {
         let tempForm;
         tempForm = {
-            filename: fileForm.title,
-            filepath: fileForm.path,
+            filename: title,
+            filepath: path,
         };
-        const response = await axiosClient.post<APIResponse<EditorFile[]>>(`/project/${projectId}/files/create_update`, tempForm);
+        const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(`/project/${projectId}/files/create_update`, tempForm);
         if (!response.data.data) {
             throw new Error(response.data.msg);
         }
-        console.log("[API]", response.data.data);
-
         // 创建一个空的文本文件
         const emptyFile = await createEmptyFile(tempForm.filename);
         console.log("Uploading file:", emptyFile);

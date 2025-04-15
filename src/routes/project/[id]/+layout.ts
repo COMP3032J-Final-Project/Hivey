@@ -55,11 +55,13 @@ export const load: LayoutLoad = async ({ url, params }) => {
     }
     const project: Project = await getProjectById(params.id);
     const filesdata: File[] = await getFiles(params.id);
-    setFiles(filesdata);
     const filesStruct: TreeNode[] = buildFileTree(filesdata);
+    console.debug("files:", filesdata);
+    console.debug("filesStruct:", filesStruct);
+    
+    setFiles(filesdata);
     setFilesStruct(filesStruct);
     updateCurrentFile({project_id: params.id});// 使用projectId更新currentFile
-
     return {
         files: filesdata,
         filesStruct: filesStruct,
