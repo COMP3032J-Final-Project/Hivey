@@ -2,7 +2,7 @@
 	import {Button, buttonVariants} from "$lib/components/ui/button/index.js";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import { Trash2 } from 'lucide-svelte';
-	import type { updateFileFrom, EditorFileInfo } from '$lib/types/editor';
+	import type { EditorFileInfo } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
     import { me, mpp } from '$lib/trans'
 	import type { TreeNode } from '$lib/types/editor';

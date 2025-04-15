@@ -1,20 +1,19 @@
 <script lang="ts">
 	import {Button, buttonVariants} from "$lib/components/ui/button/index.js";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
-	import * as Select from "$lib/components/ui/select/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
-	import { Label } from "$lib/components/ui/label/index.js";
 	import { Pencil } from 'lucide-svelte';
 	import type { updateFileFrom, EditorFileInfo } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
     import { me, mpp } from '$lib/trans'
-	import { getContext } from 'svelte';
-	import { getFolders } from '$lib/utils';
 	import type { TreeNode } from '$lib/types/editor';
+	import { getContext } from 'svelte';
+	import { updateFile } from '$lib/api/editor';
 
 	let { file } : {file : TreeNode}= $props();
 
 	let open = $state(false);
+	const { reloadFiles } = getContext<EditorFileInfo>('editor-context');
 
 	const handleTriggerClick = (e: MouseEvent) => {
         e.stopPropagation(); // 阻止事件冒泡
@@ -27,6 +26,14 @@
 		const filename = filenameInput.value.trim();
 		console.log('Edit file:', file.id, ' to:', filename);
 		// TODO: 接入后端
+		
+		let formData: updateFileFrom = {
+			filename: filename,
+			filepath: file.filepath,
+		};
+		updateFile(file.project_id, file.id, formData);
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		reloadFiles(file.project_id);
 		open = false;
 	};
 </script>

@@ -1,6 +1,6 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { FileType as EditorFile, createFileFrom, FileURLResponse } from '$lib/types/editor';
+import type { FileType as EditorFile, createFileFrom, updateFileFrom, FileURLResponse } from '$lib/types/editor';
 import { uint8ArrayToBase64 } from '$lib/utils';
 
 export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
@@ -91,6 +91,14 @@ export const createFile = async (projectId: string, fileForm: createFileFrom) =>
 export const deleteFile = async (projectId: string, fileId: string): Promise<EditorFile[]> => {
     console.log("Deleting file with ID:", fileId);
     const response = await axiosClient.delete<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}`);
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+}
+
+export const updateFile = async (projectId: string, fileId: string, fileForm: updateFileFrom) => {
+    const response = await axiosClient.put<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}/mv`, fileForm);
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }
