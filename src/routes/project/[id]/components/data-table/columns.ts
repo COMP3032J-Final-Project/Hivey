@@ -4,8 +4,6 @@ import { renderSnippet } from '$lib/components/ui/data-table/index.js';
 import { renderComponent } from '$lib/components/ui/data-table/index.js';
 import DataTableActions from './data-table-actions.svelte';
 import type { User } from '$lib/types/auth';
-import { UserPermissionEnum } from '$lib/types/auth';
-import { mpp } from '$lib/trans';
 
 export const columns: ColumnDef<User>[] = [
     {   

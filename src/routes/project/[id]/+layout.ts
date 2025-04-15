@@ -11,6 +11,8 @@ import { buildFileTree } from '$lib/utils';
 import { getProjectById } from '$lib/api/dashboard';
 import { UserPermissionEnum } from '$lib/types/auth';
 import type { Project } from '$lib/types/dashboard';
+import type { File, TreeNode } from '$lib/types/editor';
+import { setFilesStruct, setFiles, updateCurrentFile } from './store.svelte';
 
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
 export const prerender = false; // 禁用预渲染
@@ -52,12 +54,11 @@ export const load: LayoutLoad = async ({ url, params }) => {
         redirect(302, '/auth/signin');
     }
     const project: Project = await getProjectById(params.id);
-    const filesdata = await getFiles(params.id);
-    console.debug("files:", filesdata);
-    const filesStruct = buildFileTree(filesdata);
-    console.debug("filesStruct:", filesStruct);
-    //const files: SidebarFile[] = _loadSidebarFiles(filesdata);
-    //const folders: SidebarFolder[] = _loadSidebarFolder(filesdata);
+    const filesdata: File[] = await getFiles(params.id);
+    setFiles(filesdata);
+    const filesStruct: TreeNode[] = buildFileTree(filesdata);
+    setFilesStruct(filesStruct);
+    updateCurrentFile({project_id: params.id});// 使用projectId更新currentFile
 
     return {
         files: filesdata,

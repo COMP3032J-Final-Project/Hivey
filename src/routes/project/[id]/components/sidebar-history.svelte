@@ -1,15 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getContext } from 'svelte';
-	import type { EditorFileInfo } from '$lib/types/editor';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { FilePlus, FileEdit, FileX, Eye } from 'lucide-svelte';
+	import { currentFile, switchCurrentFile } from '../store.svelte';
 
 	let { projectId } = $props<{ projectId: string }>();
-
-	const { currentFileId, currentFileName, docContent, updateContent, loadFile } =
-		getContext<EditorFileInfo>('editor-context');
 
 	// 历史操作类型
 	type OperationType = 'add' | 'edit' | 'delete';
@@ -94,9 +90,7 @@
 
 	// 查看文件
 	async function viewFile(fileId: string, fileName: string) {
-		if (fileId && loadFile) {
-			await loadFile(fileId, fileName);
-		}
+		await switchCurrentFile(projectId, fileId, fileName);
 	}
 </script>
 

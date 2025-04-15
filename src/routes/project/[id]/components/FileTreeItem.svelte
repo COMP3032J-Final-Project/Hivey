@@ -4,11 +4,8 @@
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
     import * as Collapsible from '$lib/components/ui/collapsible/index.js';
     import { writable } from 'svelte/store';
-    import type { TreeNode } from '$lib/types/editor';
     import RenameDialog from "./rename_dialog.svelte";
     import DeleteDialog from "./delete_dialog.svelte";
-    import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-	  import { file } from "valibot";
   
     export let item;
     export let onFileClick;

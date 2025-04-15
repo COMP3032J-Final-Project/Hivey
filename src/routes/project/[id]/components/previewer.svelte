@@ -5,7 +5,6 @@
 	import ExportButton from './button/export-button.svelte';
   import * as pdfjsLib from 'pdfjs-dist';
   import type {
-    PDFDocumentLoadingTask,
     PDFDocumentProxy,
     PDFPageProxy,
   } from "pdfjs-dist/types/src/pdf";

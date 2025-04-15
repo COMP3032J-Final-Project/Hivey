@@ -1,4 +1,4 @@
-import type { ChatMessage, FileType } from '$lib/types/editor';
+import type { ChatMessage, File } from '$lib/types/editor';
 import type { UserAuth, User} from '$lib/types/auth';
 import { UserPermissionEnum} from '$lib/types/auth';
 import type { WSRequest, WSResponse } from '$lib/types/websocket';
@@ -41,7 +41,7 @@ export class WebSocketClient {
     // CRDT
     public crdtEventHandler: ((response: WSResponse) => void) | null = null;
     // file
-    public fileAddedHandler: ((file: FileType ) => void) | null = null;
+    public fileAddedHandler: ((file: File ) => void) | null = null;
     public fileRenamedHandler: ((data: { id: string, name: string }) => void) | null = null;
     public fileDeletedHandler: ((id: string ) => void) | null = null;
     public fileMoveHandler: ((data: { id: string, path: string }) => void) | null = null;
@@ -516,7 +516,7 @@ export class WebSocketClient {
 	}
 
     // file: 发送文件添加消息
-    public sendFileAddedMessage(file: FileType ): void {
+    public sendFileAddedMessage(file: File ): void {
 		if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
             return;
         }

@@ -6,14 +6,14 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { FileDropZone } from '$lib/components/ui/file-drop-zone/index.js';
-	import type { createFileFrom, EditorFileInfo } from '$lib/types/editor';
+	import type { createFileFrom } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus } from 'lucide-svelte';
 	import { me, mpp } from '$lib/trans';
 	import { createFile as createNewFile } from '$lib/api/editor';
-	import { getContext } from 'svelte';
 	import { getFolders } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
+	import { files, loadFiles } from '../../routes/project/[id]/store.svelte';
 
 	let {
       projectId,
@@ -24,19 +24,14 @@
       currentUser: any,
       iconSize?: number
   } = $props();
-	const { currentFiles: latestFiles, reloadFiles } = getContext<EditorFileInfo>('editor-context');
 
 	const project_id = projectId;
 	let dialogOpen = $state(false);
 
 	let folderValue = $state('');
-	let foldersData = $state([{ value: 'root', label: '/' }]);
-
-	latestFiles?.subscribe((value) => {
-		foldersData = getFolders(value);
-		console.log('[Create File Dialog] Folder update to:', foldersData);
-	});
-
+	let fileTypeValue = $state('');
+	let foldersData = $derived($files ? getFolders($files) : [{ value: 'root', label: '/' }]);
+  
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
 	);
@@ -73,7 +68,7 @@
 				console.log('[Create File Dialog] Reload files for projectId:', projectId);
 				// 后端有延迟，必须要等一会
 				await new Promise((resolve) => setTimeout(resolve, 200));
-				await reloadFiles(projectId);
+				await loadFiles(projectId);
 			}
 		} catch (error) {
 			// 直接使用错误消息
@@ -82,12 +77,12 @@
 		}
 	};
 
-	let files = $state<File[]>([]);
+	let files_upload = $state<File[]>([]);
 	let uploading = false;
 
 	async function handleUpload(uploadedFiles: File[]) {
-		files = uploadedFiles;
-		console.log('upload file:', files);
+		files_upload = uploadedFiles;
+		console.log('upload file:', files_upload);
 	}
 
 	const handleTriggerClick = (e: MouseEvent) => {
@@ -154,10 +149,10 @@
 				<FileDropZone onUpload={handleUpload} maxFiles={5} maxFileSize={10 * 1024 * 1024}>
 					<p>{mpp.upload_file_hint()}</p>
 				</FileDropZone>
-				{#if files.length}
+				{#if files_upload.length}
 					<h3>{mpp.select_file()}</h3>
 					<ul>
-						{#each files as file}
+						{#each files_upload as file}
 							<li>{file.name} - {(file.size / 1024).toFixed(2)} KB</li>
 						{/each}
 					</ul>

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { FileType, TreeNode } from "$lib/types/editor";
+import type { File, TreeNode } from "$lib/types/editor";
 
 /**
  * Combines multiple class values into a single string, handling Tailwind CSS conflicts.
@@ -113,14 +113,16 @@ export function base64ToUint8Array(base64: string): Uint8Array {
 }
 
 
-export function buildFileTree(files: FileType[]): TreeNode[] {
+export function buildFileTree(files: File[]): TreeNode[] {
     const fileMap = new Map<string, TreeNode>();
     files.forEach(file => {
         fileMap.set(file.id, {
-            ...file,
+            id: file.id,
+            project_id: file.project_id,
+            filename: file.filename,
+            filepath: file.filepath,
             filetype: 'file',
             children: null,
-            project_id: file.project_id,
         });
     });
 
@@ -149,11 +151,11 @@ export function buildFileTree(files: FileType[]): TreeNode[] {
                 // 创建文件夹节点
                 found = {
                     id: `folder-${file.filepath}-${i}`, // 生成唯一ID
+                    project_id: file.project_id,
                     filename: part,
                     filepath: pathParts.slice(0, i + 1).join('/'),
                     filetype: 'folder',
                     children: [],
-                    project_id: file.project_id,
                 };
                 currentLevel.children.push(found);
             }
@@ -201,7 +203,7 @@ export function buildFileTree(files: FileType[]): TreeNode[] {
     return root.children;
 }
 
-export function getFolders(files: FileType[]){
+export function getFolders(files: File[]){
     const folderInfoMap = new Map<string, { value: string, label: string }>(); // 用于存储不重复的文件夹路径及其名称
     
     folderInfoMap.set('/', { value: '/', label: 'root' });

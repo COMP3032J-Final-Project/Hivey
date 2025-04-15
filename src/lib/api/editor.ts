@@ -1,6 +1,6 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { FileType as EditorFile, createFileFrom, updateFileFrom, FileURLResponse } from '$lib/types/editor';
+import type { File as EditorFile, createFileFrom, updateFileFrom } from '$lib/types/editor';
 import { uint8ArrayToBase64 } from '$lib/utils';
 
 export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
@@ -11,12 +11,12 @@ export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
     return response.data.data;
 };
 
-export const getFileContent = async (projectId: string, fileId: string): Promise<FileURLResponse> => {
-    const response = await axiosClient.get<APIResponse<FileURLResponse>>(`/project/${projectId}/files/${fileId}`);
-    if (!response.data.data) {
+export const getFileURL = async (projectId: string, fileId: string): Promise<string> => {
+    const response = await axiosClient.get<APIResponse<{url: string}>>(`/project/${projectId}/files/${fileId}`);
+    if (response.data.code != 200 || !response.data.data) {
         throw new Error(response.data.msg);
     }
-    return response.data.data;
+    return response.data.data.url;
 }
 
 export async function fetchDocData(fileType: string, url: string): Promise<any> {

@@ -6,7 +6,6 @@
   import { markdown } from '@codemirror/lang-markdown';
   import { getTextFromDoc, LoroExtensions } from 'loro-codemirror';
   import { Awareness, LoroDoc, UndoManager } from 'loro-crdt';
-  import { BACKEND_ADDR_WEBSOCKET } from '$lib/constants';
   import * as v from 'valibot';
   import { Message, type WSRequest, type WSResponse } from '$lib/types/websocket';
   import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';

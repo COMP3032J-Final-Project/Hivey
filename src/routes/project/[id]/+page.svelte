@@ -17,9 +17,8 @@
 	import type { PageProps } from './$types';
 	import { type User, UserPermissionEnum } from '$lib/types/auth';
 	import { getContext, onMount } from 'svelte';
-	import type { EditorFileInfo } from '$lib/types/editor';
 	import EditableLabel from '$lib/components/ui/editable-label';
-	import { members } from './store.svelte';
+	import { members, currentFile } from './store.svelte';
 	import type { WebSocketClient } from '$lib/api/websocket';
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
@@ -34,19 +33,8 @@
 	let currentUser: User = $state(data.currentUser);
 	let membersDialogOpen = $state(false);
 	let shareTemplateDialogOpen = $state(false); // 新增：控制对话框显示状态
-
-	let docContent = $state('');
-	let currentFileType = $state('Format');
-	const { currentFileType: fileTypeFromContext, docContent: docContentStore } =
-		getContext<EditorFileInfo>('editor-context');
-	fileTypeFromContext.subscribe((value) => {
-		currentFileType = value;
-		console.log('[Page] currentFileType updated to:', currentFileType);
-	});
-	docContentStore?.subscribe((value) => {
-		docContent = value;
-		console.log('[Page] File content set to:', docContent);
-	});
+	let docContent = $derived($currentFile.fileContent || '');
+	let currentFileType = $derived($currentFile.filetype || 'Format');
 
 	function formatMarkdown() {
 		//TODO Implement markdown formatting logic here

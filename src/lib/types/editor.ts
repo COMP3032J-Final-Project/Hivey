@@ -17,33 +17,12 @@ export const File = v.object({
 	project_id: v.string(), 
 	filename: v.string(),
 	filepath: v.string(),
-	created_at: v.string(),
-	updated_at: v.string(),
+	created_at: v.optional(v.string()),
+	updated_at: v.optional(v.string()),
+    filetype: v.optional(v.string()), // .md .tex .typst etc.
+    fileContent: v.optional(v.string()),
 });
-
-export type FileType = v.InferOutput<typeof File>;
-
-export interface FileURLResponse{
-    url: string;
-}
-
-export interface EditorFileInfo {
-	currentFileId: Writable<string>;
-	updateFileId: (id: string) => void;
-	currentFileName: Writable<string>;
-	updateFileName: (name: string) => void;
-    currentFileType: Writable<string>;
-    updateFileType: (type: string) => void;
-    docContent?: Writable<string>;
-    updateContent?: (content: string) => void;
-    currentFilePath?: Writable<string>;
-    loadFile: (fileId: string, fileName: string) => Promise<boolean>;
-	currentFiles: Writable<FileType[]>;
-	updateFiles: (files: FileType[]) => void;
-	currentFilesStruct: Writable<TreeNode[]>;
-	updateFilesStruct?: (filesStruct: TreeNode[]) => void;
-	reloadFiles: (projectId: string) => Promise<boolean>;
-}
+export type File = v.InferOutput<typeof File>;
 
 // 聊天消息接口
 export interface ChatMessage {

@@ -5,13 +5,13 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { FolderPlus } from 'lucide-svelte';
-	import type { createFileFrom, EditorFileInfo } from '$lib/types/editor';
+	import type { createFileFrom } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { me, mpp } from '$lib/trans';
 	import { createFile as createNewFile } from '$lib/api/editor';
-	import { getContext } from 'svelte';
 	import { getFolders } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
+	import { files, loadFiles } from '../../routes/project/[id]/store.svelte';
 
 	let {
       projectId,
@@ -22,19 +22,12 @@
       currentUser: any,
       iconSize?: number
   } = $props();
-	const { currentFiles: latestFiles, reloadFiles } = getContext<EditorFileInfo>('editor-context');
 
 	const project_id = projectId;
 	let dialogOpen = $state(false);
 
 	let folderValue = $state('');
-	let foldersData = $state([{ value: 'root', label: 'root' }]);
-
-	latestFiles?.subscribe((value) => {
-		foldersData = getFolders(value);
-		console.log('[Create Folder Dialog] Files value:', value);
-		console.log('[Create Folder Dialog] Folder update to:', foldersData);
-	});
+	let foldersData = $derived($files ? getFolders($files) : [{ value: 'root', label: 'root' }]);
 
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
@@ -76,7 +69,7 @@
 				console.log('[Create Folder Dialog] Reload files for projectId:', projectId);
 				// 后端有延迟，必须要等一会
 				await new Promise((resolve) => setTimeout(resolve, 200));
-				await reloadFiles(projectId);
+				await loadFiles(projectId);
 			}
 		} catch (error) {
 			// 直接使用错误消息

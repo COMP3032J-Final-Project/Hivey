@@ -3,8 +3,6 @@
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Pencil } from 'lucide-svelte';
-	import type { updateFileFrom, EditorFileInfo } from '$lib/types/editor';
-	import { success, failure } from '$lib/components/ui/toast';
     import { me, mpp } from '$lib/trans'
 	import type { TreeNode } from '$lib/types/editor';
 	import { getContext } from 'svelte';
