@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { File, TreeNode } from "$lib/types/editor";
+import type { File, FileTreeFolderNode, FileType } from "$lib/types/file";
 
 /**
  * Combines multiple class values into a single string, handling Tailwind CSS conflicts.
@@ -113,6 +113,7 @@ export function base64ToUint8Array(base64: string): Uint8Array {
 }
 
 
+// TODO
 export function buildFileTree(files: File[]): TreeNode[] {
     const fileMap = new Map<string, TreeNode>();
     files.forEach(file => {
@@ -224,4 +225,44 @@ export function getFolders(files: File[]){
       });
     
     return Array.from(folderInfoMap.values());
+}
+
+/**
+ * Determines the file type based on the filename's extension.
+ *
+ * @param filename - The full name of the file (e.g., "document.typ", "image.png").
+ * @returns The determined FileType ('typst', 'latex', 'markdown', 'pdf', 'png', 'jpg', 'webp', or 'unknown').
+ */
+export function getFileType(filename: string): FileType {
+	  if (!filename) {
+		    return 'unknown';
+	  }
+	  const lastDotIndex = filename.lastIndexOf('.');
+	  // No extension found or filename starts with a dot (like .env) and has no other extension part
+	  if (lastDotIndex === -1 || lastDotIndex === 0) {
+		    return 'unknown';
+	  }
+	  const extension = filename.substring(lastDotIndex + 1).toLowerCase();
+	  switch (extension) {
+		    case 'typ':
+			      return 'typst';
+		    case 'tex':
+			      return 'latex';
+		    case 'md':
+		    case 'markdown': // Allow both .md and .markdown
+			      return 'markdown';
+		    case 'pdf':
+			      return 'pdf';
+		    case 'png':
+			      return 'png';
+		    case 'jpg':
+		    case 'jpeg': // Allow both .jpg and .jpeg
+			      return 'jpg';
+		    case 'webp':
+			      return 'webp';
+        case 'bib':
+            return 'bib';
+		    default:
+			      return 'unknown';
+	  }
 }

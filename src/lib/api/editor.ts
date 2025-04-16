@@ -1,26 +1,24 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { File as EditorFile, createFileFrom, updateFileFrom } from '$lib/types/editor';
-import { uint8ArrayToBase64 } from '$lib/utils';
+import { RawFile, type File as EditorFile } from '$lib/types/file';
+import type { createFileFrom, updateFileFrom } from '$lib/types/editor';
+import { uint8ArrayToBase64, getFileType } from '$lib/utils';
+import axios from 'axios';
+import * as v from 'valibot';
 
-export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
-    const response = await axiosClient.get<APIResponse<EditorFile[]>>(`/project/${projectId}/files/`);
-    if (!response.data.data) {
-        throw new Error(response.data.msg);
-    }
-    return response.data.data;
+export async function getFiles(projectId: string): Promise<RawFile[]> {
+    const response = await axiosClient.get(`/project/${projectId}/files/`);
+    const data = response.data.data;
+    return v.parse(v.array(RawFile), data);
 };
 
-export const getFileURL = async (projectId: string, fileId: string): Promise<string> => {
+export async function getFileURL(projectId: string, fileId: string): Promise<string> {
     const response = await axiosClient.get<APIResponse<{url: string}>>(`/project/${projectId}/files/${fileId}`);
-    if (response.data.code != 200 || !response.data.data) {
-        throw new Error(response.data.msg);
-    }
-    return response.data.data.url;
+    return response.data.data!.url;
 }
 
 export async function fetchDocData(fileType: string, url: string): Promise<any> {
-    console.log("Fetching data from URL:", url);
+    // TODO change it to axios so we don't need to handle error here
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -32,72 +30,39 @@ export async function fetchDocData(fileType: string, url: string): Promise<any> 
     } else {
         result = await response.text();
     }
-    console.log(result);
     return result;
 }
 
-const createEmptyFile = async (fileName: string): Promise<File> => {
-    const fileType = fileName.split(".")[-1];
-    switch (fileType) {
-        case 'pdf':
-            return new File([new Blob()], fileName, { type: 'application/pdf' });
-        case 'md':
-            return new File([new Blob()], fileName, { type: 'text/markdown' });
-        case 'tex':
-            return new File([new Blob()], fileName, { type: 'text/x-tex' });
-        case 'bib':
-            return new File([new Blob()], fileName, { type: 'application/x-bibtex' });
-        case 'typ':
-            return new File([new Blob()], fileName, { type: 'application/x-typ' });
-        default:
-            return new File([new Blob()], fileName, { type: 'text/plain' });
-    }
-}
-
-
-export const createFile = async (projectId: string, fileForm: createFileFrom) => {
-    const { title, path, filetype } = fileForm;
-    if (fileForm.filetype=="folder") {
-        return [];
-    } else {
-        let tempForm;
-        tempForm = {
-            filename: title,
+export async function createFile(projectId: string, fileForm: createFileFrom) {
+    const { title : fileName, path, filetype } = fileForm;
+    if (filetype === "folder") return [];
+    
+    const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(
+        `/project/${projectId}/files/create_update`,
+        {
+            filename: fileName,
             filepath: path,
-        };
-        const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(`/project/${projectId}/files/create_update`, tempForm);
-        if (!response.data.data) {
-            throw new Error(response.data.msg);
         }
-        // 创建一个空的文本文件
-        const emptyFile = await createEmptyFile(tempForm.filename);
-        console.log("Uploading file:", emptyFile);
-        console.log("File size:", emptyFile.size);
-        const uploadResponse = await fetch(response.data.data.url, {
-            method: 'PUT',
-            body: emptyFile,
-        });
-        if (uploadResponse.ok) {
-            console.log('文件上传成功');
-        } else {
-            console.error('上传失败', await uploadResponse.text());
-        }
+    );
+    const data = response.data.data;
+    if (!data) {
+        throw new Error(response.data.msg);
     }
+    // 创建一个空的文本文件
+    const emptyFile = new File([new Blob()], fileName, { type: 'text/plain' });
+    // console.debug("Uploading file:", emptyFile);
+    await axios({
+        url: data.url,
+        method: 'put',
+        data: emptyFile,
+    });
 };
 
-export const deleteFile = async (projectId: string, fileId: string): Promise<EditorFile[]> => {
-    console.log("Deleting file with ID:", fileId);
-    const response = await axiosClient.delete<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}`);
-    if (!response.data.data) {
-        throw new Error(response.data.msg);
-    }
-    return response.data.data;
+export async function deleteFile(projectId: string, fileId: string) {
+    // console.debug("Deleting file with ID:", fileId);
+    await axiosClient.delete<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}`);
 }
 
-export const updateFile = async (projectId: string, fileId: string, fileForm: updateFileFrom) => {
-    const response = await axiosClient.put<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}/mv`, fileForm);
-    if (!response.data.data) {
-        throw new Error(response.data.msg);
-    }
-    return response.data.data;
+export async function updateFile(projectId: string, fileId: string, fileForm: updateFileFrom) {
+    await axiosClient.put<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}/mv`, fileForm);
 }

@@ -35,7 +35,6 @@
 
 	let formData: createFileFrom = {
 		title: '', // 文件标题
-		suffix: '', // 文件后缀
 		path: '', // 文件路径
 		filetype: 'folder' // 文件类型
 	};
@@ -58,7 +57,6 @@
 				}
 				formData = {
 					title: foldername,
-					suffix: '', // 文件后缀
 					path: folderValue, // 文件路径
 					filetype: 'folder' // 文件类型
 				};
