@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Menubar from '$lib/components/ui/menubar';
 	import { Button } from '$lib/components/ui/button';
+  import { localizeHref } from '$lib/paraglide/runtime';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import * as AvatarGroup from '$lib/components/ui/avatar-group';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -149,8 +150,12 @@
 				<Menubar.Menu>
 					<Menubar.Trigger>Project</Menubar.Trigger>
 					<Menubar.Content>
-						<!-- TODO localize href -->
-						<Menubar.Item onclick={() => goto('/dashboard/repository/projects/all')}>
+						<Menubar.Item onclick={() => {
+							if (wsClient) {
+								wsClient.disconnect();
+							}
+							goto(localizeHref('/dashboard/repository/projects/all'));
+						}}>
 							Home page
 							<Menubar.Shortcut><House class="size-4" /></Menubar.Shortcut>
 						</Menubar.Item>
