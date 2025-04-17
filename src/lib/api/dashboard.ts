@@ -99,3 +99,11 @@ export const copyProject = async (projectId: string): Promise<Project> => {
     const project = await getProjectById(newProjectId);
     return project;
 };
+
+export const favoriteTemplate = async (templateId: string): Promise<boolean> => {
+    const response = await axiosClient.put<APIResponse<boolean>>(`/project/${templateId}/members/favorite_template/`, {});
+    if (response.data.code !== 200) {
+        throw new Error(response.data.msg || 'Failed to favorite template');
+    }
+    return response.data.data || false;
+};

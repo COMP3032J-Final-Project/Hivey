@@ -6,7 +6,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-  import { deleteProject, deleteProjects, createProjectFromTemplate } from '$lib/api/dashboard';
+  import { deleteProject, deleteProjects, createProjectFromTemplate, favoriteTemplate } from '$lib/api/dashboard';
   import { notification, success } from '$lib/components/ui/toast';
   import { me, mpd } from '$lib/trans';
   import { failure } from '$lib/components/ui/toast';
@@ -15,13 +15,14 @@
   import { goto } from '$app/navigation';
   import { localizeHref } from '$lib/paraglide/runtime';
 
-	let { id, selectedIds = [], onDelete }: { id: string; selectedIds?: string[]; onDelete?: () => void } = $props();
+	let { id, selectedIds = [], onDelete, isFavorite = false }: { id: string; selectedIds?: string[]; onDelete?: () => void; isFavorite?: boolean } = $props();
 	let showDeleteDialog = $state(false);
   let showBulkDeleteDialog = $state(false);
   let showCreateProjectDialog = $state(false);
   let newProjectName = $state('');
   let isCreating = $state(false);
   let errorMessage = $state('');
+  let isTogglingFavorite = $state(false);
 
   async function handleDelete() {
     try {
@@ -95,6 +96,28 @@
       errorMessage = '';
     }
   });
+
+  async function handleToggleFavorite() {
+    isTogglingFavorite = true;
+    try {
+      const newStatus = await favoriteTemplate(id);
+      if (newStatus) {
+        success('Template added to favorites');
+      } else {
+        success('Template removed from favorites');
+      }
+      isFavorite = newStatus;
+      await invalidateAll();
+    } catch (error) {
+      if (error instanceof Error) {
+        failure(error.message);
+      } else {
+        failure(me.unknown());
+      }
+    } finally {
+      isTogglingFavorite = false;
+    }
+  }
 </script>
 
 <DropdownMenu.Root>
@@ -122,9 +145,15 @@
 				<CirclePlus class="ml-2 size-4" />
 			</DropdownMenu.Item>
       <DropdownMenu.Item class="flex justify-between items-center"
-      aria-label="Favourite template">
-				Favourite
-				<Star class="ml-2 size-4" />
+      aria-label="Favourite template"
+      onclick={handleToggleFavorite}
+      disabled={isTogglingFavorite}>
+				{#if isFavorite}
+          Unfavourite
+        {:else}
+          Favourite
+        {/if}
+				<Star class={`ml-2 size-4 ${isFavorite ? 'text-primary fill-primary' : ''}`} />
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
