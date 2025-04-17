@@ -113,7 +113,7 @@ export function base64ToUint8Array(base64: string): Uint8Array {
 }
 
 
-export function buildFileTree(files: File[]): TreeNode[] {
+export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[] {
     const fileMap = new Map<string, TreeNode>();
     files.forEach(file => {
         fileMap.set(file.id, {
@@ -203,7 +203,7 @@ export function buildFileTree(files: File[]): TreeNode[] {
     return root.children;
 }
 
-export function getFolders(files: File[]){
+export function getFolders(files: File[], tempFolders: TreeNode[]){
     const folderInfoMap = new Map<string, { value: string, label: string }>(); // 用于存储不重复的文件夹路径及其名称
     
     folderInfoMap.set('/', { value: '/', label: 'root' });

@@ -9,11 +9,11 @@ export const files = writable<File[]>([]);
 export function setFiles(newFiles: File[]) {
     files.set(newFiles);
 }
-export async function loadFiles(projectId: string) {
+export async function loadFiles(projectId: string, temporaryFolders: TreeNode[]) {
     try {
         const updatedFiles = await getFiles(projectId);
         setFiles(updatedFiles);
-        setFilesStruct(buildFileTree(updatedFiles));
+        setFilesStruct(buildFileTree(updatedFiles, temporaryFolders));
         return true;
     } catch (error) {
         console.error('Failed to reload files:', error);
@@ -25,6 +25,12 @@ export async function loadFiles(projectId: string) {
 export const filesStruct = writable<TreeNode[]>([]);
 export function setFilesStruct(newFilesStruct: TreeNode[]) {
     filesStruct.set(newFilesStruct);
+}
+
+// 项目的空文件夹列表
+export const tempFolders = writable<TreeNode[]>([]);
+export function setTempFolders(newFolders: TreeNode[]) {
+    filesStruct.set(newFolders);
 }
 
 // 用户当前打开的文件

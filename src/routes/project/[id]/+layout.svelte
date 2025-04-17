@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MessageCircleMore, History, FolderTree } from 'lucide-svelte';
-	import CreateFileDialog from '$lib/components/new-file-modal.svelte';
-	import CreateFolderDialog from '$lib/components/new-folder-modal.svelte';
+	import CreateFileDialog from './components/new-file-modal.svelte';
+	import CreateFolderDialog from './components/new-folder-modal.svelte';
 	import type { File, TreeNode } from '$lib/types/editor';
 	import NavMain from './components/sidebar-nav-main.svelte';
 	import ChatRoom from './components/chatroom/sidebar-chatroom.svelte';
@@ -19,7 +19,7 @@
 	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-  import { files, setFilesStruct } from './store.svelte';
+  import { files, setFilesStruct, tempFolders } from './store.svelte';
 
   let { data, children } = $props<{
 	data: {
@@ -80,12 +80,12 @@
 
 			wsClient.fileAddedHandler = (file) => {
 				files.update((files) => [ ...files, file ]); // 更新当前文件列表
-				setFilesStruct(buildFileTree($files));
+				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 
 			wsClient.fileDeletedHandler = (fileId) => {
 				files.update((files) => files.filter((file) => file.id !== fileId)); // 更新当前文件列表
-				setFilesStruct(buildFileTree($files));
+				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 
 			wsClient.fileRenamedHandler = (data) => {
@@ -96,7 +96,7 @@
 					}
 					return files;
 				});
-				setFilesStruct(buildFileTree($files));
+				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 
 			wsClient.fileMoveHandler = (data) => {
@@ -107,7 +107,7 @@
 					}
 					return files;
 				});
-				setFilesStruct(buildFileTree($files));
+				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 
 			    wsClient.connect(); // 连接到服务器

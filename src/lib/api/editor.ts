@@ -56,33 +56,30 @@ const createEmptyFile = async (fileName: string): Promise<File> => {
 
 
 export const createFile = async (projectId: string, fileForm: createFileFrom) => {
-    const { title, path, filetype } = fileForm;
-    if (fileForm.filetype=="folder") {
-        return [];
-    } else {
-        let tempForm;
-        tempForm = {
-            filename: title,
-            filepath: path,
-        };
-        const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(`/project/${projectId}/files/create_update`, tempForm);
-        if (!response.data.data) {
-            throw new Error(response.data.msg);
-        }
-        // 创建一个空的文本文件
-        const emptyFile = await createEmptyFile(tempForm.filename);
-        console.log("Uploading file:", emptyFile);
-        console.log("File size:", emptyFile.size);
-        const uploadResponse = await fetch(response.data.data.url, {
-            method: 'PUT',
-            body: emptyFile,
-        });
-        if (uploadResponse.ok) {
-            console.log('文件上传成功');
-        } else {
-            console.error('上传失败', await uploadResponse.text());
-        }
-    }
+  const { title, path } = fileForm;
+  let tempForm;
+  tempForm = {
+      filename: title,
+      filepath: path,
+  };
+  const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(`/project/${projectId}/files/create_update`, tempForm);
+  if (!response.data.data) {
+      throw new Error(response.data.msg);
+  }
+  // 创建一个空的文本文件
+  const emptyFile = await createEmptyFile(tempForm.filename);
+  console.log("Uploading file:", emptyFile);
+  console.log("File size:", emptyFile.size);
+  const uploadResponse = await fetch(response.data.data.url, {
+      method: 'PUT',
+      body: emptyFile,
+  });
+  if (uploadResponse.ok) {
+      console.log('文件上传成功');
+  } else {
+      console.error('上传失败', await uploadResponse.text());
+  }
+    
 };
 
 export const deleteFile = async (projectId: string, fileId: string): Promise<EditorFile[]> => {

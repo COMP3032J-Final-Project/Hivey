@@ -13,7 +13,7 @@
 	import { createFile as createNewFile } from '$lib/api/editor';
 	import { getFolders } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
-	import { files, loadFiles } from '../../routes/project/[id]/store.svelte';
+	import { files, loadFiles, tempFolders } from '../store.svelte';
 
 	let {
       projectId,
@@ -29,8 +29,7 @@
 	let dialogOpen = $state(false);
 
 	let folderValue = $state('');
-	let fileTypeValue = $state('');
-	let foldersData = $derived($files ? getFolders($files) : [{ value: 'root', label: '/' }]);
+	let foldersData = $derived($files ? getFolders($files, $tempFolders) : [{ value: 'root', label: '/' }]);
   
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
@@ -38,7 +37,6 @@
 	let formData: createFileFrom = {
 		title: '', // 文件名
 		path: '', // 文件路径
-		filetype: 'file', // 文件类型
 	};
 
 	const createFile = async (e: Event) => {
@@ -59,7 +57,6 @@
 				formData = {
 					title: filename, // 文件标题
 					path: folderValue, // 文件路径
-					filetype: 'file',
 				};
 				console.log(formData);
 				createNewFile(project_id, formData);
@@ -68,7 +65,7 @@
 				console.log('[Create File Dialog] Reload files for projectId:', projectId);
 				// 后端有延迟，必须要等一会
 				await new Promise((resolve) => setTimeout(resolve, 200));
-				await loadFiles(projectId);
+				await loadFiles(projectId, $tempFolders);
 			}
 		} catch (error) {
 			// 直接使用错误消息

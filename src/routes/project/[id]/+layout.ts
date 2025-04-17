@@ -55,7 +55,7 @@ export const load: LayoutLoad = async ({ url, params }) => {
     }
     const project: Project = await getProjectById(params.id);
     const filesdata: File[] = await getFiles(params.id);
-    const filesStruct: TreeNode[] = buildFileTree(filesdata);
+    const filesStruct: TreeNode[] = buildFileTree(filesdata, []);
     console.debug("files:", filesdata);
     console.debug("filesStruct:", filesStruct);
     
