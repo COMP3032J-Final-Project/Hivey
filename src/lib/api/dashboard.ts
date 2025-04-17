@@ -89,3 +89,13 @@ export const createProjectFromTemplate = async (templateId: string, projectName:
     const project = await getProjectById(projectId);
     return project;
 };
+
+export const copyProject = async (projectId: string): Promise<Project> => {
+    const response = await axiosClient.post<APIResponse<{ project_id: string }>>(`/project/${projectId}/copy_project`, {});
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    const newProjectId = response.data.data.project_id;
+    const project = await getProjectById(newProjectId);
+    return project;
+};

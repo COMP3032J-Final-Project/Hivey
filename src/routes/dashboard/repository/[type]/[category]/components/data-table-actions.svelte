@@ -5,10 +5,12 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { deleteProject, deleteProjects } from '$lib/api/dashboard';
-	import { notification } from '$lib/components/ui/toast';
-	import { me } from '$lib/trans';
+	import { deleteProject, deleteProjects, copyProject } from '$lib/api/dashboard';
+	import { notification, success, failure } from '$lib/components/ui/toast';
+	import { me, mpd } from '$lib/trans';
 	import { invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
+	import { localizeHref } from '$lib/paraglide/runtime';
 
 	let {
 		id,
@@ -17,6 +19,8 @@
 	}: { id: string; selectedIds?: string[]; onDelete?: () => void } = $props();
 	let showDeleteDialog = $state(false);
 	let showBulkDeleteDialog = $state(false);
+	let showCopyDialog = $state(false);
+	let isCopying = $state(false);
 
 	async function handleDelete() {
 		try {
@@ -49,6 +53,26 @@
 			}
 		}
 	}
+
+	async function handleCopyProject() {
+		isCopying = true;
+		try {
+			const project = await copyProject(id);
+			success('Project copied successfully');
+			showCopyDialog = false;
+			await invalidateAll();
+			
+			await goto(localizeHref(`/project/${project.id}`));
+		} catch (error) {
+			if (error instanceof Error) {
+				failure(error.message);
+			} else {
+				failure(me.unknown());
+			}
+		} finally {
+			isCopying = false;
+		}
+	}
 </script>
 
 <DropdownMenu.Root>
@@ -65,8 +89,8 @@
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
       <DropdownMenu.Item
 				class="flex items-center justify-between"
-				onclick={() => navigator.clipboard.writeText(id)}
-				aria-label="Copy" >
+				onclick={() => (showCopyDialog = true)}
+				aria-label="Copy project" >
 				Copy
 				<Copy class="ml-2 size-4" />
 			</DropdownMenu.Item>
@@ -92,6 +116,23 @@
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
 			<AlertDialog.Action onclick={handleDelete}>Delete</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={showCopyDialog}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Copy Project</AlertDialog.Title>
+			<AlertDialog.Description>
+				This will create a copy of this project with all its content.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={handleCopyProject} disabled={isCopying}>
+				{isCopying ? 'Copying...' : 'Copy'}
+			</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
