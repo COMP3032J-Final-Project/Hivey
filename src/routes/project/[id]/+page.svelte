@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Menubar from '$lib/components/ui/menubar';
 	import { Button } from '$lib/components/ui/button';
-  import { localizeHref } from '$lib/paraglide/runtime';
+	import { localizeHref } from '$lib/paraglide/runtime';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import * as AvatarGroup from '$lib/components/ui/avatar-group';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -26,6 +26,7 @@
 	import ToggleableToolbar from './components/toggleable-toolbar.svelte';
 	import ShareProjectDialog from './components/share-project2template-modal.svelte';
 	import { goto } from '$app/navigation';
+	import { is } from 'valibot';
 
 	let { data }: PageProps = $props();
 	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
@@ -34,7 +35,6 @@
 	let currentUser: User = $state(data.currentUser);
 	let membersDialogOpen = $state(false);
 	let shareTemplateDialogOpen = $state(false); // 新增：控制对话框显示状态
-	let docContent = $derived($currentFile.fileContent || '');
 	let currentFileType = $derived($currentFile.filetype || 'Format');
 
 	function formatMarkdown() {
@@ -74,13 +74,23 @@
 	let editorRef: Editor;
 	let value: string[] = $state([]);
 	let isBold = $state(false);
+	let isItalic = $state(false);
+	let isStrikethrough = $state(false);
 
 	function checkSelection() {
 		if (editorRef) {
 			isBold = editorRef.hasSurroundingSymbols('**', '**');
+			isItalic = editorRef.hasSurroundingSymbols('*', '*');
+			isStrikethrough = editorRef.hasSurroundingSymbols('~~', '~~');
 			value = [];
 			if (isBold) {
 				value.push('bold');
+			}
+			if (isItalic) {
+				value.push('italic');
+			}
+			if (isStrikethrough) {
+				value.push('strikethrough');
 			}
 		}
 	}
@@ -95,6 +105,26 @@
 				} else {
 					editorRef.wrapSelection('**', '**');
 					isBold = true;
+				}
+			}
+			if (value === 'italic') {
+				if (isItalic) {
+					editorRef.unwrapSelection('*', '*');
+					isItalic = false;
+					console.log('Unwrap selection');
+				} else {
+					editorRef.wrapSelection('*', '*');
+					isItalic = true;
+				}
+			}
+			if (value === 'strikethrough') {
+				if (isStrikethrough) {
+					editorRef.unwrapSelection('~~', '~~');
+					isStrikethrough = false;
+					console.log('Unwrap selection');
+				} else {
+					editorRef.wrapSelection('~~', '~~');
+					isStrikethrough = true;
 				}
 			}
 		}
@@ -284,27 +314,14 @@
 		<Resizable.Pane defaultSize={50}>
 			<div class="flex h-full flex-col">
 				<!-- TODO make overflowed area float above editor -->
-				<ToggleableToolbar class="border-b p-1">
-					{#snippet children()}
+				{#if ['md', 'typ', 'tex'].includes(currentFileType)}
+					<div class="border-b p-1 flex justify-normal">
 						<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
-						<!-- TODO don't use grouped item, use single buttons instead to better suit ToggleableToolbar -->
-						<ToggleGroup.Root class="w-[120px]" type="multiple" bind:value>
-							<ToggleGroup.Item
-								value="bold"
-								aria-label="Toggle bold"
-								onclick={() => wrapSelection('bold')}
-							>
-								<Bold class="size-4 p-0" />
-							</ToggleGroup.Item>
-							<ToggleGroup.Item value="italic" aria-label="Toggle italic">
-								<Italic class="size-4 p-0" />
-							</ToggleGroup.Item>
-							<ToggleGroup.Item value="strikethrough" aria-label="Toggle strikethrough">
-								<Underline class="size-4 p-0" />
-							</ToggleGroup.Item>
-						</ToggleGroup.Root>
-					{/snippet}
-				</ToggleableToolbar>
+						<Button variant="ghost" size="icon" onclick={() => wrapSelection('bold')}><Bold/></Button>
+						<Button variant="ghost" size="icon" onclick={() => wrapSelection('italic')}><Italic/></Button>
+						<Button variant="ghost" size="icon" onclick={() => wrapSelection('strikethrough')}><Underline/></Button>
+					</div>
+				{/if}
 				<div class="flex-1 overflow-auto">
 					<Editor
 						bind:this={editorRef}
