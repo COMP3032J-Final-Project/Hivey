@@ -316,10 +316,10 @@
 				<!-- TODO make overflowed area float above editor -->
 				{#if ['md', 'typ', 'tex'].includes(currentFileType)}
 					<div class="border-b p-1 flex justify-normal">
-						<Button size="sm" onclick={formatMarkdown}>{currentFileType}</Button>
-						<Button variant="ghost" size="icon" onclick={() => wrapSelection('bold')}><Bold/></Button>
-						<Button variant="ghost" size="icon" onclick={() => wrapSelection('italic')}><Italic/></Button>
-						<Button variant="ghost" size="icon" onclick={() => wrapSelection('strikethrough')}><Underline/></Button>
+						<Button class="mr-1" size="icon" onclick={formatMarkdown}>{currentFileType}</Button>
+						<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('bold')}><Bold/></Button>
+						<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('italic')}><Italic/></Button>
+						<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('strikethrough')}><Underline/></Button>
 					</div>
 				{/if}
 				<div class="flex-1 overflow-auto">
