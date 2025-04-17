@@ -21,27 +21,27 @@
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { files, setFilesStruct } from './store.svelte';
 
-	let { data, children } = $props<{
-		  data: {
-			    files: File[];
-			    filesStruct: TreeNode[];
-			    currentUser: User;
-			    projectId: string;
-			    project: Project;
-			    authInfo: UserAuth;
-		  };
-		  children: any;
-	}>();
-	let projectId = data.projectId;
+  let { data, children } = $props<{
+	data: {
+	  files: File[];
+	  filesStruct: TreeNode[];
+	  currentUser: User;
+	  projectId: string;
+	  project: Project;
+	  authInfo: UserAuth;
+	};
+	children: any;
+  }>();
+  let projectId = data.projectId;
   const SidebarMode = {
       FileTree: "FileTree",
       ChatRoom: "ChatRoom",
       EditHistory: "pEditHistory"
   };
-	let wsClient = $state<WebSocketClient | null>(null);
+  let wsClient = $state<WebSocketClient | null>(null);
   setContext('websocket-client', () => wsClient); // 传入一个获取wsClient的函数而不是wsClient本身这样可以保证访问到最新的wsClient值
 
-	let project = $state<Project>(data.project);
+  let project = $state<Project>(data.project);
   let sidebarMode = $state(SidebarMode.FileTree);
   let sidebarResizeOffset = $state({x: 0, y: 0});
   let sidebarWidth = $derived.by(() => {

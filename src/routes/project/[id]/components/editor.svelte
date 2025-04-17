@@ -13,10 +13,9 @@
   import type { WebSocketClient } from '$lib/api/websocket';
   import { search, openSearchPanel, findNext as cmFindNext, findPrevious as cmFindPrevious } from '@codemirror/search';
   import { getContext } from 'svelte';
+  import { currentFile } from './../store.svelte';
 
   let {
-      value = $bindable(),
-      fileType = $bindable(),
       // TODO pass user type
       username,
       project_id,
@@ -24,8 +23,6 @@
       access_token,
       permission,
   }: {
-      value: any;
-      fileType: string;
       username: string;
       project_id: string;
       access_token: string;
@@ -238,7 +235,7 @@
       }
 
       const startState = EditorState.create({
-          doc: value,
+          doc: $currentFile.fileContent,
           extensions: extensions
       });
 
@@ -250,9 +247,9 @@
       
       $effect(() => {
           // update editor content when value changes
-          if (editorView && value !== editorView.state.doc.toString()) {
+          if (editorView && $currentFile.fileContent !== editorView.state.doc.toString()) {
               editorView.dispatch({
-                  changes: { from: 0, to: editorView.state.doc.length, insert: value }
+                  changes: { from: 0, to: editorView.state.doc.length, insert: $currentFile.fileContent }
               });
           }
       });
@@ -302,7 +299,7 @@
   });
 </script>
 
-{#if fileType!='pdf'}
+{#if $currentFile.filetype!='pdf'}
   <div bind:this={editorAreaElem} class="editor size-full"></div>
 {:else}
   <div></div>

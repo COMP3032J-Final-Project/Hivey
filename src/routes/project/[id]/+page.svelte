@@ -302,8 +302,6 @@
 				</ToggleableToolbar>
 				<div class="flex-1 overflow-auto">
 					<Editor
-						bind:value={docContent}
-						bind:fileType={currentFileType}
 						bind:this={editorRef}
 						username={data.currentUser.username}
 						project_id={data.project.id}
@@ -317,7 +315,7 @@
 		<Resizable.Handle />
 
 		<Resizable.Pane defaultSize={50}>
-			<Previewer fileType={currentFileType} content={docContent} />
+			<Previewer />
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>

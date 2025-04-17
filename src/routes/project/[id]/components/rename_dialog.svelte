@@ -4,14 +4,13 @@
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Pencil } from 'lucide-svelte';
     import { me, mpp } from '$lib/trans'
-	import type { TreeNode } from '$lib/types/editor';
-	import { getContext } from 'svelte';
+	import type { TreeNode, updateFileFrom } from '$lib/types/editor';
 	import { updateFile } from '$lib/api/editor';
+	import { loadFiles } from './../store.svelte';
 
 	let { file } : {file : TreeNode}= $props();
 
 	let open = $state(false);
-	const { reloadFiles } = getContext<EditorFileInfo>('editor-context');
 
 	const handleTriggerClick = (e: MouseEvent) => {
         e.stopPropagation(); // 阻止事件冒泡
@@ -31,7 +30,7 @@
 		};
 		updateFile(file.project_id, file.id, formData);
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		reloadFiles(file.project_id);
+		loadFiles(file.project_id);
 		open = false;
 	};
 </script>
