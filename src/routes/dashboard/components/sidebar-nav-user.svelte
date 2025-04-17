@@ -10,6 +10,7 @@
   import { failure, success } from '$lib/components/ui/toast';
   import { m, me, mpd } from '$lib/trans';
   import { updateNav } from '../store.svelte';
+  import { localizeHref } from '$lib/paraglide/runtime';
 
   let { user }: {
       user: (User & {avatar: string}) | null
@@ -22,7 +23,7 @@
       try {
           await logoutUser();
           success(m.logout());
-          goto('/auth/signin');
+          goto(localizeHref('/auth/signin'));
       } catch (error) {
           failure(me.logout_failed());
       }
@@ -31,7 +32,7 @@
   // 处理个人资料点击
   function handleProfileClick() {
       updateNav('Profile', '');
-      goto('/dashboard/profile');
+      goto(localizeHref('/dashboard/profile'));
   }
 </script>
 

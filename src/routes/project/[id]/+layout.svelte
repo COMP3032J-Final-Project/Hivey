@@ -20,7 +20,8 @@
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { files, setFilesStruct, tempFolders } from './store.svelte';
-
+  import { localizeHref } from '$lib/paraglide/runtime';
+  
   let { data, children } = $props<{
 	data: {
 	  files: File[];
@@ -69,7 +70,7 @@
 			    // 设置项目删除事件的处理
 			    wsClient.projectDeletedHandler = () => {
               // TODO notify user
-				      goto('/dashboard/repository/projects/all'); // 重定向到项目列表页面
+				      goto(localizeHref('/dashboard/repository/projects/all')); // 重定向到项目列表页面
 			    }
 
 			wsClient.projectUpdateHandler = (data) => {

@@ -59,7 +59,7 @@
 
 			    // 延迟跳转到首页
 			    setTimeout(() => {
-				      goto('/dashboard/repository/projects/all');
+				      goto(localizeHref('/dashboard/repository/projects/all'));
 			    }, 500);
 		  } catch (error) {
           failureError(error);

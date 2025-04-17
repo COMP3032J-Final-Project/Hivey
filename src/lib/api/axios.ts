@@ -13,13 +13,11 @@ import {
     saveUserSession,
     clearUserSession
 } from '$lib/auth';
-
-
+import { localizeHref } from '$lib/paraglide/runtime';
 import type { RefreshUserAuthForm } from '$lib/types/auth';
 import { me } from '$lib/trans';
 import { browser } from '$app/environment';
 import { notification } from '$lib/components/ui/toast';
-
 import { BACKEND_ADDR } from '$lib/constants';
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
@@ -99,7 +97,7 @@ axiosClient.interceptors.request.use(
 
             // 如果不是登录页，跳转到登录页
             if (browser && !window.location.pathname.includes('/auth/signin')) {
-                goto('/auth/signin');
+                goto(localizeHref('/auth/signin'));
             }
 
             return Promise.reject(error);
@@ -177,7 +175,7 @@ axiosClient.interceptors.response.use(
 
             // 如果不是登录页，跳转到登录页
             if (browser && !window.location.pathname.includes('/auth/signin')) {
-                goto('/auth/signin');
+                goto(localizeHref('/auth/signin'));
             }
 
             return Promise.reject(refreshError);

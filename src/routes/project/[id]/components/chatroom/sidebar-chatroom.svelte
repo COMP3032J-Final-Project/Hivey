@@ -13,6 +13,7 @@
   import { WebSocketClient } from '$lib/api/websocket';
   import { goto } from '$app/navigation';
   import { chatMessages, setChatMessages, addChatMessage, addChatMessages } from '../../store.svelte';
+  import { localizeHref } from '$lib/paraglide/runtime';
 
   // 接收从Layout传入的props
 	let  { currentUser, projectId, wsClient }: {
@@ -30,7 +31,7 @@
   onMount(async () => {  // 当组件挂载后加载历史消息
     if (isSessionExpired()) { 
       failure(me.session_expired());
-      goto('/auth/login');
+      goto(localizeHref('/auth/login'));
       return;
     }
     

@@ -36,7 +36,7 @@
 			    success(mpa.success_sign_up());
 			    setTimeout(() => {
 				      // 带着用户信息跳转到登录页并自动填充用户邮箱和密码
-				      goto(`/auth/signin`, {
+				      goto(localizeHref(`/auth/signin`), {
 					        state: {
 						          email: formData.email,
 						          password: formData.password

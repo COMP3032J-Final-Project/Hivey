@@ -6,6 +6,7 @@
 	import { success, failure } from '$lib/components/ui/toast';
 	import { mpd } from '$lib/trans';
 	import { goto } from '$app/navigation';
+	import { localizeHref } from '$lib/paraglide/runtime';
 
 	let {
 		open = $bindable(false),
@@ -82,7 +83,7 @@
 		try {
 			const project = await onSubmit(createProjectForm);
 			success(mpd.success_project_create());
-      goto(`/project/${project.id}`);
+      goto(localizeHref(`/project/${project.id}`));
 		} catch (error) {
 			failure(mpd.error_project_create());
 		} finally {
