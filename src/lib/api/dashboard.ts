@@ -1,6 +1,6 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { Project, CreateProjectForm, ProjectsDeleteForm } from '$lib/types/dashboard';
+import type { Project, CreateProjectForm } from '$lib/types/dashboard';
 import { ProjectType } from '$lib/types/dashboard';
 
 
@@ -75,4 +75,17 @@ export const deleteProjects = async (projectIds: string[]): Promise<void> => {
         throw new Error(response.data.msg || 'Failed to delete projects');
     }
     return;
+};
+
+export const createProjectFromTemplate = async (templateId: string, projectName: string): Promise<Project> => {
+    const response = await axiosClient.post<APIResponse<{ project_id: string }>>(`/project/${templateId}/create_project`, {
+        name: projectName,
+        type: 'project'
+    });
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    const projectId = response.data.data.project_id;
+    const project = await getProjectById(projectId);
+    return project;
 };

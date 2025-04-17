@@ -6,14 +6,22 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-  import { deleteProject, deleteProjects } from '$lib/api/dashboard';
-  import { notification } from '$lib/components/ui/toast';
-  import { me } from '$lib/trans';
+  import { deleteProject, deleteProjects, createProjectFromTemplate } from '$lib/api/dashboard';
+  import { notification, success } from '$lib/components/ui/toast';
+  import { me, mpd } from '$lib/trans';
+  import { failure } from '$lib/components/ui/toast';
   import { invalidateAll } from '$app/navigation';
+  import { Input } from '$lib/components/ui/input/index.js';
+  import { goto } from '$app/navigation';
+  import { localizeHref } from '$lib/paraglide/runtime';
 
 	let { id, selectedIds = [], onDelete }: { id: string; selectedIds?: string[]; onDelete?: () => void } = $props();
 	let showDeleteDialog = $state(false);
   let showBulkDeleteDialog = $state(false);
+  let showCreateProjectDialog = $state(false);
+  let newProjectName = $state('');
+  let isCreating = $state(false);
+  let errorMessage = $state('');
 
   async function handleDelete() {
     try {
@@ -46,6 +54,47 @@
       }
     }
   }
+  
+  async function handleCreateProject() {
+    errorMessage = '';
+    
+    if (!newProjectName.trim()) {
+      errorMessage = 'Project name cannot be empty';
+      return;
+    }
+    
+    isCreating = true;
+    try {
+      const project = await createProjectFromTemplate(id, newProjectName);
+      success(mpd.success_project_create());
+      showCreateProjectDialog = false;
+      newProjectName = '';
+      await invalidateAll();
+      
+      await goto(localizeHref(`/project/${project.id}`));
+    } catch (error) {
+      if (error instanceof Error) {
+        failure(error.message);
+      } else {
+        failure(me.unknown());
+      }
+    } finally {
+      isCreating = false;
+    }
+  }
+  
+  function handleCancel() {
+    newProjectName = '';
+    errorMessage = '';
+    showCreateProjectDialog = false;
+  }
+  
+  $effect(() => {
+    if (!showCreateProjectDialog) {
+      newProjectName = '';
+      errorMessage = '';
+    }
+  });
 </script>
 
 <DropdownMenu.Root>
@@ -67,6 +116,7 @@
 				<Trash2 class="ml-2 size-4" />
 			</DropdownMenu.Item>
       <DropdownMenu.Item class="flex justify-between items-center"
+      onclick={() => showCreateProjectDialog = true}
       aria-label="Create project from template">
 				Create
 				<CirclePlus class="ml-2 size-4" />
@@ -91,6 +141,35 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action onclick={handleDelete}>Delete</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={showCreateProjectDialog}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Create Project from Template</AlertDialog.Title>
+    </AlertDialog.Header>
+
+    <div class="space-y-4">
+      <Input 
+        id="project-name" 
+        name="project-name"
+        bind:value={newProjectName} 
+        type="text" 
+        placeholder="Enter project name" 
+      />
+
+      {#if errorMessage}
+        <div class="text-sm text-destructive">{errorMessage}</div>
+      {/if}
+    </div>
+
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel onclick={handleCancel}>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={handleCreateProject} disabled={isCreating}>
+        {isCreating ? 'Creating...' : 'Create'}
+      </AlertDialog.Action>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>

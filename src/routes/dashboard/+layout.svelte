@@ -66,7 +66,6 @@
 	import NavUser from './components/sidebar-nav-user.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { LayoutData } from './$types';
-	import type { User } from '$lib/types/auth';
 
 	let { data, children } = $props<{ data: LayoutData; children: any }>();
 </script>

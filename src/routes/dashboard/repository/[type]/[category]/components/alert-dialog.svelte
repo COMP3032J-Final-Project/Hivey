@@ -81,7 +81,6 @@
 
 		try {
 			const project = await onSubmit(createProjectForm);
-      console.log(project);
 			success(mpd.success_project_create());
       goto(`/project/${project.id}`);
 		} catch (error) {
