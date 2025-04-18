@@ -90,32 +90,34 @@
 				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 
-			wsClient.fileRenamedHandler = (data) => {
+			wsClient.fileRenamedHandler = (updatedFile) => {
 				files.update((files) => {
-					const file = files.find((file) => file.id === data.id);
+					const file = files.find((file) => file.id === updatedFile.id);
 					if (file) {
-						file.filename = data.name; // 更新文件名称
+						file.filename = updatedFile.filename; // 更新文件名称
+						file.filepath = updatedFile.filepath; // 更新文件路径(应对移动+重命名的情况)
 					}
 					return files;
 				});
 				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 
-			wsClient.fileMoveHandler = (data) => {
+			wsClient.fileMoveHandler = (updatedFile) => {
 				files.update((files) => {
-					const file = files.find((file) => file.id === data.id);
+					const file = files.find((file) => file.id === updatedFile.id);
 					if (file) {
-						file.filepath = data.path; // 更新文件父级ID
+						file.filepath = updatedFile.filepath; // 更新文件父级ID
+						file.filename = updatedFile.filename; // 更新文件名称(应对移动+重命名的情况)
 					}
 					return files;
 				});
 				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
-
-			    wsClient.connect(); // 连接到服务器
-		  } catch (error) {
-			    console.error('Project WebSocket Client init failed:', error);
-		  }
+      
+      wsClient.connect(); // 连接到服务器
+    } catch (error) {
+        console.error('Project WebSocket Client init failed:', error);
+    }
 	}
 
 	onMount(async () => {

@@ -41,10 +41,10 @@ export class WebSocketClient {
     // CRDT
     public crdtEventHandler: ((response: WSResponse) => void) | null = null;
     // file
-    public fileAddedHandler: ((file: File ) => void) | null = null;
-    public fileRenamedHandler: ((data: { id: string, name: string }) => void) | null = null;
+    public fileAddedHandler: ((file: File) => void) | null = null;
+    public fileRenamedHandler: ((file: File) => void) | null = null;
     public fileDeletedHandler: ((id: string ) => void) | null = null;
-    public fileMoveHandler: ((data: { id: string, path: string }) => void) | null = null;
+    public fileMoveHandler: ((file: File) => void) | null = null;
 
 
     constructor(
@@ -120,6 +120,7 @@ export class WebSocketClient {
 
     // 处理WebSocket的消息事件
     private handleMessage(event: MessageEvent): void {
+        console.log('Received WebSocket message:', event.data);
         try {
             const response = JSON.parse(event.data); // 解析响应数据为WSResponse格式
             
@@ -302,56 +303,37 @@ export class WebSocketClient {
     private handleFileEvent(response: WSResponse): void {
         switch (response.action) {
             case "added":
-                // TODO: 处理文件添加事件
                 if (!this.fileAddedHandler) {
                     console.warn("File added handler not set");
                     return;
                 }
-                try {
-                    console.log('Calling file add handler with payload:', response.payload);
-                    this.fileAddedHandler(response.payload);
-                } catch (error) {
-                    console.error('Error handling file add:', error);
-                }
+                const addedFile: File = response.payload;
+                console.log('File added:', addedFile);
+                this.fileAddedHandler(addedFile);
                 break;
             case "renamed":
-                // TODO: 处理文件重命名事件
                 if (!this.fileRenamedHandler) {
                     console.warn("File rename handler not set");
                     return;
                 }
-                try {
-                    console.log('Calling file rename handler with payload:', response.payload);
-                    this.fileRenamedHandler(response.payload);
-                } catch (error) {
-                    console.error('Error handling file rename:', error);
-                }
+                const renamedFile: File = response.payload;
+                this.fileRenamedHandler(renamedFile);
                 break;
             case "moved":
-                // TODO: 处理文件移动事件
                 if (!this.fileMoveHandler) {
                     console.warn("File moved handler not set");
                     return;
                 }
-                try {
-                    console.log('Calling file move handler with payload:', response.payload);
-                    this.fileMoveHandler(response.payload);
-                } catch (error) {
-                    console.error('Error handling file move:', error);
-                }
+                const movedFile: File = response.payload;
+                this.fileMoveHandler(movedFile);
                 break;
             case "deleted":
-                // TODO: 处理文件删除事件
                 if (!this.fileDeletedHandler) {
                     console.warn("File deleted handler not set");
                     return;
                 }
-                try {
-                    console.log('Calling file delete handler with payload:', response.payload);
-                    this.fileDeletedHandler(response.payload);
-                } catch (error) {
-                    console.error('Error handling file deletion:', error);
-                }
+                const deletedFileId = response.payload.id;
+                this.fileDeletedHandler(deletedFileId);
                 break;
             default:
                 console.warn("Unknown file event type:", response.action);

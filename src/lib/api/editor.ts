@@ -2,6 +2,7 @@ import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
 import type { File as EditorFile, createFileFrom, updateFileFrom } from '$lib/types/editor';
 import { uint8ArrayToBase64 } from '$lib/utils';
+import type { F } from 'vitest/dist/chunks/config.d.DevWltVl.js';
 
 export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
     const response = await axiosClient.get<APIResponse<EditorFile[]>>(`/project/${projectId}/files/`);
@@ -54,6 +55,15 @@ const createEmptyFile = async (fileName: string): Promise<File> => {
     }
 }
 
+export const checkFileExistence = async (projectId: string, fileId: string): Promise<File> => {
+    console.log("Checking file existence for ID:", fileId);
+    const response = await axiosClient.get<APIResponse<File>>(`/project/${projectId}/files/${fileId}/exist`);
+    if (response.data.code != 200 || !response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    const file: File = response.data.data;
+    return file;
+}
 
 export const createFile = async (projectId: string, fileForm: createFileFrom) => {
   const { title, path } = fileForm;
@@ -63,23 +73,17 @@ export const createFile = async (projectId: string, fileForm: createFileFrom) =>
       filepath: path,
   };
   const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(`/project/${projectId}/files/create_update`, tempForm);
-  if (!response.data.data) {
+  if (!response.data.data || response.data.code != 200) {
       throw new Error(response.data.msg);
   }
-  // 创建一个空的文本文件
-  const emptyFile = await createEmptyFile(tempForm.filename);
-  console.log("Uploading file:", emptyFile);
-  console.log("File size:", emptyFile.size);
-  const uploadResponse = await fetch(response.data.data.url, {
-      method: 'PUT',
-      body: emptyFile,
-  });
-  if (uploadResponse.ok) {
-      console.log('文件上传成功');
-  } else {
-      console.error('上传失败', await uploadResponse.text());
+  console.log("File created:", response.data.data);
+  const fileId = response.data.data.file_id;
+  const fileUrl = response.data.data.url;
+  const file = await checkFileExistence(projectId, fileId);
+  if (!file) {
+    throw new Error("Failed to create file!");
   }
-    
+  return file;
 };
 
 export const deleteFile = async (projectId: string, fileId: string) => {

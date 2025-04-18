@@ -41,9 +41,7 @@
 
 	const createFile = async (e: Event) => {
 		console.log('Create file');
-
 		e.preventDefault();
-
 		const filenameInput = document.getElementById('filename') as HTMLInputElement;
 		const filename = filenameInput.value.trim();
 

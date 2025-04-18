@@ -19,6 +19,7 @@ export const prerender = false; // 禁用预渲染
 
 export const load: LayoutLoad = async ({ url, params }) => {
     const session: UserAuth | null = getUserSession();
+    console.log("Access Token:", session);
     // 如果未登录，立即重定向到登录页面
     if (!session || isSessionExpired()) {
         // 显示错误提示
