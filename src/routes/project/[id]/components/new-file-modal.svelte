@@ -10,7 +10,7 @@
 	import { success, failure } from '$lib/components/ui/toast';
 	import { FilePlus } from 'lucide-svelte';
 	import { me, mpp } from '$lib/trans';
-	import { createFile as createNewFile } from '$lib/api/editor';
+	import { createFile as createNewFile, uploadFile } from '$lib/api/editor';
 	import { getFolders } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
 	import { files, loadFiles, tempFolders } from '../store.svelte';
@@ -62,7 +62,7 @@
 				document.getElementById('dialog-close-btn')?.click();
 				console.log('[Create File Dialog] Reload files for projectId:', projectId);
 				// 后端有延迟，必须要等一会
-				await new Promise((resolve) => setTimeout(resolve, 200));
+				await new Promise((resolve) => setTimeout(resolve, 100));
 				await loadFiles(projectId, $tempFolders);
 			}
 		} catch (error) {
@@ -76,8 +76,30 @@
 	let uploading = false;
 
 	async function handleUpload(uploadedFiles: File[]) {
+		if (!uploadedFiles.length || !folderValue) {
+			failure('Please complete the form');
+			return;
+		}
 		files_upload = uploadedFiles;
-		console.log('upload file:', files_upload);
+		for (const file of files_upload) {
+			try{
+				formData = {
+					title: file.name,  // 文件标题
+					path: folderValue, // 文件路径
+				};
+				await uploadFile(project_id, formData, file);
+				success('Upload file successfully');
+				document.getElementById('dialog-close-btn')?.click();
+				console.log('[Upload File Dialog] Reload files for projectId:', files_upload);
+				// 后端有延迟，必须要等一会
+				await new Promise((resolve) => setTimeout(resolve, 100));
+				await loadFiles(projectId, $tempFolders);
+			} catch (error) {
+				// 直接使用错误消息
+				const errorMessage = (error as Error).message;
+				failure(errorMessage || me.unknown());
+			}
+		}
 	}
 
 	const handleTriggerClick = (e: MouseEvent) => {
@@ -141,9 +163,27 @@
 				</form>
 			</Tabs.Content>
 			<Tabs.Content value="uploadFile">
-				<FileDropZone onUpload={handleUpload} maxFiles={5} maxFileSize={10 * 1024 * 1024}>
+				<FileDropZone onUpload={async (files: File[]) => {files_upload = files;}} maxFiles={5} maxFileSize={10 * 1024 * 1024}>
 					<p>{mpp.upload_file_hint()}</p>
 				</FileDropZone>
+				<br>
+				<div class="flex items-center justify-center gap-4">
+					<Label for="folder-select" class="w-1/4 text-right">{mpp.file_path()}</Label>
+					<Select.Root type="single" name="folder" bind:value={folderValue}>
+						<Select.Trigger id="folder-select" class="w-[250px]">
+							{triggerContent}
+						</Select.Trigger>
+						<Select.Content>
+							<Select.Group>
+								{#each foldersData as folder}
+									<Select.Item value={folder.value} label={folder.label}
+										>{folder.label}</Select.Item
+									>
+								{/each}
+							</Select.Group>
+						</Select.Content>
+					</Select.Root>
+				</div>
 				{#if files_upload.length}
 					<h3>{mpp.select_file()}</h3>
 					<ul>
@@ -151,10 +191,14 @@
 							<li>{file.name} - {(file.size / 1024).toFixed(2)} KB</li>
 						{/each}
 					</ul>
-					<Button onclick={() => handleUpload} disabled={uploading}>
-						{uploading ? mpp.uploading_file() : mpp.upload_file()}
-					</Button>
+					<Dialog.Footer>
+						<Button onclick={() => handleUpload(files_upload)} disabled={uploading}>
+							{uploading ? mpp.uploading_file() : mpp.upload_file()}
+						</Button>
+						<Dialog.Close id="dialog-close-btn" class="hidden" />
+					</Dialog.Footer>
 				{/if}
+
 			</Tabs.Content>
 		</Tabs.Root>
 	</Dialog.Content>
