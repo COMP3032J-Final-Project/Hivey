@@ -49,10 +49,10 @@
 				}
 				//TODO 接后端
 				const newNode: TreeNode = {
-					id: project_id + $tempFolders.length,        // 需确保唯一性
+					id: project_id + "-" + $tempFolders.length,        // 需确保唯一性
 					project_id: project_id,
 					filename: foldername,
-					filepath: folderValue + '/' + foldername,
+					filepath: folderValue,
 					filetype: "folder",         // 或 'file' 根据需求修改
 					children: []                // 文件夹建议用空数组，文件用 null
 				};

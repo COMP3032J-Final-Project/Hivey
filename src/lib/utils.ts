@@ -120,7 +120,6 @@ export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[
 
   const root: TreeLevel = { children: [] };
 
-  // 合并文件和临时文件夹一起处理
   const allNodes: TreeNode[] = [
     ...files.map(file => ({
       ...file,
@@ -145,41 +144,46 @@ export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[
     }
     
     let currentLevel: TreeLevel = root;
+		if (pathParts.length === 0) {
+      // 如果没有路径，直接添加到根目录
+      currentLevel.children.push(node);
+      return;
+		}
 
     for (let i = 0; i < pathParts.length; i++) {
       const part = pathParts[i];
-      const isLastPart = i === pathParts.length - 1;
 
+      // 中间路径部分或文件夹，确保目录存在
       let found = currentLevel.children.find(
         child => child.filename === part && child.filetype === 'folder'
       );
 
-      if (!found && (!isLastPart || node.filetype === 'file')) {
-        // 创建中间路径的文件夹
+      if (!found) {
         found = {
-          id: `folder-${pathParts.slice(0, i + 1).join('/')}-${i}`,
+          id: `folder-${pathParts.slice(0, i + 1).join('/')}`,
           project_id: node.project_id,
           filename: part,
-          filepath: pathParts.slice(0, i + 1).join('/'),
+          filepath: `/${pathParts.slice(0, i + 1).join('/')}`,
           filetype: 'folder',
           children: [],
         };
         currentLevel.children.push(found);
       }
 
-      if (found) {
-        currentLevel = found as TreeLevel;
-      }
+      currentLevel = found as TreeLevel;
+    };
 
-      // 最后一部分：将当前节点挂上去（如果没重复）
-      if (isLastPart && !currentLevel.children.find(child => child.id === node.id)) {
-        currentLevel.children.push(node);
-      }
-    }
+		const existingNode = currentLevel.children.find(
+			child => child.filename === node.filename && child.filetype === node.filetype
+		);
+		if (!existingNode) {
+			currentLevel.children.push(node);
+		}
   });
 
   return root.children;
 }
+
 
 
 export function getFolders(files: File[], tempFolders: TreeNode[]){
@@ -190,24 +194,29 @@ export function getFolders(files: File[], tempFolders: TreeNode[]){
 	const allSources = [...(files ?? []), ...(tempFolders ?? [])];
 
 	allSources.forEach(item => {
-		// 当前文件夹本身就是一个目录，也应该加入
+		// 如果是文件夹，直接加进去
 		if (item.filetype === 'folder') {
-			if (!folderInfoMap.has(item.filepath)) {
-				folderInfoMap.set(item.filepath, { value: item.filepath, label: item.filename });
+			if (!folderInfoMap.has(item.filepath + '/' + item.filename)) {
+				folderInfoMap.set(item.filepath + '/' + item.filename, { value: item.filepath + '/' + item.filename, label: item.filename });
 			}
 		}
 
-		// 继续解析父路径
-		const rawPath = item.filepath || '/';
-		const pathParts = rawPath.split('/').filter(Boolean);
+		// 无论是文件还是文件夹，都要处理其 filepath 作为“父路径”
+		const pathParts = item.filepath?.split('/').filter(Boolean) ?? [];
 
 		let currentPath = '';
-		pathParts.forEach((part) => {
+		for (let i = 0; i < pathParts.length; i++) {
+			const part = pathParts[i];
 			currentPath += `/${part}`;
+
+			// 避免把文件的 filepath 也当成文件夹加入（前面已经加了 folder 的 filepath）
 			if (!folderInfoMap.has(currentPath)) {
-				folderInfoMap.set(currentPath, { value: currentPath, label: part });
+				folderInfoMap.set(currentPath, {
+					value: currentPath,
+					label: part,
+				});
 			}
-		});
+		}
 	});
 
 	return Array.from(folderInfoMap.values());

@@ -38,6 +38,9 @@ export async function loadFiles(projectId: string, temporaryFolders: TreeNode[])
         const updatedFiles = await getFiles(projectId);
         setFiles(updatedFiles);
         setFilesStruct(buildFileTree(updatedFiles, temporaryFolders));
+        console.log('Updated file structure:', updatedFiles);
+        console.log('Temporary folders:', temporaryFolders);
+        console.log('File structure:', buildFileTree(updatedFiles, temporaryFolders));
         return true;
     } catch (error) {
         console.error('Failed to reload files:', error);
