@@ -8,9 +8,9 @@
 	import type { createFileFrom, TreeNode } from '$lib/types/editor';
 	import { success, failure } from '$lib/components/ui/toast';
 	import { me, mpp } from '$lib/trans';
-	import { getFolders } from '$lib/utils';
+	import { getFolders, buildFileTree } from '$lib/utils';
 	import { UserPermissionEnum } from '$lib/types/auth';
-	import { files, loadFiles, tempFolders, setTempFolders } from '../store.svelte';
+	import { files, loadFiles, setFilesStruct, tempFolders, setTempFolders } from '../store.svelte';
 
 	let {
       projectId,
@@ -31,12 +31,6 @@
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
 	);
-
-	let formData: createFileFrom = {
-		title: '', // 文件标题
-		path: '', // 文件路径
-	};
-
 	const createFolder = async (e: Event) => {
 		console.log('Create folder');
 
@@ -53,22 +47,24 @@
 				if (folderValue == 'root') {
 					folderValue = '';
 				}
-				formData = {
-					title: foldername, // 文件标题
-					path: folderValue, // 文件路径
-				};
 				//TODO 接后端
 				const newNode: TreeNode = {
-					id: "unique_id_123",        // 需确保唯一性
-					project_id: "your_project_id",
-					filename: "new_folder",
-					filepath: "/path/to/new_folder",
+					id: project_id + $tempFolders.length,        // 需确保唯一性
+					project_id: project_id,
+					filename: foldername,
+					filepath: folderValue + '/' + foldername,
 					filetype: "folder",         // 或 'file' 根据需求修改
 					children: []                // 文件夹建议用空数组，文件用 null
-					};
+				};
 				setTempFolders([...$tempFolders, newNode]);
+				console.log('newNode', newNode);
+				console.log('tempFolders', $tempFolders);
+				console.log('foldersData', foldersData);
 				success('Create folder successfully');
 				document.getElementById('dialog-close-btn')?.click();
+				const filesStruct = buildFileTree($files, $tempFolders)
+				console.log('filesStruct', filesStruct);
+				setFilesStruct(filesStruct);
 			}
 		} catch (error) {
 			// 直接使用错误消息

@@ -6,7 +6,7 @@
     import { me, mpp } from '$lib/trans'
 	import type { TreeNode, updateFileFrom } from '$lib/types/editor';
 	import { updateFile } from '$lib/api/editor';
-	import { loadFiles } from './../store.svelte';
+	import { loadFiles, tempFolders } from './../store.svelte';
 
 	let { file } : {file : TreeNode}= $props();
 
@@ -30,7 +30,7 @@
 		};
 		updateFile(file.project_id, file.id, formData);
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		loadFiles(file.project_id);
+		loadFiles(file.project_id, $tempFolders);
 		open = false;
 	};
 </script>

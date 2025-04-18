@@ -82,13 +82,13 @@ export const createFile = async (projectId: string, fileForm: createFileFrom) =>
     
 };
 
-export const deleteFile = async (projectId: string, fileId: string): Promise<EditorFile[]> => {
+export const deleteFile = async (projectId: string, fileId: string) => {
     console.log("Deleting file with ID:", fileId);
     const response = await axiosClient.delete<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}`);
-    if (!response.data.data) {
-        throw new Error(response.data.msg);
-    }
-    return response.data.data;
+    if (response.status >= 200 && response.status < 300) {
+        return;
+      }
+    throw new Error(response.data.msg);
 }
 
 export const updateFile = async (projectId: string, fileId: string, fileForm: updateFileFrom) => {

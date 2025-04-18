@@ -30,7 +30,7 @@ export function setFilesStruct(newFilesStruct: TreeNode[]) {
 // 项目的空文件夹列表
 export const tempFolders = writable<TreeNode[]>([]);
 export function setTempFolders(newFolders: TreeNode[]) {
-    filesStruct.set(newFolders);
+    tempFolders.set(newFolders);
 }
 
 // 用户当前打开的文件

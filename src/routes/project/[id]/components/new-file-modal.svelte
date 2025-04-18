@@ -29,7 +29,7 @@
 	let dialogOpen = $state(false);
 
 	let folderValue = $state('');
-	let foldersData = $derived($files ? getFolders($files, $tempFolders) : [{ value: 'root', label: '/' }]);
+	let foldersData = $derived($files ? getFolders($files, $tempFolders) : [{ value: 'root', label: 'root' }]);
   
 	const triggerContent = $derived(
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
@@ -51,7 +51,7 @@
 			if (!folderValue || !filename) {
 				throw new Error('Please complete the form');
 			} else {
-				if (folderValue == '/') {
+				if (folderValue == 'root') {
 					folderValue = '';
 				}
 				formData = {
