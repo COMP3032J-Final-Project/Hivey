@@ -120,7 +120,6 @@ export class WebSocketClient {
 
     // 处理WebSocket的消息事件
     private handleMessage(event: MessageEvent): void {
-        console.log('Received WebSocket message:', event.data);
         try {
             const response = JSON.parse(event.data); // 解析响应数据为WSResponse格式
             
@@ -209,8 +208,6 @@ export class WebSocketClient {
 
     // 处理项目相关事件
     private handleProjectEvent(response: WSResponse): void {
-        console.log('Handling project event:', response.action, response.payload);
-        
         switch (response.action) {
             case "update_name":
                 if (!this.projectUpdateHandler) {

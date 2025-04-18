@@ -56,7 +56,6 @@ const createEmptyFile = async (fileName: string): Promise<File> => {
 }
 
 export const checkFileExistence = async (projectId: string, fileId: string): Promise<File> => {
-    console.log("Checking file existence for ID:", fileId);
     const response = await axiosClient.get<APIResponse<File>>(`/project/${projectId}/files/${fileId}/exist`);
     if (response.data.code != 200 || !response.data.data) {
         throw new Error(response.data.msg);
@@ -76,11 +75,13 @@ export const createFile = async (projectId: string, fileForm: createFileFrom) =>
   if (!response.data.data || response.data.code != 200) {
       throw new Error(response.data.msg);
   }
-  console.log("File created:", response.data.data);
   const fileId = response.data.data.file_id;
   const fileUrl = response.data.data.url;
+  const emptyFile = await createEmptyFile(tempForm.filename);
+  await fetch(fileUrl, {method: 'PUT', body: emptyFile});
+
   const file = await checkFileExistence(projectId, fileId);
-  if (!file) {
+  if (!file ) {
     throw new Error("Failed to create file!");
   }
   return file;
