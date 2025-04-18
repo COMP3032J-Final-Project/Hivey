@@ -25,9 +25,9 @@
 </script>
    
 <Dialog.Root bind:open={open}>
-	<Dialog.Trigger class={buttonVariants({ size:"sm", variant: "ghost" })} onclick={handleTriggerClick}>
+	<Dialog.Trigger class="flex w-full items-center justify-between p-0" onclick={handleTriggerClick}>
 		<span>Delete</span>
-		<Trash2 />
+		<Trash2 class="size-4" />
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
