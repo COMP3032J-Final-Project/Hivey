@@ -19,7 +19,7 @@
 	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-  import { files, setFilesStruct, tempFolders } from './store.svelte';
+  import { files, setFilesStruct, tempFolders, project, updateProject } from './store.svelte';
   import { localizeHref } from '$lib/paraglide/runtime';
   
   let { data, children } = $props<{
@@ -27,13 +27,11 @@
 	  files: File[];
 	  filesStruct: TreeNode[];
 	  currentUser: User;
-	  projectId: string;
-	  project: Project;
 	  authInfo: UserAuth;
 	};
 	children: any;
   }>();
-  let projectId = data.projectId;
+
   const SidebarMode = {
       FileTree: "FileTree",
       ChatRoom: "ChatRoom",
@@ -42,7 +40,6 @@
   let wsClient = $state<WebSocketClient | null>(null);
   setContext('websocket-client', () => wsClient); // 传入一个获取wsClient的函数而不是wsClient本身这样可以保证访问到最新的wsClient值
 
-  let project = $state<Project>(data.project);
   let sidebarMode = $state(SidebarMode.FileTree);
   let sidebarResizeOffset = $state({x: 0, y: 0});
   let sidebarWidth = $derived.by(() => {
@@ -56,26 +53,30 @@
 	async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
 		try {
 			wsClient = new WebSocketClient( // 创建WebSocket客户端
-					projectId,
+					$project.id,
 					currentUser,
 					userSession
 			);
-		// 设置成员进入事件的处理
+		  // 设置成员进入事件的处理
 			wsClient.memberJoinedHandler = (username: string) => {
 					if (username !== currentUser.username && username !== 'Unknown') {
 						notification(`${username} entered the project.`);
 					}
 			}
 
-			    // 设置项目删除事件的处理
-			    wsClient.projectDeletedHandler = () => {
-              // TODO notify user
-				      goto(localizeHref('/dashboard/repository/projects/all')); // 重定向到项目列表页面
-			    }
+      // 设置项目删除事件的处理
+      wsClient.projectDeletedHandler = () => {
+        if (wsClient) {
+            wsClient.disconnect();
+            wsClient = null;
+        }
+        notification(`Project has been deleted by owner.`);
+        goto(localizeHref('/dashboard/repository/projects/all')); // 重定向到项目列表页面
+      }
 
 			wsClient.projectUpdateHandler = (data) => {
 					if (data.name) {
-						project.name = data.name;
+						updateProject({name: data.name});
 					}
 			}
 
@@ -146,13 +147,13 @@
 
           {#if sidebarMode === SidebarMode.FileTree}
 				    <CreateFileDialog
-              {projectId}
+              projectId={$project.id}
               currentUser={data.currentUser}
               iconSize={20}
             />
 
 				    <CreateFolderDialog
-              {projectId}
+              projectId={$project.id}
               currentUser={data.currentUser}
               iconSize={20}
             />

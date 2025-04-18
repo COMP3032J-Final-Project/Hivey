@@ -1,8 +1,32 @@
 import { writable } from 'svelte/store';
 import type { User } from '$lib/types/auth';
+import  { type Project, ProjectType } from '$lib/types/dashboard';
 import type { ChatMessage, File, TreeNode } from '$lib/types/editor';
 import { getFiles, getFileURL, fetchDocData } from '$lib/api/editor';
 import { buildFileTree } from '$lib/utils';
+
+// Project
+export const project = writable<Project>({
+    id: '',
+    name: '',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    type: ProjectType.Project,
+    owner: undefined,
+    members_num: 0,
+    isFavorite: false
+});
+export function setProject(newProject: Project) {
+    project.set(newProject);
+}
+export function updateProject(newProject: Partial<Project>) {
+    project.update(currentProject => ({
+        ...currentProject,
+        ...newProject
+    }));
+}
+
+// ==============================================================================
 
 // 项目的文件列表
 export const files = writable<File[]>([]);
@@ -21,11 +45,15 @@ export async function loadFiles(projectId: string, temporaryFolders: TreeNode[])
     }
 }
 
+// ==============================================================================
+
 // 项目的文件树
 export const filesStruct = writable<TreeNode[]>([]);
 export function setFilesStruct(newFilesStruct: TreeNode[]) {
     filesStruct.set(newFilesStruct);
 }
+
+// ==============================================================================
 
 // 项目的空文件夹列表
 export const tempFolders = writable<TreeNode[]>([]);
@@ -33,7 +61,9 @@ export function setTempFolders(newFolders: TreeNode[]) {
     tempFolders.set(newFolders);
 }
 
-// 用户当前打开的文件
+// ==============================================================================
+
+// 用户当前打开(选中)的文件
 export const currentFile = writable<File>({
     id: '',
     project_id: '',
@@ -71,6 +101,7 @@ export async function switchCurrentFile(projectId: string, fileId: string, fileN
         return false;
     }
 }
+
 // ==============================================================================
 
 // 项目成员状态
@@ -105,16 +136,14 @@ export function updateMember(username: string, updatedMember: Partial<User>) { /
     );
 }
 
+// ==============================================================================
+
 // 聊天消息状态
 export const chatMessages = writable<ChatMessage[]>([]);
-
-// 设置聊天消息列表
-export function setChatMessages(messages: ChatMessage[]) {
+export function setChatMessages(messages: ChatMessage[]) { // 设置聊天消息列表
     chatMessages.set(messages);
 }
-
-// 添加新的聊天消息
-export function addChatMessage(message: ChatMessage) {
+export function addChatMessage(message: ChatMessage) { // 添加新的聊天消息
     chatMessages.update(messages => {
         const updatedMsgs = [...messages, message].sort((a, b) =>
             new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
@@ -122,9 +151,7 @@ export function addChatMessage(message: ChatMessage) {
         return updatedMsgs;
     });
 }
-
-// 添加多条聊天消息（用于加载历史消息）
-export function addChatMessages(newMessages: ChatMessage[]) {
+export function addChatMessages(newMessages: ChatMessage[]) { // 添加多条聊天消息（用于加载历史消息）
     chatMessages.update(currentMessages => {
         const combinedMessages = [...newMessages, ...currentMessages];
         return combinedMessages.sort((a, b) =>

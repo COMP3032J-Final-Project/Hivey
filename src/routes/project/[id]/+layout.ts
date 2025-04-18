@@ -12,7 +12,7 @@ import { getProjectById } from '$lib/api/dashboard';
 import { UserPermissionEnum } from '$lib/types/auth';
 import type { Project } from '$lib/types/dashboard';
 import type { File, TreeNode } from '$lib/types/editor';
-import { setFilesStruct, setFiles, updateCurrentFile } from './store.svelte';
+import { setFilesStruct, setFiles, updateCurrentFile, setProject } from './store.svelte';
 
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
 export const prerender = false; // 禁用预渲染
@@ -56,18 +56,18 @@ export const load: LayoutLoad = async ({ url, params }) => {
     const project: Project = await getProjectById(params.id);
     const filesdata: File[] = await getFiles(params.id);
     const filesStruct: TreeNode[] = buildFileTree(filesdata, []);
-    console.debug("files:", filesdata);
-    console.debug("filesStruct:", filesStruct);
+    console.log("project:", project);
+    console.log("files:", filesdata);
+    console.log("filesStruct:", filesStruct);
     
+    setProject(project);
     setFiles(filesdata);
     setFilesStruct(filesStruct);
-    updateCurrentFile({project_id: params.id});// 使用projectId更新currentFile
+    updateCurrentFile({project_id: params.id}); // 设置currentFile的project_id
     return {
         files: filesdata,
         filesStruct: filesStruct,
         currentUser: currentUser,
-        projectId: params.id,
-        project: project,
         authInfo: session
     };
 };

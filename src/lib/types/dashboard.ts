@@ -23,6 +23,7 @@ export const Project = v.object({
     createdAt: v.date(),
     updatedAt: v.date(),
     type: v.enum(ProjectType),
+    members_num: v.optional(v.number()),
     owner: v.optional(User),
     isFavorite: v.optional(v.boolean())
 })

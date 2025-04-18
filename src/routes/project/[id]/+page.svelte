@@ -14,24 +14,20 @@
 	import { Command, ArrowBigUp, House, Share } from 'lucide-svelte';
 	import { updateProject } from '$lib/api/dashboard';
 	import { success, failure } from '$lib/components/ui/toast';
-	import type { Project } from '$lib/types/dashboard';
 	import type { PageProps } from './$types';
 	import { type User, UserPermissionEnum } from '$lib/types/auth';
 	import { getContext, onMount } from 'svelte';
 	import EditableLabel from '$lib/components/ui/editable-label';
-	import { members, currentFile } from './store.svelte';
+	import { members, currentFile, project, updateProject as updateProjectStore } from './store.svelte';
 	import type { WebSocketClient } from '$lib/api/websocket';
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
-	import ToggleableToolbar from './components/toggleable-toolbar.svelte';
 	import ShareProjectDialog from './components/share-project2template-modal.svelte';
 	import { goto } from '$app/navigation';
-	import { is } from 'valibot';
 
 	let { data }: PageProps = $props();
 	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
 	let wsClient = $derived(getWsClient ? getWsClient() : null); // 获取当前的wsClient实例
-	let project: Project = $state(data.project);
 	let currentUser: User = $state(data.currentUser);
 	let membersDialogOpen = $state(false);
 	let shareTemplateDialogOpen = $state(false); // 新增：控制对话框显示状态
@@ -45,12 +41,11 @@
 	async function handleProjectNameUpdate(projectName: string) {
 		try {
 			const updatedProject = await updateProject({
-				id: project.id,
+				id: $project.id,
 				name: projectName
 			});
 
-			// 更新本地项目名称
-			project.name = projectName;
+			updateProjectStore({name: projectName}); // 更新本地项目名称
 			success('Project name updated successfully');
 
 			// 通过WebSocket广播项目名称更新
@@ -267,7 +262,7 @@
 		</div>
 
 		<div class="flex items-center">
-			<EditableLabel initialText={project.name} handleUpdateValueFn={handleProjectNameUpdate} />
+			<EditableLabel initialText={$project.name} handleUpdateValueFn={handleProjectNameUpdate} />
 		</div>
 
 		<div class="hidden items-center gap-4 md:flex">
@@ -291,21 +286,21 @@
 				</AvatarGroup.Root>
 			</button>
 
-			<InviteButton {currentUser} projectId={project.id} />
+			<InviteButton {currentUser} projectId={$project.id} />
 		</div>
 	</header>
 
 	<MembersDialog
 		{currentUser}
-		projectId={project.id}
+		projectId={$project.id}
 		open={membersDialogOpen}
 		onOpenChange={(open) => (membersDialogOpen = open)}
 	/>
 
 	<ShareProjectDialog
-		projectId={project.id}
+		projectId={$project.id}
 		{currentUser}
-		{project}
+		project={$project}
 		open={shareTemplateDialogOpen}
 		onOpenChange={(open) => (shareTemplateDialogOpen = open)}
 	/>
