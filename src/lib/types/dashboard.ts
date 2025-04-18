@@ -23,7 +23,8 @@ export const Project = v.object({
     createdAt: v.date(),
     updatedAt: v.date(),
     type: v.enum(ProjectType),
-    owner: v.optional(User) ,
+    owner: v.optional(User),
+    isFavorite: v.optional(v.boolean())
 })
 
 export type Project = v.InferOutput<typeof Project>;

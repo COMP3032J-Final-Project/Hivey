@@ -44,6 +44,17 @@ export const getFavoriteTemplates = async (): Promise<Project[]> => {
     return response.data.data;
 };
 
+export const getTemplatesWithFavoriteStatus = async (): Promise<Project[]> => {
+    const allTemplates = await getPublicTemplates();
+    const favoriteTemplates = await getFavoriteTemplates();
+    const favoriteIds = new Set(favoriteTemplates.map(template => template.id));
+    
+    return allTemplates.map(template => ({
+        ...template,
+        isFavorite: favoriteIds.has(template.id)
+    }));
+};
+
 export const getProjectById = async (id: string): Promise<Project> => {
     const response = await axiosClient.get<APIResponse<Project>>(`/project/${id}`);
     if (!response.data.data) {

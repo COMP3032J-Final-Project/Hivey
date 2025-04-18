@@ -177,12 +177,14 @@ export const getColumns = (type: string): ColumnDef<Project>[] => {
 		baseColumns.push({
 			id: 'actions',
 			cell: ({ row, table }) => {
+				const category = window.location.pathname.split('/').pop() || '';
 				return renderComponent(TemplateActions, { 
 					id: row.original.id,
 					selectedIds: table.getFilteredSelectedRowModel().rows.map(row => row.original.id),
 					onDelete: () => {
 						table.toggleAllPageRowsSelected(false);
-					}
+					},
+					isFavorite: row.original.isFavorite === true ? true : category === 'favourite'
 				});
 			},
 			enableHiding: false,

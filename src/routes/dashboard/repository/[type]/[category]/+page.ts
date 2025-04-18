@@ -5,7 +5,8 @@ import {
     getOwnProjects,
     getSharedProjects,
     getPublicTemplates,
-    getFavoriteTemplates
+    getFavoriteTemplates,
+    getTemplatesWithFavoriteStatus
 } from '$lib/api/dashboard';
 import { setProjects } from '../../../store.svelte';
 
@@ -32,17 +33,28 @@ export const load: PageLoad = async ({ parent, params }) => {
         }
     } else { // type === 'templates'
         if (category === 'mine') {
-            projects = await getUserProjects();
-            projects = projects.filter(project => 
+            const myProjects = await getUserProjects();
+            const favoriteTemplates = await getFavoriteTemplates();
+            const favoriteIds = new Set(favoriteTemplates.map(template => template.id));
+            
+            projects = myProjects.filter(project => 
                 project.type === "template" && 
                 project.owner?.email === user?.email
-            );
+            ).map(project => ({
+                ...project,
+                isFavorite: favoriteIds.has(project.id)
+            }));
+            
             navItem = 'My Templates';
         } else if (category === 'favourite') {
             projects = await getFavoriteTemplates();
+            projects = projects.map(project => ({
+                ...project,
+                isFavorite: true
+            }));
             navItem = 'Favourite Templates';
         } else {
-            projects = await getPublicTemplates();
+            projects = await getTemplatesWithFavoriteStatus();
             navItem = 'All Templates';
         }
     }
