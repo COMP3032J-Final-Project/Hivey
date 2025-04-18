@@ -136,19 +136,13 @@ export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[
     const pathParts = getPathParts(node.filepath);
     // 如果filepath为空或路径部分为空则直接将节点添加到根目录
     if (pathParts.length === 0) {
-      
-      if (!root.children.find(child => child.id === node.id)) { // 检查根目录是否已经有同id的节点
+      if (!root.children.find(child => child.filename === node.filename)) { // 检查根目录是否已经有同名节点
         root.children.push(node);
       }
       return; // 继续处理下一个节点
     }
     
     let currentLevel: TreeLevel = root;
-		if (pathParts.length === 0) {
-      // 如果没有路径，直接添加到根目录
-      currentLevel.children.push(node);
-      return;
-		}
 
     for (let i = 0; i < pathParts.length; i++) {
       const part = pathParts[i];
