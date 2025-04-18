@@ -15,8 +15,9 @@
 	let {
 		id,
 		selectedIds = [],
-		onDelete
-	}: { id: string; selectedIds?: string[]; onDelete?: () => void } = $props();
+		onDelete,
+		isOwner = false
+	}: { id: string; selectedIds?: string[]; onDelete?: () => void; isOwner?: boolean } = $props();
 	let showDeleteDialog = $state(false);
 	let showBulkDeleteDialog = $state(false);
 	let showCopyDialog = $state(false);
@@ -94,6 +95,7 @@
 				Copy
 				<Copy class="ml-2 size-4" />
 			</DropdownMenu.Item>
+			{#if isOwner}
 			<DropdownMenu.Item
 				class="flex items-center justify-between"
 				onclick={() => (showDeleteDialog = true)}
@@ -101,6 +103,7 @@
 				Delete
 				<Trash2 class="ml-2 size-4" />
 			</DropdownMenu.Item>
+			{/if}
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
@@ -137,7 +140,7 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-{#if selectedIds && selectedIds.length > 0}
+{#if selectedIds && selectedIds.length > 0 && isOwner}
 	<div class="fixed bottom-4 right-4">
 		<Button
 			variant="destructive"

@@ -15,7 +15,7 @@
   import { goto } from '$app/navigation';
   import { localizeHref } from '$lib/paraglide/runtime';
 
-	let { id, selectedIds = [], onDelete, isFavorite = false }: { id: string; selectedIds?: string[]; onDelete?: () => void; isFavorite?: boolean } = $props();
+	let { id, selectedIds = [], onDelete, isFavorite = false, isOwner = false }: { id: string; selectedIds?: string[]; onDelete?: () => void; isFavorite?: boolean; isOwner?: boolean } = $props();
 	let showDeleteDialog = $state(false);
   let showBulkDeleteDialog = $state(false);
   let showCreateProjectDialog = $state(false);
@@ -132,29 +132,29 @@
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-			<DropdownMenu.Item class="flex justify-between items-center"
-      onclick={() => showDeleteDialog = true}
-      aria-label="Delete template">
-				Delete
-				<Trash2 class="ml-2 size-4" />
-			</DropdownMenu.Item>
-      <DropdownMenu.Item class="flex justify-between items-center"
-      onclick={() => showCreateProjectDialog = true}
-      aria-label="Create project from template">
+			<DropdownMenu.Item
+				class="flex items-center justify-between"
+				onclick={() => (showCreateProjectDialog = true)}
+				aria-label="Create project from template" >
 				Create
 				<CirclePlus class="ml-2 size-4" />
 			</DropdownMenu.Item>
-      <DropdownMenu.Item class="flex justify-between items-center"
-      aria-label="Favourite template"
-      onclick={handleToggleFavorite}
-      disabled={isTogglingFavorite}>
-				{#if isFavorite}
-          Unfavourite
-        {:else}
-          Favourite
-        {/if}
-				<Star class={`ml-2 size-4 ${isFavorite ? 'text-primary fill-primary' : ''}`} />
+      <DropdownMenu.Item
+				class="flex items-center justify-between"
+				onclick={handleToggleFavorite}
+				aria-label="Toggle favorite" >
+				{isFavorite ? 'Unfavourite' : 'Favourite'}
+				<Star class={`ml-2 size-4 ${isFavorite ? 'fill-primary' : ''}`} />
 			</DropdownMenu.Item>
+			{#if isOwner}
+			<DropdownMenu.Item
+				class="flex items-center justify-between"
+				onclick={() => (showDeleteDialog = true)}
+				aria-label="Delete selected items" >
+				Delete
+				<Trash2 class="ml-2 size-4" />
+			</DropdownMenu.Item>
+			{/if}
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
@@ -203,16 +203,17 @@
   </AlertDialog.Content>
 </AlertDialog.Root>
 
-{#if selectedIds && selectedIds.length > 0}
-  <div class="fixed bottom-4 right-4">
-    <Button 
-      variant="destructive" 
-      class="flex items-center gap-2"
-      onclick={() => showBulkDeleteDialog = true}>
-      <Trash2 class="size-4" />
-      Delete Selected ({selectedIds.length})
-    </Button>
-  </div>
+{#if selectedIds && selectedIds.length > 0 && isOwner}
+	<div class="fixed bottom-4 right-4">
+		<Button
+			variant="destructive"
+			class="flex items-center gap-2"
+			onclick={() => (showBulkDeleteDialog = true)}
+		>
+			<Trash2 class="size-4" />
+			Delete Selected ({selectedIds.length})
+		</Button>
+	</div>
 {/if}
 
 <AlertDialog.Root bind:open={showBulkDeleteDialog}>

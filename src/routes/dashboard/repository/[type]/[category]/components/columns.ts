@@ -7,8 +7,9 @@ import DataTableActions from './data-table-actions.svelte';
 import TemplateActions from './template-actions.svelte';
 import DataTableTimeButton from './data-table-time-button.svelte';
 import type { Project } from '$lib/types/dashboard';
+import type { User } from '$lib/types/auth';
 
-export const getColumns = (type: string): ColumnDef<Project>[] => {
+export const getColumns = (type: string, currentUser: User | null): ColumnDef<Project>[] => {
 	const baseColumns: ColumnDef<Project>[] = [
 		{
 			id: 'select',
@@ -165,7 +166,8 @@ export const getColumns = (type: string): ColumnDef<Project>[] => {
 					selectedIds: table.getFilteredSelectedRowModel().rows.map(row => row.original.id),
 					onDelete: () => {
 						table.toggleAllPageRowsSelected(false);
-					}
+					},
+					isOwner: currentUser?.email === row.original.owner?.email
 				});
 			},
 			enableHiding: false,
@@ -184,7 +186,8 @@ export const getColumns = (type: string): ColumnDef<Project>[] => {
 					onDelete: () => {
 						table.toggleAllPageRowsSelected(false);
 					},
-					isFavorite: row.original.isFavorite === true ? true : category === 'favourite'
+					isFavorite: row.original.isFavorite === true ? true : category === 'favourite',
+					isOwner: currentUser?.email === row.original.owner?.email
 				});
 			},
 			enableHiding: false,
@@ -201,7 +204,8 @@ export const getColumns = (type: string): ColumnDef<Project>[] => {
 					selectedIds: table.getFilteredSelectedRowModel().rows.map(row => row.original.id),
 					onDelete: () => {
 						table.toggleAllPageRowsSelected(false);
-					}
+					},
+					isOwner: currentUser?.email === row.original.owner?.email
 				});
 			},
 			enableHiding: false,
@@ -215,4 +219,4 @@ export const getColumns = (type: string): ColumnDef<Project>[] => {
 };
 
 // 为了兼容性保留旧的columns导出
-export const columns = getColumns('projects');
+export const columns = getColumns('projects', null);
