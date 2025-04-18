@@ -2,6 +2,10 @@ import type { PageLoad } from './$types';
 import type { Project } from '$lib/types/dashboard';
 import {
     getUserProjects,
+    getOwnProjects,
+    getSharedProjects,
+    getPublicTemplates,
+    getFavoriteTemplates
 } from '$lib/api/dashboard';
 import { setProjects } from '../../../store.svelte';
 
@@ -11,28 +15,35 @@ export const load: PageLoad = async ({ parent, params }) => {
 
     let navGroup = type.charAt(0).toUpperCase() + type.slice(1);
     let navItem = "";
-    let projects: Project[] = await getUserProjects();
+    let projects: Project[] = [];
 
-    // 根据type和category过滤projects
+    // 根据type和category调用不同的API
     if (type === 'projects') {
-        projects = projects.filter(project => project.type === "project");
-        navItem = 'All Projects';
         if (category === 'mine') {
-            projects = projects.filter(project => project.owner?.email === user?.email);
+            projects = await getOwnProjects();
             navItem = 'My Projects';
         } else if (category === 'shared') {
-            projects = projects.filter(project => project.owner?.email !== user?.email);
+            projects = await getSharedProjects();
             navItem = 'Shared with Me';
+        } else {
+            projects = await getUserProjects();
+            projects = projects.filter(project => project.type === "project");
+            navItem = 'All Projects';
         }
     } else { // type === 'templates'
-        projects = projects.filter(project => project.type === "template");
-        navItem = 'All Templates';
         if (category === 'mine') {
-            projects = projects.filter(project => project.owner?.email === user?.email);
+            projects = await getUserProjects();
+            projects = projects.filter(project => 
+                project.type === "template" && 
+                project.owner?.email === user?.email
+            );
             navItem = 'My Templates';
         } else if (category === 'favourite') {
-            projects = projects.filter(project => project.owner?.email !== user?.email);
+            projects = await getFavoriteTemplates();
             navItem = 'Favourite Templates';
+        } else {
+            projects = await getPublicTemplates();
+            navItem = 'All Templates';
         }
     }
 

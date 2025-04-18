@@ -12,6 +12,38 @@ export const getUserProjects = async (): Promise<Project[]> => {
     return response.data.data;
 };
 
+export const getOwnProjects = async (): Promise<Project[]> => {
+    const response = await axiosClient.get<APIResponse<Project[]>>('/project/own/');
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+};
+
+export const getSharedProjects = async (): Promise<Project[]> => {
+    const response = await axiosClient.get<APIResponse<Project[]>>('/project/shared/');
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+};
+
+export const getPublicTemplates = async (): Promise<Project[]> => {
+    const response = await axiosClient.get<APIResponse<Project[]>>('/project/templates/');
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+};
+
+export const getFavoriteTemplates = async (): Promise<Project[]> => {
+    const response = await axiosClient.get<APIResponse<Project[]>>('/project/favorite_templates/');
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+};
+
 export const getProjectById = async (id: string): Promise<Project> => {
     const response = await axiosClient.get<APIResponse<Project>>(`/project/${id}`);
     if (!response.data.data) {
