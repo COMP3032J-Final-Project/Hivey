@@ -129,7 +129,7 @@ export const shareProject2Template = async (form: ShareProject2TemplateForm): Pr
     }
 
     const response = await axiosClient.post<APIResponse<void>>(`/project/${projectId}/create_template`, 
-        { is_public: isPublic, name: templateName });
+        { is_public: isPublic, name: templateName, type: 'template' });
     if (response.data.code !== 200) {
         throw new Error(response.data.msg);
     }
