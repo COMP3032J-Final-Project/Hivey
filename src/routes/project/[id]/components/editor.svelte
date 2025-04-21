@@ -14,6 +14,8 @@
   import { search, openSearchPanel, findNext as cmFindNext, findPrevious as cmFindPrevious } from '@codemirror/search';
   import { getContext } from 'svelte';
   import { currentFile } from './../store.svelte';
+  import { project } from './../store.svelte';
+  import { getFileMissingOps } from '$lib/api/editor';
 
   let {
       // TODO pass user type
@@ -243,6 +245,12 @@
           state: startState,
           parent: editorAreaElem
       });
+
+      // File already been created
+      if ($currentFile.id) {
+          const missingOpLogs = await getFileMissingOps($project.id, $currentFile.id, doc);
+          doc.import(missingOpLogs);
+      }
   });
   
   $effect(() => {

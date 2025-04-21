@@ -11,11 +11,12 @@
   import { lineNumbers } from '@codemirror/view';
   import { markdown } from '@codemirror/lang-markdown';
   import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
+  import { getFileMissingOps } from '$lib/api/editor';
 
   let editorArea1: HTMLElement;
   let editorArea2: HTMLElement;
 
-  onMount(() => {
+  onMount(async () => {
       const doc1 = new LoroDoc();
       const awareness1: Awareness = new Awareness(doc1.peerIdStr);
       const undoManager1 = new UndoManager(doc1, {});
@@ -32,20 +33,23 @@
 
       const peer2Version = doc2.oplogVersion();
       const peer1Version = doc1.oplogVersion();
-      console.log(VersionVector.decode(peer1Version.encode()))
-      // console.log(base64ToUint8Array(uint8ArrayToBase64(peer1Version.encode())));
 
-      const missingOps = doc1.export({ 
-          mode: "update",
-          from: peer2Version 
-      });
-      doc2.import(missingOps);
-      const missingOps2 = doc2.export({
-          mode: "update",
-          from: peer1Version,
-      });
-      doc1.import(missingOps2);
-      console.log(doc2.getText("text").toString());
+      const res = await getFileMissingOps("30d459fd190c4d6db632295b0cb08fb2", "39981fdc69564ff593e365a4f5243abd", doc1);
+      
+      // console.log(VersionVector.decode(peer1Version.encode()))
+      // // console.log(base64ToUint8Array(uint8ArrayToBase64(peer1Version.encode())));
+
+      // const missingOps = doc1.export({ 
+      //     mode: "update",
+      //     from: peer2Version 
+      // });
+      // doc2.import(missingOps);
+      // const missingOps2 = doc2.export({
+      //     mode: "update",
+      //     from: peer1Version,
+      // });
+      // doc1.import(missingOps2);
+      // console.log(doc2.getText("text").toString());
  
         
       // doc1.subscribeLocalUpdates((update) => {
