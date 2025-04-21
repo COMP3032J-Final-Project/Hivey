@@ -34,7 +34,6 @@ export async function fetchDocData(fileType: string, url: string): Promise<any> 
     } else {
         result = await response.text();
     }
-    console.log(result);
     return result;
 }
 

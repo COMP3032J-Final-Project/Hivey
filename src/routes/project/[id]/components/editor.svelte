@@ -1,48 +1,54 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { EditorView, basicSetup } from 'codemirror';
-  import { lineNumbers } from '@codemirror/view';
-  import { EditorState } from '@codemirror/state';
-  import { markdown } from '@codemirror/lang-markdown';
-  import { getTextFromDoc, LoroExtensions } from 'loro-codemirror';
-  import { Awareness, LoroDoc, UndoManager } from 'loro-crdt';
-  import * as v from 'valibot';
-  import { Message, type WSRequest, type WSResponse } from '$lib/types/websocket';
+  import { onMount, untrack } from 'svelte';
+  import { Awareness, LoroDoc, UndoManager, type AwarenessListener } from 'loro-crdt';
+  import { type WSResponse } from '$lib/types/websocket';
   import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
   import { UserPermissionEnum } from '$lib/types/auth';
   import type { WebSocketClient } from '$lib/api/websocket';
   import { search, openSearchPanel, findNext as cmFindNext, findPrevious as cmFindPrevious } from '@codemirror/search';
   import { getContext } from 'svelte';
-  import { currentFile } from './../store.svelte';
-  import { project } from './../store.svelte';
-  import { getFileMissingOps } from '$lib/api/editor';
+	import { getFileMissingOps } from '$lib/api/editor';
 
+  // code mirror
+  import { EditorView, basicSetup } from 'codemirror';
+  import { lineNumbers } from '@codemirror/view';
+  import { Compartment, EditorState } from '@codemirror/state';
+  
+  import { markdown } from '@codemirror/lang-markdown';
+  import { latex } from 'codemirror-lang-latex';
+	import { javascript } from '@codemirror/lang-javascript';
+  import { LoroExtensions } from 'loro-codemirror';
+
+
+  import { project, currentFile } from './../store.svelte';
+  
   let {
-      // TODO pass user type
+      // NOTE: they are also state-ful (can be tracked as dependency inside `$effect`)
       username,
-      project_id,
-      // TODO handle situation at the first connecting, the access_token is expired and needed to be refershed
-      access_token,
       permission,
   }: {
       username: string;
-      project_id: string;
-      access_token: string;
       permission: UserPermissionEnum;
   } = $props();
 
-  const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
-  let wsClient = $derived(getWsClient ? getWsClient() : null); // 获取当前的wsClient实例
-  let editorAreaElem: HTMLElement;
-  let isConnected = $state(false);
-  let editorView: EditorView;
-  let isExternalUpdate = false;
+  const getWsClient = getContext<() => WebSocketClient | null>('websocket-client');
+  const wsClient = $derived(getWsClient ? getWsClient() : null);
+  
+  let editorView: EditorView | undefined;
+  let loroDoc: LoroDoc | undefined = new LoroDoc();
+	let loroAwareness: Awareness | undefined = new Awareness(loroDoc.peerIdStr);
+	let undoManager: UndoManager | undefined = new UndoManager(loroDoc, {});
 
-  const doc = new LoroDoc();
-  // TODO setPeerId()
-  const awareness: Awareness = new Awareness(doc.peerIdStr);
-  const undoManager = new UndoManager(doc, {});
+	let isLoadingFileContent = $state(false);
+  let editorContainerElem: HTMLElement | undefined = $state();
+  
+  // --- Compartments for Dynamic Configuration ---
+	let languageCompartment = new Compartment();
+	let readOnlyCompartment = new Compartment();
+	let loroCompartment = new Compartment(); // To reconfigure LoroExtensions with new instances
 
+
+  // --- Export Functions ---
   export function hasSurroundingSymbols(prefix: string, suffix: string) {
       if (!editorView) return false;
 
@@ -129,12 +135,12 @@
   }
 
   export function undo() {
-      if (!editorView) return;
+      if (!editorView || !undoManager) return;
       undoManager.undo();
   }
 
   export function redo() {
-      if (!editorView) return;
+      if (!editorView || !undoManager) return;
       undoManager.redo();
   }
 
@@ -161,6 +167,7 @@
 
       const text = state.sliceDoc(selection.main.from, selection.main.to);
       navigator.clipboard.writeText(text).then(() => {
+          if (!editorView) return;
           editorView.dispatch({
               changes: { from: selection.main.from, to: selection.main.to, insert: '' }
           });
@@ -180,6 +187,7 @@
   export function pasteAtCursor() {
       if (!editorView) return;
       navigator.clipboard.readText().then((text) => {
+          if (!editorView) return;
           const { state } = editorView;
           const { selection } = state;
           editorView.dispatch({
@@ -188,129 +196,204 @@
       });
   }
 
-  function handleWsMessage(message: Message) {
-      message = v.parse(Message, message);
-      if (message.action !== 'send_message' || message.client_id == username) return;
-      const data = message.message;
-      switch (data.type) {
-          case 'update':
-              // console.log('update', message.client_id, base64ToUint8Array(data.data));
-              doc.import(base64ToUint8Array(data.data));
-              break;
-          case 'awareness':
-              // console.log('awareness', message.client_id, base64ToUint8Array(data.data));
-              awareness.apply(base64ToUint8Array(data.data));
-              break;
-          default:
-              break;
-      }
+
+  // --- Language Mapping ---
+	function getLanguageExtension(filetype: string | undefined) {
+		  switch (filetype?.toLowerCase()) {
+			    case 'md':
+              return markdown();
+			    case 'js':
+              return javascript();
+          case 'tex':
+              return latex();
+			    default:
+              return markdown();
+		  }
+	}
+
+
+  // --- Editor --- 
+  // Life cycle Management
+
+  function loroSubscribeLocalUpdateFn(update: Uint8Array) {
+      const fileId = $currentFile.id;
+			if (wsClient && fileId) {
+				  const updateData = uint8ArrayToBase64(update);
+				  wsClient.sendCRDTUpdateMessage(fileId, updateData);
+			}
   }
 
-  onMount(async () => {
-      // basic extensions
-      const extensions = [
-          basicSetup,
-          markdown(),
-          lineNumbers({}),
-          EditorView.lineWrapping,
-          search(),
-          EditorView.theme({
-              '&': { height: '100%', fontSize: '18px' }
-          }),
-          LoroExtensions(
-              doc,
-              {
-                  user: { name: username, colorClassName: 'bg-orange-500 text-orange-500' },
-                  awareness: awareness
-              },
-              undoManager
-          )
-      ];
-
-      if (permission === UserPermissionEnum.Viewer) {
-          // 如果用户只有查看权限则配置编辑器为只读
-          extensions.push(
-              EditorState.readOnly.of(true),
-              EditorView.editable.of(false),
-              EditorView.contentAttributes.of({ tabindex: '0' })
-          );
-      }
-
-      const startState = EditorState.create({
-          doc: $currentFile.fileContent,
-          extensions: extensions
-      });
-
-      editorView = new EditorView({
-          state: startState,
-          parent: editorAreaElem
-      });
-
-      // File already been created
-      if ($currentFile.id) {
-          const missingOpLogs = await getFileMissingOps($project.id, $currentFile.id, doc);
-          doc.import(missingOpLogs);
-      }
-  });
+  function loroAwarenessListener(
+      updates: Parameters<AwarenessListener>[0],
+      origin: Parameters<AwarenessListener>[1]
+  ) {
+      const fileId = $currentFile.id;
+			if (wsClient && origin === 'local' && fileId && loroAwareness) {
+				  const changes = updates.added.concat(updates.removed).concat(updates.updated);
+				  if (changes.length > 0) {
+					    const awarenessData = uint8ArrayToBase64(loroAwareness.encode(changes));
+					    wsClient.sendAwarenessUpdateMessage(fileId, awarenessData);
+				  }
+			}
+	}
   
   $effect(() => {
-      if ($currentFile.fileContent === undefined ){
-          editorView.dispatch({
-              changes: { from: 0, to: editorView.state.doc.length, insert: "Loading content..." }
-          });
-      } else if (editorView && $currentFile.fileContent !== editorView.state.doc.toString()) {
-          editorView.dispatch({
-              changes: { from: 0, to: editorView.state.doc.length, insert: $currentFile.fileContent }
-          });
-      }
-  });
+      const fileId = $currentFile.id;
+      const fileType = $currentFile.filetype
+      const fileContent = $currentFile.fileContent;
+      const loroUserName = username;
+      const pid = $project.id;
 
-  $effect(() => {
-      // 由于wsClient在+layout.svelte中的初始化是异步的, 因此需要使用$effect来确保wsClient在初始化后才进行回调函数设置
-      if (wsClient) {
-          // 为wsClinet设置crdtEventHandler的回调函数
-          wsClient.crdtEventHandler = (response: WSResponse) => {
-              try {
-                  if (response.payload.type === 'update') {
-                      // 处理文档更新
-                      const updateData = base64ToUint8Array(response.payload.data);
-                      doc.import(updateData);
-                  } else if (response.payload.type === 'awareness') {
-                      // 处理awareness更新
-                      const awarenessData = base64ToUint8Array(response.payload.data);
-                      awareness.apply(awarenessData);
-                  }
-              } catch (error) {
-                  console.error('Error handling CRDT event:', error);
-              }
-          }
-
-          isConnected = true; 
-
-          // 订阅文档更新
-          doc.subscribeLocalUpdates((update) => {
-              if (wsClient && isConnected) {
-                  // 使用WebSocketClient发送CRDT更新
-                  const updateData = uint8ArrayToBase64(update);
-                  wsClient.sendCRDTUpdateMessage(updateData);
-              }
-          });
+      if (!fileId) return;
+      untrack(() => {
+          isLoadingFileContent = true;
+      })
+		  
+      if (!fileContent) return;
       
-          // 订阅awareness更新
-          awareness.addListener((updates, origin) => {
-              if (isConnected && origin === 'local') {
-                  // 使用WebSocketClient发送awareness更新
-                  const changes = updates.added.concat(updates.removed).concat(updates.updated);
-                  const awarenessData = uint8ArrayToBase64(awareness.encode(changes));
-                  wsClient.sendAwarenessUpdateMessage(awarenessData);
-              }
-          });
-      }
+      loroDoc = new LoroDoc();
+		  loroAwareness = new Awareness(loroDoc.peerIdStr);
+		  undoManager = new UndoManager(loroDoc, {});
+
+      // TODO get file content(CRDT snapshot)
+
+      getFileMissingOps(pid, fileId, loroDoc)
+          .then((missingOpLogs) => {
+              if (!loroDoc || !loroAwareness || !undoManager) return;
+              
+					    console.log(`Importing ops/snapshot for ${fileId}`);
+					    loroDoc.import(missingOpLogs);
+      
+              const isReadOnly = untrack(() => permission) === UserPermissionEnum.Viewer;
+			        const extensions = [
+					        basicSetup,
+					        lineNumbers(),
+					        EditorView.lineWrapping,
+					        search(),
+					        EditorView.theme({
+						          '&': { height: '100%', fontSize: '18px' },
+					        }),
+					        languageCompartment.of(getLanguageExtension(fileType)),
+					        readOnlyCompartment.of([
+						          EditorState.readOnly.of(isReadOnly),
+						          EditorView.editable.of(!isReadOnly),
+                      // EditorView.contentAttributes.of({ tabindex: '0' })''
+					        ]),
+					        loroCompartment.of(
+						          LoroExtensions(
+							            loroDoc,
+							            {
+								              user: {
+                                  name: loroUserName,
+                                  colorClassName: 'bg-orange-500 text-orange-500'
+                              },
+								              awareness: loroAwareness,
+							            },
+							            undoManager
+						          )
+					        )
+			        ];
+
+              try {
+					        const editorState = EditorState.create({ extensions });
+					        editorView = new EditorView({ state: editorState, parent: editorContainerElem });
+					        console.debug(`EditorView created successfully for ${fileId}`);
+			        } catch (error) {
+					        console.error(`Failed to create EditorView for ${fileId}:`, error);
+                  return;
+			        }
+              
+			        editorView.focus();
+
+              loroDoc.subscribeLocalUpdates(loroSubscribeLocalUpdateFn);
+		          loroAwareness.addListener(loroAwarenessListener);
+          })
+      		.catch((err) => {
+				      console.error(`Failed to get CRDT operations for ${fileId}:`, err);
+			    })
+			    .finally(() => {
+              untrack(() => {
+					        isLoadingFileContent = false;
+              });
+			    });
+
+
+
+      return () => {
+				  if (editorView) {
+					    console.debug(`Destroying EditorView for previous file: ${fileId}`);
+					    editorView.destroy();
+				  }
+          // TODO cancel getFileMissingOps if exists
+          
+				  // Reset state associated with the old editor instance
+				  editorView = undefined;
+				  loroDoc = undefined;
+				  loroAwareness = undefined;
+				  undoManager = undefined;
+			};
+
   });
+
+  
+  // read only state change
+  $effect(() => {
+      const isReadOnly = permission === UserPermissionEnum.Viewer;
+      if (isReadOnly && editorView) {
+  				editorView.dispatch({
+					    effects: readOnlyCompartment.reconfigure([
+						      EditorState.readOnly.of(isReadOnly),
+						      EditorView.editable.of(!isReadOnly)
+					    ])
+				  });
+        
+      }
+  })
+
+  function handleCRDTEvent(response: WSResponse) {
+      const data = response.payload.data;
+      const currentFileId = $currentFile.id;
+      
+      if (data.file_id != currentFileId) return;
+			if (!loroDoc || !loroAwareness) return;
+
+			try {
+				  if (response.payload.type === 'update') {
+					    const updateData = base64ToUint8Array(data.data);
+					    loroDoc.import(updateData);
+				  } else if (response.payload.type === 'awareness') {
+					    const awarenessData = base64ToUint8Array(data.data);
+					    loroAwareness.apply(awarenessData);
+				  }
+			} catch (error) {
+				  console.error(`WS: Error handling CRDT event:`, error);
+			}
+  }
+
+  // setup webscoket
+  $effect(() => {
+		  if (!wsClient || untrack(() => isLoadingFileContent)) return;
+		  wsClient.crdtEventHandler = handleCRDTEvent;
+  })
+  
 </script>
 
-{#if $currentFile.filetype!='pdf'}
-  <div bind:this={editorAreaElem} class="editor size-full"></div>
+
+{#if !$currentFile.id}
+	<div class="flex items-center justify-center size-full text-muted-foreground">
+		Select a file to start editing.
+	</div>
+{:else if $currentFile.filetype === 'pdf'}
+  <div class="flex items-center justify-center size-full text-muted-foreground">
+		PDF preview
+	</div>
 {:else}
-  <div></div>
+	<div class="relative size-full">
+		{#if isLoadingFileContent}
+			<div class="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+				Loading content for {$currentFile.filename}...
+			</div>
+		{/if}
+		<div bind:this={editorContainerElem} class="editor size-full"></div>
+	</div>
 {/if}

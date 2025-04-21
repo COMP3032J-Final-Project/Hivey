@@ -353,8 +353,6 @@
 					<Editor
 						bind:this={editorRef}
 						username={data.currentUser.username}
-						project_id={data.project.id}
-						access_token={data.authInfo.access_token}
 						permission={data.currentUser.permission ?? UserPermissionEnum.Viewer}
 					/>
 				</div>

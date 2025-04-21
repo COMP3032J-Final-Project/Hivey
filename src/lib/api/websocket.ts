@@ -450,7 +450,7 @@ export class WebSocketClient {
     }
 
     // crdt: 发送CRDT更新消息
-    public sendCRDTUpdateMessage(data: string ): void {
+    public sendCRDTUpdateMessage(file_id: string, data: string ): void {
 		if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
             console.error('WebSocket not connected for CRDT update, current state:', this.socket ? this.socket.readyState : 'null');
             return;
@@ -462,7 +462,10 @@ export class WebSocketClient {
                 action: "broadcast",
                 payload: {
                     type: "update",
-                    data: data,
+                    data: {
+                        file_id,
+                        data
+                    },
                     client_id: this.currentUser.username
                 }
             };
@@ -473,7 +476,7 @@ export class WebSocketClient {
 	}
 
     // crdt: 发送awareness更新消息
-    public sendAwarenessUpdateMessage(data: string ): void {
+    public sendAwarenessUpdateMessage(file_id: string, data: string ): void {
 		if (!this.socket || this.socket.readyState !== WebSocketState.OPEN) {
             console.error('WebSocket not connected for awareness update, current state:', this.socket ? this.socket.readyState : 'null');
             return;
@@ -484,7 +487,10 @@ export class WebSocketClient {
                 action: "broadcast",
                 payload: {
                     type: "awareness",
-                    data: data,
+                    data: {
+                        file_id,
+                        data
+                    },
                     client_id: this.currentUser.username
                 }
             };
