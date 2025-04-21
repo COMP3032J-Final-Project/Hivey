@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Download } from 'lucide-svelte';
 	import * as Menubar from '$lib/components/ui/menubar';
 	import { Button } from '$lib/components/ui/button';
 	import { localizeHref } from '$lib/paraglide/runtime';
@@ -174,7 +175,7 @@
 			<Menubar.Root class="border-0 bg-transparent">
 				<Menubar.Menu>
 					<Menubar.Trigger>Project</Menubar.Trigger>
-					<Menubar.Content>
+					<Menubar.Content class="w-48">
 						<Menubar.Item onclick={() => {
 							if (wsClient) {
 								wsClient.disconnect();
@@ -196,6 +197,10 @@
 							Share as Template
 							<Menubar.Shortcut><Share class="size-4" /></Menubar.Shortcut>
 						</Menubar.Item>
+            <Menubar.Item>
+              Export Source as Zip
+              <Menubar.Shortcut><Download class="size-4" /></Menubar.Shortcut>
+            </Menubar.Item>
 					</Menubar.Content>
 				</Menubar.Menu>
 				<Menubar.Menu>
