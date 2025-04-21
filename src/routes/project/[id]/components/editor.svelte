@@ -243,21 +243,18 @@
           state: startState,
           parent: editorAreaElem
       });
-
-      
-      $effect(() => {
-          // update editor content when value changes
-          if ($currentFile.fileContent === undefined ){
-            editorView.dispatch({
-                  changes: { from: 0, to: editorView.state.doc.length, insert: "Loading content..." }
-              });
-          }
-          else if (editorView && $currentFile.fileContent !== editorView.state.doc.toString()) {
-              editorView.dispatch({
-                  changes: { from: 0, to: editorView.state.doc.length, insert: $currentFile.fileContent }
-              });
-          }
-      });
+  });
+  
+  $effect(() => {
+      if ($currentFile.fileContent === undefined ){
+          editorView.dispatch({
+              changes: { from: 0, to: editorView.state.doc.length, insert: "Loading content..." }
+          });
+      } else if (editorView && $currentFile.fileContent !== editorView.state.doc.toString()) {
+          editorView.dispatch({
+              changes: { from: 0, to: editorView.state.doc.length, insert: $currentFile.fileContent }
+          });
+      }
   });
 
   $effect(() => {
