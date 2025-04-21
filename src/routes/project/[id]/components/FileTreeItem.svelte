@@ -32,14 +32,9 @@
       <DropdownMenu.Content side="right" align="start">
         <DropdownMenu.Item class="flex justify-between items-center">
           <RenameDialog file={item}/>
-          <!-- <RenameDialog  item/> -->
-          <!-- <span>Rename</span>
-          <Pencil class="ml-2 size-4" /> -->
         </DropdownMenu.Item>
         <DropdownMenu.Item class="flex justify-between items-center">
           <DeleteDialog file={item}/>
-          <!-- <span>Delete</span>
-          <Trash2 class="ml-2 size-4" /> -->
         </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
@@ -68,13 +63,9 @@
               <DropdownMenu.Content side="right" align="start">
                 <DropdownMenu.Item class="flex justify-between items-center">
                   <RenameDialog file={item}/>
-                  <!-- <span>Rename</span>
-                  <Pencil class="ml-2 size-4" /> -->
                 </DropdownMenu.Item>
                 <DropdownMenu.Item class="flex justify-between items-center">
                   <DeleteDialog file={item}/>
-                  <!-- <span>Delete</span>
-                  <Trash2 class="ml-2 size-4" /> -->
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Root>

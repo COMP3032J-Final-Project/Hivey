@@ -4,6 +4,7 @@
 	import { Input } from '../input/index';
 	import { Button } from '../button/index';
 	import { Loader2 } from 'lucide-svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	let {
 		initialText = '',
@@ -87,9 +88,14 @@
 		{:else}
 			<span class={cn('text-xl font-medium', spanClass)}>{labelText}</span>
 			{#if isHovered}
-				<Button variant="ghost" size="icon" class="ml-2" onclick={startEditing}>
-					<Pencil class="size-4" />
-				</Button>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<Button variant="ghost" size="icon" class="ml-2" onclick={startEditing}>
+							<Pencil class="size-4" />
+						</Button>
+					</Tooltip.Trigger>
+					<Tooltip.Content>Click to rename</Tooltip.Content>
+				</Tooltip.Root>
 			{/if}
 		{/if}
 	</div>
