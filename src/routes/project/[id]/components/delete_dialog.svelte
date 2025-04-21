@@ -8,23 +8,21 @@
   import { loadFiles, tempFolders } from './../store.svelte';
 
 	let { file } : {file : TreeNode}= $props();
-
-	let open = $state(false);
+	let deleteDialogRef: HTMLElement | null = $state(null);
 
 	const handleTriggerClick = (e: MouseEvent) => {
         e.stopPropagation(); // 阻止事件冒泡
-        //e.preventDefault(); // 防止默认行为
     };
 
 	const handleDeleteFile = async (e: Event) => {
 		e.preventDefault();
 		await deleteFile(file.project_id, file.id);
 		loadFiles(file.project_id, $tempFolders);
-		open = false;
+		deleteDialogRef?.click();
 	};
 </script>
-   
-<Dialog.Root bind:open={open}>
+  
+<Dialog.Root>
 	<Dialog.Trigger class="flex w-full items-center justify-between p-0" onclick={handleTriggerClick}>
 		<span>Delete</span>
 		<Trash2 class="size-4" />
@@ -37,7 +35,7 @@
       {mpp.delete_file_description()}
       <Dialog.Footer>
         <Button type="submit">Confirm</Button>
-        <Dialog.Close id="dialog-close-btn" class="hidden" />
+        <Dialog.Close bind:ref={deleteDialogRef} class="hidden" />
       </Dialog.Footer>
 		</form>
 	</Dialog.Content>

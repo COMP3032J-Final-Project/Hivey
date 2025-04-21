@@ -9,8 +9,7 @@
 	import { loadFiles, tempFolders } from './../store.svelte';
 
 	let { file }: { file: TreeNode } = $props();
-
-	let open = $state(false);
+	let renameDialogRef: HTMLElement | null = $state(null);
 
 	const handleTriggerClick = (e: MouseEvent) => {
 		e.stopPropagation(); // 阻止事件冒泡
@@ -31,11 +30,11 @@
 		updateFile(file.project_id, file.id, formData);
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		loadFiles(file.project_id, $tempFolders);
-		open = false;
+		renameDialogRef?.click();
 	};
 </script>
 
-<Dialog.Root bind:open>
+<Dialog.Root>
 	<Dialog.Trigger class="flex w-full items-center justify-between p-0" onclick={handleTriggerClick}>
 		<span>Rename</span>
 		<Pencil class="size-4" />
@@ -58,7 +57,7 @@
 			</div>
 			<Dialog.Footer>
 				<Button type="submit">Confirm</Button>
-				<Dialog.Close id="dialog-close-btn" class="hidden" />
+				<Dialog.Close bind:ref={renameDialogRef} class="hidden" />
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

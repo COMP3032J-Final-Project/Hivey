@@ -24,6 +24,7 @@
 
 	const project_id = projectId;
 	let dialogOpen = $state(false);
+	let createFolderDialogRef: HTMLElement | null = $state(null);
 
 	let folderValue = $state('');
 	let foldersData = $derived($files ? getFolders($files, $tempFolders) : [{ value: 'root', label: 'root' }]);
@@ -32,7 +33,7 @@
 		foldersData.find((folder) => folder.value === folderValue)?.label ?? mpp.choose_file_path()
 	);
 	const createFolder = async (e: Event) => {
-		console.log('Create folder');
+		// console.log('Create folder');
 
 		e.preventDefault();
 
@@ -41,7 +42,7 @@
 
 		try {
 			if (!foldername) {
-				console.log('Please complete the form');
+				// console.log('Please complete the form');
 				throw new Error('Please complete the form');
 			} else {
 				if (folderValue == 'root') {
@@ -57,13 +58,13 @@
 					children: []                // 文件夹建议用空数组，文件用 null
 				};
 				setTempFolders([...$tempFolders, newNode]);
-				console.log('newNode', newNode);
-				console.log('tempFolders', $tempFolders);
-				console.log('foldersData', foldersData);
+				// console.log('newNode', newNode);
+				// console.log('tempFolders', $tempFolders);
+				// console.log('foldersData', foldersData);
 				success('Create folder successfully');
-				document.getElementById('dialog-close-btn')?.click();
+				createFolderDialogRef?.click();
 				const filesStruct = buildFileTree($files, $tempFolders)
-				console.log('filesStruct', filesStruct);
+				// console.log('filesStruct', filesStruct);
 				setFilesStruct(filesStruct);
 			}
 		} catch (error) {
@@ -125,7 +126,7 @@
 			</div>
 			<Dialog.Footer>
 				<Button type="submit">Confirm</Button>
-				<Dialog.Close id="dialog-close-btn" class="hidden" />
+				<Dialog.Close bind:ref={createFolderDialogRef} class="hidden" />
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>
