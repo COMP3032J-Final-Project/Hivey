@@ -3,6 +3,7 @@
   import { UserRoundPlus } from 'lucide-svelte';
   import { Button } from "$lib/components/ui/button/index.js";
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
   import { addProjectMember } from '$lib/api/project';
   import { success } from '$lib/components/ui/toast';
@@ -92,9 +93,16 @@
 <div>
   <AlertDialog.Root bind:open={isOpen}>
     <AlertDialog.Trigger>
-      <Button class="rounded-full" variant="ghost" size="icon">
-        <UserRoundPlus />
-      </Button>
+      <Tooltip.Root>
+        <Tooltip.Trigger>
+          <Button class="rounded-full" variant="ghost" size="icon">
+            <UserRoundPlus />
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>
+          Invite Member
+        </Tooltip.Content>
+      </Tooltip.Root>
     </AlertDialog.Trigger>
     <AlertDialog.Content>
       <AlertDialog.Header>
