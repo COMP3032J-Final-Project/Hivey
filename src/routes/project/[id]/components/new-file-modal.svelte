@@ -83,17 +83,20 @@
       files_upload = uploadedFiles;
       for (const file of files_upload) {
           try{
-              formData = {
-                  title: file.name,  // 文件标题
-                  path: folderValue, // 文件路径
-              };
-              await uploadFile(project_id, formData, file);
-              success('Upload file successfully');
-              uploadFileCloseDialogElem?.click();
-              // console.debug('[Upload File Dialog] Reload files for projectId:', files_upload);
-              // 后端有延迟，必须要等一会
-              await new Promise((resolve) => setTimeout(resolve, 100));
-              await loadFiles(projectId, $tempFolders);
+            if (folderValue == 'root') {
+              folderValue = '';
+            }
+            formData = {
+                title: file.name,  // 文件标题
+                path: folderValue, // 文件路径
+            };
+            await uploadFile(project_id, formData, file);
+            success('Upload file successfully');
+            uploadFileCloseDialogElem?.click();
+            // console.debug('[Upload File Dialog] Reload files for projectId:', files_upload);
+            // 后端有延迟，必须要等一会
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await loadFiles(projectId, $tempFolders);
           } catch (error) {
               // 直接使用错误消息
               const errorMessage = (error as Error).message;

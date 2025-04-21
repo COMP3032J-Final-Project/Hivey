@@ -4,12 +4,10 @@
   import MarkdownIt from 'markdown-it';
 	import ExportButton from './button/export-button.svelte';
   import * as pdfjsLib from 'pdfjs-dist';
-  import type {
-    PDFDocumentProxy,
-    PDFPageProxy,
-  } from "pdfjs-dist/types/src/pdf";
   import { currentFile } from './../store.svelte';
+  import workerEntry from 'pdfjs-dist/build/pdf.worker.mjs?worker';
 
+  pdfjsLib.GlobalWorkerOptions.workerPort = new workerEntry();
 
   let {
       class: className = '',
@@ -18,6 +16,7 @@
   } = $props();
 
   let canvas: HTMLCanvasElement;
+  let pdfUrl = '/GroupProject.pdf';
     
   // Initialize MarkdownIt instance
   const markdownRender = new MarkdownIt({
@@ -28,27 +27,45 @@
 
   let renenderedHTML = markdownRender.render($currentFile.fileContent || '');
 
-  onMount(async () => {
-    if ($currentFile.filetype === 'pdf') {
-      // 渲染 PDF
-      const loadingTask = pdfjsLib.getDocument({ data: $currentFile.fileContent });
-      const pdf: PDFDocumentProxy = await loadingTask.promise;
-      const page: PDFPageProxy = await pdf.getPage(1); // 获取第一页
-
-      const scale = 1.5; // 设置渲染比例
-      const viewport = page.getViewport({ scale });
-
-      const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+  // Function to render PDF
+  const renderPDF = async (url: string) =>{
+    try {
+      const loadingTask = pdfjsLib.getDocument(url);
+      console.log('🔗 Loading PDF from URL:', url);
+      const pdf = await loadingTask.promise;
+      console.log('✅ PDF loaded:', pdf);
+      
+      // 获取第一页
+      const page = await pdf.getPage(1);
+      console.log('📄 Page 1 loaded:', page);
+      const viewport = page.getViewport({ scale: 1.0 });
+      console.log('📐 Viewport:', viewport);
+      
+      // 设置 canvas 尺寸
       canvas.width = viewport.width;
       canvas.height = viewport.height;
-
-      const renderContext = {
+      const context = canvas.getContext('2d');
+      if (!context) {
+        throw new Error('Failed to get canvas 2D context');
+      }
+      // 渲染 PDF 页面
+      console.log('🖌️ Starting to render PDF page');
+      await page.render({
         canvasContext: context,
-        viewport: viewport
-      };
-
-      await page.render(renderContext).promise;
+        viewport,
+      }).promise;
+      console.log('✅ PDF page rendered successfully');
+    } catch (error) {
+      console.error('Error rendering PDF:', error);
     }
+  }
+
+  let renenderedPDF = renderPDF(pdfUrl);
+
+  onMount(async () => {
+    if ($currentFile.filetype === 'pdf') {
+      
+    };
   });
 </script>
 
@@ -56,11 +73,5 @@
   <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block">
     <ExportButton />
   </div>
-  {#if $currentFile.filetype === "markdown"}
-    <div class="prose lg:prose-md overflow-y-auto p-2 break-words">
-      {@html renenderedHTML}
-    </div>
-  {:else if $currentFile.filetype === 'pdf'}
-    <canvas bind:this={canvas}></canvas>
-  {/if}
+  <canvas bind:this={canvas}></canvas>
 </div>
