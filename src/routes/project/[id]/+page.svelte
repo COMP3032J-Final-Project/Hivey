@@ -5,7 +5,6 @@
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import * as AvatarGroup from '$lib/components/ui/avatar-group';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import InviteButton from './components/button/invite-button.svelte';
 	import MembersDialog from './components/members-dialog.svelte';
 	import Bold from '@lucide/svelte/icons/bold';
@@ -24,6 +23,7 @@
 	import Previewer from './components/previewer.svelte';
 	import ShareProjectDialog from './components/share-project2template-modal.svelte';
 	import { goto } from '$app/navigation';
+	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
 	let { data }: PageProps = $props();
 	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
@@ -312,9 +312,36 @@
 				{#if ['md', 'typ', 'tex'].includes(currentFileType)}
 					<div class="border-b p-1 flex justify-normal">
 						<Button class="mr-1" size="icon" onclick={formatMarkdown}>{currentFileType}</Button>
-						<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('bold')}><Bold/></Button>
-						<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('italic')}><Italic/></Button>
-						<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('strikethrough')}><Underline/></Button>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('bold')}>
+									<Bold/>
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								Bold
+							</Tooltip.Content>
+						</Tooltip.Root>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('italic')}>
+									<Italic/>
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								Italic
+							</Tooltip.Content>
+						</Tooltip.Root>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('strikethrough')}>
+									<Underline/>
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								Underline
+							</Tooltip.Content>
+						</Tooltip.Root>
 					</div>
 				{/if}
 				<div class="flex-1 overflow-auto">
