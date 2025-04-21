@@ -91,7 +91,7 @@ export async function switchCurrentFile(projectId: string, fileId: string, fileN
             id: fileId,
             filename: fileName,
             filetype: filetype,
-            fileContent: 'Loading content...'
+            fileContent: undefined
         });
         const url = await getFileURL(projectId, fileId);
         const fileData = await fetchDocData(filetype, url);
