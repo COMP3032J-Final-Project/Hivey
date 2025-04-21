@@ -168,9 +168,9 @@
 				</FileDropZone>
 				<br>
 				<div class="flex items-center justify-center gap-4">
-					<Label for="folder-select" class="w-1/4 text-right">{mpp.file_path()}</Label>
+					<Label for="folder-select1">{mpp.file_path()}</Label>
 					<Select.Root type="single" name="folder" bind:value={folderValue}>
-						<Select.Trigger id="folder-select" class="w-[250px]">
+						<Select.Trigger id="folder-select1" class="w-[250px]">
 							{triggerContent}
 						</Select.Trigger>
 						<Select.Content>
