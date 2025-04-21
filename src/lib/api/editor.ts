@@ -65,8 +65,8 @@ export const checkFileExistence = async (projectId: string, fileId: string): Pro
 }
 
 export const createFile = async (projectId: string, fileForm: createFileFrom) => {
-  const { title } = fileForm;
-  return uploadFile(projectId, fileForm, await createEmptyFile(title));
+    const { title } = fileForm;
+    return uploadFile(projectId, fileForm, await createEmptyFile(title));
 };
 
 export const deleteFile = async (projectId: string, fileId: string) => {
@@ -74,7 +74,7 @@ export const deleteFile = async (projectId: string, fileId: string) => {
     const response = await axiosClient.delete<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}`);
     if (response.status >= 200 && response.status < 300) {
         return;
-      }
+    }
     throw new Error(response.data.msg);
 }
 
@@ -86,26 +86,28 @@ export const updateFile = async (projectId: string, fileId: string, fileForm: up
     return response.data.data;
 }
 
-export const uploadFile = async (projectId: string, fileForm: createFileFrom, file: File) => {
-  const { title, path } = fileForm;
-  let tempForm;
-  tempForm = {
-      filename: title,
-      filepath: path,
-  };
-  const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(`/project/${projectId}/files/create_update`, tempForm);
-  if (!response.data.data || response.data.code != 200) {
-      throw new Error(response.data.msg);
-  }
-  const fileId = response.data.data.file_id;
-  const fileUrl = response.data.data.url;
-  await fetch(fileUrl, {method: 'PUT', body: file});
+export async function uploadFile(projectId: string, fileForm: createFileFrom, file: File) {
+    const { title, path } = fileForm;
+    const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(
+        `/project/${projectId}/files/create_update`,
+        {
+            filename: title,
+            filepath: path,
+        }
+    );
+    if (!response.data.data || response.data.code != 200) 
+        throw new Error(response.data.msg);
+    
+    const data = response.data.data;
+    const fileId = data.file_id;
+    const fileUrl = data.url;
+    await fetch(fileUrl, {method: 'PUT', body: file});
 
-  const result = await checkFileExistence(projectId, fileId);
-  if (!result ) {
-    throw new Error("Failed to create file!");
-  }
-  return result;
+    const result = await checkFileExistence(projectId, fileId);
+    if (!result ) {
+        throw new Error("Failed to create file!");
+    }
+    return result;
 }
 
 

@@ -249,7 +249,7 @@
           isLoadingFileContent = true;
       })
 		  
-      if (!fileContent) return;
+      if (fileContent == null) return;
       
       loroDoc = new LoroDoc();
 		  loroAwareness = new Awareness(loroDoc.peerIdStr);
