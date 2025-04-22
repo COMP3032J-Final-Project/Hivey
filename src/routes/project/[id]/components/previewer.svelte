@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn, uint8ArrayToString } from '$lib/utils.js';
+  import { cn } from '$lib/utils.js';
   import MarkdownIt from 'markdown-it';
 	import ExportButton from './button/export-button.svelte';
   import * as pdfjsLib from 'pdfjs-dist';

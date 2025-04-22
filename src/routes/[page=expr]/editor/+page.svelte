@@ -10,7 +10,6 @@
   import { basicSetup } from "codemirror";
   import { lineNumbers } from '@codemirror/view';
   import { markdown } from '@codemirror/lang-markdown';
-  import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
   import { getFileMissingOps } from '$lib/api/editor';
 
   let editorArea1: HTMLElement;

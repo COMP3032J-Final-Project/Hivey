@@ -1,9 +1,9 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
 import type { File as EditorFile, createFileFrom, updateFileFrom } from '$lib/types/editor';
-import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
 import type { F } from 'vitest/dist/chunks/config.d.DevWltVl.js';
 import { LoroDoc, VersionVector } from 'loro-crdt';
+import { Base64 } from 'js-base64';
 
 export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
     const response = await axiosClient.get<APIResponse<EditorFile[]>>(`/project/${projectId}/files/`);
@@ -101,9 +101,9 @@ export async function uploadFile(projectId: string, fileForm: createFileFrom, fi
 
 export async function getFileMissingOps(projectId: string, fileId: string, doc: LoroDoc) {
     const rawOpLogVersion = doc.oplogVersion();
-    const opLogVersion = uint8ArrayToBase64(rawOpLogVersion.encode());
+    const opLogVersion = Base64.fromUint8Array(rawOpLogVersion.encode(), true);
     const response = await axiosClient.get(
         `/project/${projectId}/files/${fileId}/crdt?opLogVersion=${opLogVersion}`
     );
-    return base64ToUint8Array(response.data.data);
+    return Base64.toUint8Array(response.data.data);
 }

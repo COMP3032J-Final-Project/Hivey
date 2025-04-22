@@ -2,12 +2,12 @@
   import { onMount, untrack } from 'svelte';
   import { Awareness, LoroDoc, UndoManager, type AwarenessListener } from 'loro-crdt';
   import { type WSResponse } from '$lib/types/websocket';
-  import { uint8ArrayToBase64, base64ToUint8Array } from '$lib/utils';
   import { UserPermissionEnum } from '$lib/types/auth';
   import type { WebSocketClient } from '$lib/api/websocket';
   import { search, openSearchPanel, findNext as cmFindNext, findPrevious as cmFindPrevious } from '@codemirror/search';
   import { getContext } from 'svelte';
 	import { getFileMissingOps } from '$lib/api/editor';
+  import { Base64 } from 'js-base64';
 
   // code mirror
   import { EditorView, basicSetup } from 'codemirror';
@@ -37,6 +37,7 @@
   const wsClient = $derived(getWsClient ? getWsClient() : null);
   
   let editorView: EditorView | undefined;
+  let isEditorSettled: boolean = false;
   let loroDoc: LoroDoc | undefined;
 	let loroAwareness: Awareness | undefined;
 	let undoManager: UndoManager | undefined;
@@ -223,7 +224,7 @@
       const fileId = untrack(() => $currentFile).id;
       const ws = untrack(() => wsClient);
 			if (ws && fileId) {
-				  const updateData = uint8ArrayToBase64(update);
+				  const updateData = Base64.fromUint8Array(update);
 				  ws.sendCRDTUpdateMessage(fileId, updateData);
 			}
   }
@@ -238,7 +239,7 @@
 			if (ws && origin === 'local' && fileId && loroAwareness) {
 				  const changes = updates.added.concat(updates.removed).concat(updates.updated);
 				  if (changes.length > 0) {
-					    const awarenessData = uint8ArrayToBase64(loroAwareness.encode(changes));
+					    const awarenessData = Base64.fromUint8Array(loroAwareness.encode(changes));
 					    ws.sendAwarenessUpdateMessage(fileId, awarenessData);
 				  }
 			}
@@ -249,7 +250,43 @@
       return perm === UserPermissionEnum.Viewer
           || perm === UserPermissionEnum.NonMember;
   }
-  
+
+  function readOnlyP_trackable() {
+      const perm = permission;
+      return perm === UserPermissionEnum.Viewer
+          || perm === UserPermissionEnum.NonMember;
+  }
+
+  const updateListener = EditorView.updateListener.of(update => {
+			if (update.docChanged) {
+					docContent = update.state.doc.toString();
+			}
+	});
+
+  function setupEditor() {
+      untrack(() => { isLoadingFileContent = true; })
+
+			const extensions = [
+					basicSetup,
+					lineNumbers(),
+					EditorView.lineWrapping,
+					search(),
+					EditorView.theme({
+						  '&': { height: '100%', fontSize: '18px' },
+					}),
+          updateListener,
+					languageCompartment.of([]),
+					readOnlyCompartment.of([]),
+					loroCompartment.of([])
+			];
+
+			const editorState = EditorState.create({ extensions });
+			editorView = new EditorView({ state: editorState, parent: editorContainerElem });
+
+      untrack(() => { isLoadingFileContent = false; })
+  }
+
+  // CRDT & language
   $effect(() => {
       const fileId = $currentFile.id;
       const fileType = $currentFile.filetype
@@ -259,85 +296,56 @@
 
       if (!fileId) return;
       
-      untrack(() => { isLoadingFileContent = true; })
-		  
-      if (rawData == null) return;
+      if (!isEditorSettled) {
+          setupEditor();
+          isEditorSettled = true;
+      }
       
+      untrack(() => { isLoadingFileContent = true; })
+      
+      if (rawData == null) return;
+
       loroDoc = new LoroDoc();
 		  loroAwareness = new Awareness(loroDoc.peerIdStr);
 		  undoManager = new UndoManager(loroDoc, {});
-
-			const updateListener = EditorView.updateListener.of(update => {
-				if (update.docChanged) {
-					docContent = update.state.doc.toString();
-				}
-			});
       
-      // TODO setup editor onMount
+      loroDoc.import(rawData);
+
       getFileMissingOps(pid, fileId, loroDoc)
           .then((missingOpLogs) => {
               if (!loroDoc || !loroAwareness || !undoManager) return;
               
 					    console.log(`Importing ops/snapshot for ${fileId}`);
 					    loroDoc.import(missingOpLogs);
-      
-              const isReadOnly = readOnlyP();
-              
-			        const extensions = [
-					        basicSetup,
-					        lineNumbers(),
-					        EditorView.lineWrapping,
-					        search(),
-					        EditorView.theme({
-						          '&': { height: '100%', fontSize: '18px' },
-					        }),
-					        languageCompartment.of(getLanguageExtension(fileType)),
-					        readOnlyCompartment.of([
-						          EditorState.readOnly.of(isReadOnly),
-						          EditorView.editable.of(!isReadOnly),
-                      // EditorView.contentAttributes.of({ tabindex: '0' })''
-					        ]),
-					        loroCompartment.of(
-						          LoroExtensions(
-							            loroDoc,
-							            {
-								              user: {
-                                  name: loroUserName,
-                                  colorClassName: 'bg-orange-500 text-orange-500'
-                              },
-								              awareness: loroAwareness,
-							            },
-							            undoManager
-						          )
-					        ),
-									updateListener
-			        ];
-
-							if (editorView) {
-								docContent = editorView.state.doc.toString();
-							}
-              try {
-					        const editorState = EditorState.create({ extensions });
-					        editorView = new EditorView({ state: editorState, parent: editorContainerElem });
-					        console.debug(`EditorView created successfully for ${fileId}`);
-			        } catch (error) {
-					        console.error(`Failed to create EditorView for ${fileId}:`, error);
-                  return;
-			        }
-
-              
-              try {
-                  loroDoc.import(rawData);
-              } catch (err) {
-                  console.error("CRDT import error:", err);
-              }
-              
-			        editorView.focus();
 
               loroDoc.subscribeLocalUpdates(loroSubscribeLocalUpdateFn);
 		          loroAwareness.addListener(loroAwarenessListener);
+
+              if (editorView) {
+                  editorView.dispatch({
+					            effects: languageCompartment.reconfigure(
+                          getLanguageExtension(fileType)
+                      )
+                  });
+
+                  editorView.dispatch({
+					            effects: loroCompartment.reconfigure(
+						              LoroExtensions(
+							                loroDoc,
+							                {
+								                  user: {
+                                      name: loroUserName,
+                                      colorClassName: 'bg-orange-500 text-orange-500'
+                                  },
+								                  awareness: loroAwareness,
+							                },
+							                undoManager
+						              )
+					            )
+				          });
+              }
           })
-      		.catch((err) => {
+          .catch((err) => {
 				      console.error(`Failed to get CRDT operations for ${fileId}:`, err);
 			    })
 			    .finally(() => {
@@ -345,27 +353,29 @@
 			    });
 
 
-
       return () => {
-				  if (editorView) {
-					    console.debug(`Destroying EditorView for previous file: ${fileId}`);
-					    editorView.destroy();
-				  }
+          if (editorView) {
+              editorView.dispatch({
+					        effects: languageCompartment.reconfigure([])
+              });
+
+              editorView.dispatch({
+					        effects: loroCompartment.reconfigure([])
+              });
+          }
           // TODO cancel getFileMissingOps if exists
           
 				  // Reset state associated with the old editor instance
-				  editorView = undefined;
 				  loroDoc = undefined;
 				  loroAwareness = undefined;
 				  undoManager = undefined;
 			};
-
-  });
-
+  })
   
   // read only state change
   $effect(() => {
-      const isReadOnly = readOnlyP();
+      const isReadOnly = readOnlyP_trackable();
+      
       if (editorView) {
   				editorView.dispatch({
 					    effects: readOnlyCompartment.reconfigure([
@@ -385,10 +395,10 @@
 
 			try {
 				  if (response.payload.type === 'update') {
-					    const updateData = base64ToUint8Array(data.data);
+					    const updateData = Base64.toUint8Array(data.data);
 					    loroDoc.import(updateData);
 				  } else if (response.payload.type === 'awareness') {
-					    const awarenessData = base64ToUint8Array(data.data);
+					    const awarenessData = Base64.toUint8Array(data.data);
 					    loroAwareness.apply(awarenessData);
 				  }
 			} catch (error) {
