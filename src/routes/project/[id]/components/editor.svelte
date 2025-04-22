@@ -221,7 +221,7 @@
   // see example: https://svelte.dev/playground/a832ed82bf244d748bea12b233f1e3f0?version=5.28.1
 
   function loroSubscribeLocalUpdateFn(update: Uint8Array) {
-      const fileId = untrack(() => $currentFile).id;
+      const fileId = untrack(() => $currentFile.id);
       const ws = untrack(() => wsClient);
 			if (ws && fileId) {
 				  const updateData = Base64.fromUint8Array(update);
@@ -233,7 +233,7 @@
       updates: Parameters<AwarenessListener>[0],
       origin: Parameters<AwarenessListener>[1]
   ) {
-      const fileId = untrack(() => $currentFile).id;
+      const fileId = untrack(() => $currentFile.id);
       const ws = untrack(() => wsClient);
       
 			if (ws && origin === 'local' && fileId && loroAwareness) {
@@ -311,6 +311,8 @@
       
       loroDoc.import(rawData);
 
+      let unsubFn: () => void | undefined;
+      
       getFileMissingOps(pid, fileId, loroDoc)
           .then((missingOpLogs) => {
               if (!loroDoc || !loroAwareness || !undoManager) return;
@@ -318,7 +320,7 @@
 					    console.log(`Importing ops/snapshot for ${fileId}`);
 					    loroDoc.import(missingOpLogs);
 
-              loroDoc.subscribeLocalUpdates(loroSubscribeLocalUpdateFn);
+              unsubFn = loroDoc.subscribeLocalUpdates(loroSubscribeLocalUpdateFn);
 		          loroAwareness.addListener(loroAwarenessListener);
 
               if (editorView) {
@@ -354,6 +356,9 @@
 
 
       return () => {
+          if (unsubFn) unsubFn();
+          loroAwareness?.removeListener(loroAwarenessListener);
+          
           if (editorView) {
               editorView.dispatch({
 					        effects: languageCompartment.reconfigure([])
@@ -363,6 +368,7 @@
 					        effects: loroCompartment.reconfigure([])
               });
           }
+          
           // TODO cancel getFileMissingOps if exists
           
 				  // Reset state associated with the old editor instance
