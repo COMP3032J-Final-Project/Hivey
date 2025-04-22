@@ -95,6 +95,7 @@ export async function switchCurrentFile(
             id: fileId,
             filename: fileName,
             filetype: filetype,
+            rawData: undefined
         });
         const fileUrl = await getFileURL(projectId, fileId, true);
         const resp = await fetch(fileUrl);
