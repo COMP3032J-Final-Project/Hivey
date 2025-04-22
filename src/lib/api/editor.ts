@@ -13,28 +13,16 @@ export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
     return response.data.data;
 };
 
-export const getFileURL = async (projectId: string, fileId: string): Promise<string> => {
-    const response = await axiosClient.get<APIResponse<{url: string}>>(`/project/${projectId}/files/${fileId}`);
-    if (response.data.code != 200 || !response.data.data) {
-        throw new Error(response.data.msg);
-    }
-    return response.data.data.url;
-}
-
-export async function fetchDocData(fileType: string, url: string): Promise<any> {
-    console.log("Fetching data from URL:", url);
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    let result;
-    if (fileType === 'pdf') {
-        const temp = await response.arrayBuffer(); // 或者 response.arrayBuffer()，视需求而定
-        result = uint8ArrayToBase64(new Uint8Array(temp));
-    } else {
-        result = await response.text();
-    }
-    return result;
+export async function getFileURL(
+    projectId: string,
+    fileId: string,
+    crdt_protected: boolean = false,
+): Promise<string> {
+    let url = `/project/${projectId}/files/${fileId}`;
+    if (crdt_protected) url += "?crdt_protected=true";
+    
+    const response = await axiosClient.get<APIResponse<{url: string}>>(url);
+    return response.data.data!.url;
 }
 
 const createEmptyFile = async (fileName: string): Promise<File> => {

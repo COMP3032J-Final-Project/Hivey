@@ -20,8 +20,9 @@ export const File = v.object({
     created_at: v.optional(v.string()),
     updated_at: v.optional(v.string()),
     filetype: v.optional(v.string()), // .md .tex .typst etc.
-    fileContent: v.optional(v.string()),
+    rawData: v.any()  // FIXME uint8array (bytes)
 });
+
 export type File = v.InferOutput<typeof File>;
 
 // 聊天消息接口

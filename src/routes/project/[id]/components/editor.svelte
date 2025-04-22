@@ -35,9 +35,9 @@
   const wsClient = $derived(getWsClient ? getWsClient() : null);
   
   let editorView: EditorView | undefined;
-  let loroDoc: LoroDoc | undefined = new LoroDoc();
-	let loroAwareness: Awareness | undefined = new Awareness(loroDoc.peerIdStr);
-	let undoManager: UndoManager | undefined = new UndoManager(loroDoc, {});
+  let loroDoc: LoroDoc | undefined;
+	let loroAwareness: Awareness | undefined;
+	let undoManager: UndoManager | undefined;
 
 	let isLoadingFileContent = $state(false);
   let editorContainerElem: HTMLElement | undefined = $state();
@@ -214,12 +214,15 @@
 
   // --- Editor --- 
   // Life cycle Management
+  // state variables inside function will cause `$effect` rerun
+  // see example: https://svelte.dev/playground/a832ed82bf244d748bea12b233f1e3f0?version=5.28.1
 
   function loroSubscribeLocalUpdateFn(update: Uint8Array) {
-      const fileId = $currentFile.id;
-			if (wsClient && fileId) {
+      const fileId = untrack(() => $currentFile).id;
+      const ws = untrack(() => wsClient);
+			if (ws && fileId) {
 				  const updateData = uint8ArrayToBase64(update);
-				  wsClient.sendCRDTUpdateMessage(fileId, updateData);
+				  ws.sendCRDTUpdateMessage(fileId, updateData);
 			}
   }
 
@@ -227,36 +230,42 @@
       updates: Parameters<AwarenessListener>[0],
       origin: Parameters<AwarenessListener>[1]
   ) {
-      const fileId = $currentFile.id;
-			if (wsClient && origin === 'local' && fileId && loroAwareness) {
+      const fileId = untrack(() => $currentFile).id;
+      const ws = untrack(() => wsClient);
+      
+			if (ws && origin === 'local' && fileId && loroAwareness) {
 				  const changes = updates.added.concat(updates.removed).concat(updates.updated);
 				  if (changes.length > 0) {
 					    const awarenessData = uint8ArrayToBase64(loroAwareness.encode(changes));
-					    wsClient.sendAwarenessUpdateMessage(fileId, awarenessData);
+					    ws.sendAwarenessUpdateMessage(fileId, awarenessData);
 				  }
 			}
 	}
+
+  function readOnlyP() {
+      const perm = untrack(() => permission);
+      return perm === UserPermissionEnum.Viewer
+          || perm === UserPermissionEnum.NonMember;
+  }
   
   $effect(() => {
       const fileId = $currentFile.id;
       const fileType = $currentFile.filetype
-      const fileContent = $currentFile.fileContent;
+      const rawData = $currentFile.rawData;
       const loroUserName = username;
       const pid = $project.id;
 
       if (!fileId) return;
-      untrack(() => {
-          isLoadingFileContent = true;
-      })
+      
+      untrack(() => { isLoadingFileContent = true; })
 		  
-      if (fileContent == null) return;
+      if (rawData == null) return;
       
       loroDoc = new LoroDoc();
 		  loroAwareness = new Awareness(loroDoc.peerIdStr);
 		  undoManager = new UndoManager(loroDoc, {});
-
-      // TODO get file content(CRDT snapshot)
-
+      
+      // TODO setup editor onMount
       getFileMissingOps(pid, fileId, loroDoc)
           .then((missingOpLogs) => {
               if (!loroDoc || !loroAwareness || !undoManager) return;
@@ -264,7 +273,8 @@
 					    console.log(`Importing ops/snapshot for ${fileId}`);
 					    loroDoc.import(missingOpLogs);
       
-              const isReadOnly = untrack(() => permission) === UserPermissionEnum.Viewer || untrack(() => permission) === UserPermissionEnum.NonMember;
+              const isReadOnly = readOnlyP();
+              
 			        const extensions = [
 					        basicSetup,
 					        lineNumbers(),
@@ -302,6 +312,13 @@
 					        console.error(`Failed to create EditorView for ${fileId}:`, error);
                   return;
 			        }
+
+              
+              try {
+                  loroDoc.import(rawData);
+              } catch (err) {
+                  console.error("CRDT import error:", err);
+              }
               
 			        editorView.focus();
 
@@ -312,9 +329,7 @@
 				      console.error(`Failed to get CRDT operations for ${fileId}:`, err);
 			    })
 			    .finally(() => {
-              untrack(() => {
-					        isLoadingFileContent = false;
-              });
+              untrack(() => { isLoadingFileContent = false; });
 			    });
 
 
@@ -338,7 +353,7 @@
   
   // read only state change
   $effect(() => {
-      const isReadOnly = permission === UserPermissionEnum.Viewer || permission === UserPermissionEnum.NonMember;
+      const isReadOnly = readOnlyP();
       if (editorView) {
   				editorView.dispatch({
 					    effects: readOnlyCompartment.reconfigure([

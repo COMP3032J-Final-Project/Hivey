@@ -24,17 +24,23 @@
       const awareness2: Awareness = new Awareness(doc2.peerIdStr);
       const undoManager2 = new UndoManager(doc2, {});
 
-      doc1.getText("text").insert(0, "Hello");
-      doc1.commit()
-      doc1.getText("text").insert(1, "Hello");
-       doc1.commit()
-     doc1.getText("text").insert(1, "Hello");
-      doc1.commit()
+     //  doc1.getText("text").insert(0, "Hello");
+     //  doc1.commit()
+     //  doc1.getText("text").insert(1, "Hello");
+     //   doc1.commit()
+     // doc1.getText("text").insert(1, "Hello");
+     //  doc1.commit()
 
-      const peer2Version = doc2.oplogVersion();
-      const peer1Version = doc1.oplogVersion();
+     //  const peer2Version = doc2.oplogVersion();
+     //  const peer1Version = doc1.oplogVersion();
 
-      const res = await getFileMissingOps("30d459fd190c4d6db632295b0cb08fb2", "39981fdc69564ff593e365a4f5243abd", doc1);
+     //  const res = await getFileMissingOps("30d459fd190c4d6db632295b0cb08fb2",
+      //  "39981fdc69564ff593e365a4f5243abd", doc1);
+
+
+      const resp = await fetch("/GroupProject1.pdf");
+      const data = await resp.text();
+      console.log(data);
       
       // console.log(VersionVector.decode(peer1Version.encode()))
       // // console.log(base64ToUint8Array(uint8ArrayToBase64(peer1Version.encode())));

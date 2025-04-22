@@ -2,8 +2,9 @@ import { writable } from 'svelte/store';
 import type { User } from '$lib/types/auth';
 import  { type Project, ProjectType } from '$lib/types/dashboard';
 import type { ChatMessage, File, TreeNode } from '$lib/types/editor';
-import { getFiles, getFileURL, fetchDocData } from '$lib/api/editor';
+import { getFiles, getFileURL } from '$lib/api/editor';
 import { buildFileTree } from '$lib/utils';
+import { LoroDoc } from 'loro-crdt';
 
 // Project
 export const project = writable<Project>({
@@ -72,8 +73,8 @@ export const currentFile = writable<File>({
     project_id: '',
     filename: '',
     filepath: '',
-    filetype: 'Format',
-    fileContent: ''
+    filetype: undefined,
+    rawData: undefined
 });
 export function setCurrentFile(file: File) {
     currentFile.set(file);
@@ -84,19 +85,25 @@ export function updateCurrentFile(file: Partial<File>) {
         ...file
     }));
 }
-export async function switchCurrentFile(projectId: string, fileId: string, fileName: string) {
+export async function switchCurrentFile(
+    projectId: string,
+    fileId: string,
+    fileName: string
+) {
     try {
         const filetype = fileName.split('.').pop() || 'md';
         updateCurrentFile({
             id: fileId,
             filename: fileName,
             filetype: filetype,
-            fileContent: undefined
         });
-        const url = await getFileURL(projectId, fileId);
-        const fileData = await fetchDocData(filetype, url);
+        const fileUrl = await getFileURL(projectId, fileId, true);
+        const resp = await fetch(fileUrl);
+        if (!resp.ok) throw new Error(`Response status: ${resp.status}`)
+        const rawContent = await resp.bytes();
+        
         updateCurrentFile({
-            fileContent: fileData
+            rawData: rawContent
         });
         return true;
     } catch (error) {
