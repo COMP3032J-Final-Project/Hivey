@@ -19,7 +19,7 @@
 	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-  import { files, setFilesStruct, tempFolders, project, updateProject } from './store.svelte';
+  import { files, setFilesStruct, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember } from './store.svelte';
   import { localizeHref } from '$lib/paraglide/runtime';
   
   let { data, children } = $props<{
@@ -58,11 +58,15 @@
 					userSession
 			);
 		  // 设置成员进入事件的处理
-			wsClient.memberJoinedHandler = (username: string) => {
-					if (username !== currentUser.username && username !== 'Unknown') {
-						notification(`${username} entered the project.`);
-					}
+			wsClient.memberJoinedHandler = (onlineMembers: User[]) => {
+          console.log("onlineMembers:", onlineMembers);
+					setOnlineMembers(onlineMembers);
 			}
+      
+      // 设置成员离开事件的处理
+      wsClient.memberLeftHandler = (username: string) => {
+        removeOnlineMember(username);
+      }
 
       // 设置项目删除事件的处理
       wsClient.projectDeletedHandler = () => {

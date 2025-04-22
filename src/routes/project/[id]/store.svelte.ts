@@ -4,7 +4,6 @@ import  { type Project, ProjectType } from '$lib/types/dashboard';
 import type { ChatMessage, File, TreeNode } from '$lib/types/editor';
 import { getFiles, getFileURL } from '$lib/api/editor';
 import { buildFileTree } from '$lib/utils';
-import { LoroDoc } from 'loro-crdt';
 
 // Project
 export const project = writable<Project>({
@@ -110,6 +109,30 @@ export async function switchCurrentFile(
         console.error('Failed to load file:', error);
         return false;
     }
+}
+
+// ==============================================================================
+
+// 当前在线成员列表
+export const onlineMembers = writable<User[]>([]);
+export function setOnlineMembers(newMembers: User[]) {
+    // 如果成员没有头像，则将用户名的前两个字母作为头像
+    newMembers.forEach(member => {
+        if (!member.avatar) {
+            member.avatar = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
+        }
+    });
+    onlineMembers.set(newMembers);
+}
+export function addOnlineMember(member: User) {
+    // 如果成员没有头像，则将用户名的前两个字母作为头像
+    if (!member.avatar) {
+        member.avatar = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
+    }
+    onlineMembers.update(currentMembers => [...currentMembers, member]);
+}
+export function removeOnlineMember(username: string) {
+    onlineMembers.update(currentMembers => currentMembers.filter(member => member.username !== username));
 }
 
 // ==============================================================================

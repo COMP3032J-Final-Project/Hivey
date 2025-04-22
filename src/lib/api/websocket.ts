@@ -32,7 +32,7 @@ export class WebSocketClient {
     public projectUpdateHandler: ((data: { name: string }) => void) | null = null;
     public projectDeletedHandler: ((data: { id: string }) => void) | null = null;
     // member
-    public memberJoinedHandler: ((username: string) => void) | null = null;
+    public memberJoinedHandler: ((onlineMembers: User[]) => void) | null = null;
     public memberInvitedHandler: ((invitee: User) => void) | null = null;
     public memberUpdateHandler: ((username: string, permission: UserPermissionEnum) => void) | null = null;
     public memberRemoveHandler: ((username: string) => void) | null = null;
@@ -249,8 +249,8 @@ export class WebSocketClient {
                     return;
                 }
                 console.log('Member joined:', response.payload);
-                const username = response.payload?.username || "Unknown";
-                this.memberJoinedHandler(username);
+                const onlineMembers: User[] = response.payload;
+                this.memberJoinedHandler(onlineMembers);
                 break;
             case "left":
                 if (!this.memberLeftHandler) {

@@ -18,7 +18,7 @@
 	import { type User, UserPermissionEnum } from '$lib/types/auth';
 	import { getContext, onMount } from 'svelte';
 	import EditableLabel from '$lib/components/ui/editable-label';
-	import { members, currentFile, project, updateProject as updateProjectStore } from './store.svelte';
+	import { onlineMembers, currentFile, project, updateProject as updateProjectStore } from './store.svelte';
 	import type { WebSocketClient } from '$lib/api/websocket';
 	import Editor from './components/editor.svelte';
 	import Previewer from './components/previewer.svelte';
@@ -277,7 +277,7 @@
 				onkeydown={(e) => e.key === 'Enter' && (membersDialogOpen = true)}
 			>
 				<AvatarGroup.Root>
-					{#each $members.slice(0, 3) as member (member.username)}
+					{#each $onlineMembers.slice(0, 5) as member (member.username)}
 						<AvatarGroup.Member class="size-8">
 							<AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
 							<AvatarGroup.MemberFallback>
@@ -285,8 +285,8 @@
 							</AvatarGroup.MemberFallback>
 						</AvatarGroup.Member>
 					{/each}
-					{#if $members.length > 3}
-						<AvatarGroup.Etc class="size-8" plus={$members.length - 3} />
+					{#if $onlineMembers.length > 5}
+						<AvatarGroup.Etc class="size-8" plus={$onlineMembers.length - 5} />
 					{/if}
 				</AvatarGroup.Root>
 			</button>
