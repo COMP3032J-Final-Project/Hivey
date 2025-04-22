@@ -1,34 +1,34 @@
 <script lang="ts">
-	import { MessageCircleMore, History, FolderTree } from 'lucide-svelte';
-	import CreateFileDialog from './components/new-file-modal.svelte';
-	import CreateFolderDialog from './components/new-folder-modal.svelte';
-	import type { File, TreeNode } from '$lib/types/editor';
-	import NavMain from './components/sidebar-nav-main.svelte';
-	import ChatRoom from './components/chatroom/sidebar-chatroom.svelte';
-	import HistoryPanel from './components/sidebar-history.svelte';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { setContext } from 'svelte';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
-	import { goto } from '$app/navigation';
-	import { buildFileTree } from '$lib/utils';
-	import type { User, UserAuth } from '$lib/types/auth';
-	import { WebSocketClient } from '$lib/api/websocket';
-	import { getUserSession } from '$lib/auth';
-	import { onMount, onDestroy } from 'svelte';
-	import { notification } from '$lib/components/ui/toast';
+  import { MessageCircleMore, History, FolderTree } from 'lucide-svelte';
+  import CreateFileDialog from './components/new-file-modal.svelte';
+  import CreateFolderDialog from './components/new-folder-modal.svelte';
+  import type { File, TreeNode } from '$lib/types/editor';
+  import NavMain from './components/sidebar-nav-main.svelte';
+  import ChatRoom from './components/chatroom/sidebar-chatroom.svelte';
+  import HistoryPanel from './components/sidebar-history.svelte';
+  import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+  import { setContext } from 'svelte';
+  import { buttonVariants } from '$lib/components/ui/button/index.js';
+  import { goto } from '$app/navigation';
+  import { buildFileTree } from '$lib/utils';
+  import type { User, UserAuth } from '$lib/types/auth';
+  import { WebSocketClient } from '$lib/api/websocket';
+  import { getUserSession } from '$lib/auth';
+  import { onMount, onDestroy } from 'svelte';
+  import { notification } from '$lib/components/ui/toast';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { files, setFilesStruct, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember } from './store.svelte';
   import { localizeHref } from '$lib/paraglide/runtime';
   
   let { data, children } = $props<{
-	data: {
-	  files: File[];
-	  filesStruct: TreeNode[];
-	  currentUser: User;
-	  authInfo: UserAuth;
-	};
-	children: any;
+      data: {
+          files: File[];
+          filesStruct: TreeNode[];
+          currentUser: User;
+          authInfo: UserAuth;
+      };
+      children: any;
   }>();
 
   const SidebarMode = {
@@ -49,97 +49,97 @@
       return curWidth > minWidth ?  (curWidth < maxWidth ? curWidth : maxWidth) : minWidth;
   });
   
-	async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
-		try {
-			wsClient = new WebSocketClient( // 创建WebSocket客户端
-					$project.id,
-					currentUser,
-					userSession
-			);
-		  // 设置成员进入事件的处理
-			wsClient.memberJoinedHandler = (onlineMembers: User[]) => {
-          console.log("onlineMembers:", onlineMembers);
-					setOnlineMembers(onlineMembers);
-			}
+  async function initWebSocketClient(userSession: UserAuth, currentUser: User) {
+      try {
+          wsClient = new WebSocketClient( // 创建WebSocket客户端
+              $project.id,
+              currentUser,
+              userSession
+          );
+          // 设置成员进入事件的处理
+          wsClient.memberJoinedHandler = (onlineMembers: User[]) => {
+              console.log("onlineMembers:", onlineMembers);
+              setOnlineMembers(onlineMembers);
+          }
       
-      // 设置成员离开事件的处理
-      wsClient.memberLeftHandler = (username: string) => {
-        removeOnlineMember(username);
-      }
+          // 设置成员离开事件的处理
+          wsClient.memberLeftHandler = (username: string) => {
+              removeOnlineMember(username);
+          }
 
-      // 设置项目删除事件的处理
-      wsClient.projectDeletedHandler = () => {
-        if (wsClient) {
-            wsClient.disconnect();
-            wsClient = null;
-        }
-        notification(`Project has been deleted by owner.`);
-        goto(localizeHref('/dashboard/repository/projects/all')); // 重定向到项目列表页面
-      }
+          // 设置项目删除事件的处理
+          wsClient.projectDeletedHandler = () => {
+              if (wsClient) {
+                  wsClient.disconnect();
+                  wsClient = null;
+              }
+              notification(`Project has been deleted by owner.`);
+              goto(localizeHref('/dashboard/repository/projects/all')); // 重定向到项目列表页面
+          }
 
-			wsClient.projectUpdateHandler = (data) => {
-					if (data.name) {
-						updateProject({name: data.name});
-					}
-			}
+          wsClient.projectUpdateHandler = (data) => {
+              if (data.name) {
+                  updateProject({name: data.name});
+              }
+          }
 
-			wsClient.fileAddedHandler = (file) => {
-				files.update((files) => [ ...files, file ]); // 更新当前文件列表
-				setFilesStruct(buildFileTree($files, $tempFolders));
-			}
+          wsClient.fileAddedHandler = (file) => {
+              files.update((files) => [ ...files, file ]); // 更新当前文件列表
+              setFilesStruct(buildFileTree($files, $tempFolders));
+          }
 
-			wsClient.fileDeletedHandler = (fileIdList) => {
-				files.update((files) => files.filter((file) => !fileIdList.includes(file.id))); // 更新当前文件列表
-				setFilesStruct(buildFileTree($files, $tempFolders));
-			}
+          wsClient.fileDeletedHandler = (fileIdList) => {
+              files.update((files) => files.filter((file) => !fileIdList.includes(file.id))); // 更新当前文件列表
+              setFilesStruct(buildFileTree($files, $tempFolders));
+          }
 
-			wsClient.fileRenamedHandler = (updatedFile) => {
-				files.update((files) => {
-					const file = files.find((file) => file.id === updatedFile.id);
-					if (file) {
-						file.filename = updatedFile.filename; // 更新文件名称
-						file.filepath = updatedFile.filepath; // 更新文件路径(应对移动+重命名的情况)
-					}
-					return files;
-				});
-				setFilesStruct(buildFileTree($files, $tempFolders));
-			}
+          wsClient.fileRenamedHandler = (updatedFile) => {
+              files.update((files) => {
+                  const file = files.find((file) => file.id === updatedFile.id);
+                  if (file) {
+                      file.filename = updatedFile.filename; // 更新文件名称
+                      file.filepath = updatedFile.filepath; // 更新文件路径(应对移动+重命名的情况)
+                  }
+                  return files;
+              });
+              setFilesStruct(buildFileTree($files, $tempFolders));
+          }
 
-			wsClient.fileMoveHandler = (updatedFile) => {
-				files.update((files) => {
-					const file = files.find((file) => file.id === updatedFile.id);
-					if (file) {
-						file.filepath = updatedFile.filepath; // 更新文件父级ID
-						file.filename = updatedFile.filename; // 更新文件名称(应对移动+重命名的情况)
-					}
-					return files;
-				});
-				setFilesStruct(buildFileTree($files, $tempFolders));
-			}
+          wsClient.fileMoveHandler = (updatedFile) => {
+              files.update((files) => {
+                  const file = files.find((file) => file.id === updatedFile.id);
+                  if (file) {
+                      file.filepath = updatedFile.filepath; // 更新文件父级ID
+                      file.filename = updatedFile.filename; // 更新文件名称(应对移动+重命名的情况)
+                  }
+                  return files;
+              });
+              setFilesStruct(buildFileTree($files, $tempFolders));
+          }
       
-      wsClient.connect(); // 连接到服务器
-    } catch (error) {
-        console.error('Project WebSocket Client init failed:', error);
-    }
-	}
+          wsClient.connect(); // 连接到服务器
+      } catch (error) {
+          console.error('Project WebSocket Client init failed:', error);
+      }
+  }
 
-	onMount(async () => {
-		  const userSession = getUserSession() as UserAuth;
-		  await initWebSocketClient(userSession, data.currentUser);
-	});
+  onMount(async () => {
+      const userSession = getUserSession() as UserAuth;
+      await initWebSocketClient(userSession, data.currentUser);
+  });
 
-	onDestroy(() => {
-		  if (wsClient) {
-			    wsClient.disconnect();
-			    wsClient = null;
-		  }
-	});
+  onDestroy(() => {
+      if (wsClient) {
+          wsClient.disconnect();
+          wsClient = null;
+      }
+  });
 </script>
 
 <Sidebar.Provider style="--sidebar-width: {String(sidebarWidth) + 'px'};">
-	<Sidebar.Root collapsible="offcanvas" variant="inset">
-		<Sidebar.Header>
-			<div class="w-full flex justify-between pb-1">
+  <Sidebar.Root collapsible="offcanvas" variant="inset">
+    <Sidebar.Header>
+      <div class="w-full flex justify-between pb-1">
         <div class="flex">
           <!-- MOVE TO page.svelte menu `project`  -->
           
@@ -151,13 +151,13 @@
           <!-- /> -->
 
           {#if sidebarMode === SidebarMode.FileTree}
-				    <CreateFileDialog
+            <CreateFileDialog
               projectId={$project.id}
               currentUser={data.currentUser}
               iconSize={20}
             />
 
-				    <CreateFolderDialog
+            <CreateFolderDialog
               projectId={$project.id}
               currentUser={data.currentUser}
               iconSize={20}
@@ -167,13 +167,13 @@
         
         <DropdownMenu.Root>
           <DropdownMenu.Trigger class={buttonVariants({ size: 'icon' })}>
-		        {#if sidebarMode === SidebarMode.FileTree }
+            {#if sidebarMode === SidebarMode.FileTree }
               <FolderTree />
-		        {:else if sidebarMode === SidebarMode.ChatRoom}
-					    <MessageCircleMore />
-		        {:else}
-					    <History />
-		        {/if}
+            {:else if sidebarMode === SidebarMode.ChatRoom}
+              <MessageCircleMore />
+            {:else}
+              <History />
+            {/if}
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
             <DropdownMenu.Group>
@@ -183,23 +183,23 @@
             </DropdownMenu.Group>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
-			</div>
-		</Sidebar.Header>
+      </div>
+    </Sidebar.Header>
 
-		<Sidebar.Separator />
+    <Sidebar.Separator />
 
-		{#if sidebarMode === SidebarMode.FileTree }
-			<NavMain />
-		{:else if sidebarMode === SidebarMode.ChatRoom}
-			<ChatRoom currentUser={data.currentUser} wsClient={wsClient} />
-		{:else}
-			<HistoryPanel projectId={data.projectId} />
-		{/if}
-	</Sidebar.Root>
+    {#if sidebarMode === SidebarMode.FileTree }
+      <NavMain />
+    {:else if sidebarMode === SidebarMode.ChatRoom}
+      <ChatRoom currentUser={data.currentUser} wsClient={wsClient} />
+    {:else}
+      <HistoryPanel projectId={data.projectId} />
+    {/if}
+  </Sidebar.Root>
 
   <!-- Settings an fixed height allow inner element to overflow with scrollbar -->
   <!-- Please see inset's source code to figure out why I use this height -->
-	<Sidebar.Inset class="h-[calc(100svh-theme(spacing.4))]">
+  <Sidebar.Inset class="h-[calc(100svh-theme(spacing.4))]">
     <div class="size-full flex relative">
       <DragOffsetCalculator
         class="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize z-10"
@@ -210,5 +210,5 @@
       </div>
     </div>
 
-	</Sidebar.Inset>
+  </Sidebar.Inset>
 </Sidebar.Provider>
