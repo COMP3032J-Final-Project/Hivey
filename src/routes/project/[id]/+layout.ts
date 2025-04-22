@@ -6,11 +6,8 @@ import { me } from '$lib/trans';
 import type { User, UserAuth } from '$lib/types/auth';
 import { getUserInfo } from '$lib/api/auth';
 import { getProjectMemberInfo } from '$lib/api/project';
-import { getFiles } from '$lib/api/editor';
-import { buildFileTree } from '$lib/utils';
 import { getProjectById } from '$lib/api/dashboard';
 import { UserPermissionEnum } from '$lib/types/auth';
-import type { Project } from '$lib/types/dashboard';
 import type { File, TreeNode } from '$lib/types/editor';
 import { setFilesStruct, setFiles, updateCurrentFile, setProject, addOnlineMember } from './store.svelte';
 
@@ -19,7 +16,7 @@ export const prerender = false; // 禁用预渲染
 
 export const load: LayoutLoad = async ({ url, params }) => {
     const session: UserAuth | null = getUserSession();
-    console.log("Session:", session);
+    // console.debug("Session:", session);
     // 如果未登录，立即重定向到登录页面
     if (!session || isSessionExpired()) {
         // 显示错误提示
@@ -37,8 +34,11 @@ export const load: LayoutLoad = async ({ url, params }) => {
         redirect(302, `/auth/signin?returnUrl=${returnUrl}`)
     }
     
+    let project;
+    const project_id = params.id;
     try {
-        const project = await getProjectById(params.id);
+        project = await getProjectById(project_id);
+
         // 如果是模板项目，检查是否是创建者
         if (project.type === 'template') {
             currentUser = {
@@ -46,27 +46,20 @@ export const load: LayoutLoad = async ({ url, params }) => {
                 permission: UserPermissionEnum.NonMember
             };
         } else {
-            currentUser = await getProjectMemberInfo(params.id, currentUser.username);
+            currentUser = await getProjectMemberInfo(project_id, currentUser.username);
         }
     } catch (error) {
         failure(me.session_expired());
         redirect(302, '/auth/signin');
     }
-    const project: Project = await getProjectById(params.id);
-    const filesdata: File[] = await getFiles(params.id);
-    const filesStruct: TreeNode[] = buildFileTree(filesdata, []);
-    console.log("project:", project);
-    console.log("files:", filesdata);
-    console.log("filesStruct:", filesStruct);
     
+    // console.debug("project:", project);
     setProject(project);
-    setFiles(filesdata);
-    setFilesStruct(filesStruct);
-    updateCurrentFile({project_id: params.id}); // 设置currentFile的project_id
     addOnlineMember(currentUser);
+    updateCurrentFile({project_id: project_id}); // 设置currentFile的project_id
+    
     return {
-        files: filesdata,
-        filesStruct: filesStruct,
+        project_id: params.id,
         currentUser: currentUser,
         authInfo: session
     };
