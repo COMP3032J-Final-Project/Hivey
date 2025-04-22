@@ -16,7 +16,6 @@
 	import { getUserSession } from '$lib/auth';
 	import { onMount, onDestroy } from 'svelte';
 	import { notification } from '$lib/components/ui/toast';
-	import type { Project } from '$lib/types/dashboard';
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { files, setFilesStruct, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember } from './store.svelte';
@@ -192,7 +191,7 @@
 		{#if sidebarMode === SidebarMode.FileTree }
 			<NavMain />
 		{:else if sidebarMode === SidebarMode.ChatRoom}
-			<ChatRoom projectId={data.projectId} currentUser={data.currentUser} wsClient={wsClient} />
+			<ChatRoom currentUser={data.currentUser} wsClient={wsClient} />
 		{:else}
 			<HistoryPanel projectId={data.projectId} />
 		{/if}

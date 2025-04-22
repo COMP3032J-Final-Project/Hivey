@@ -12,13 +12,12 @@
   import { ArrowUp } from 'lucide-svelte';
   import { WebSocketClient } from '$lib/api/websocket';
   import { goto } from '$app/navigation';
-  import { chatMessages, setChatMessages, addChatMessage, addChatMessages } from '../../store.svelte';
+  import { chatMessages, setChatMessages, addChatMessage, addChatMessages, project } from '../../store.svelte';
   import { localizeHref } from '$lib/paraglide/runtime';
 
   // 接收从Layout传入的props
-	let  { currentUser, projectId, wsClient }: {
+	let  { currentUser, wsClient }: {
       currentUser: User;
-      projectId: string;
       wsClient: WebSocketClient | null;
   } = $props();
   
@@ -48,7 +47,7 @@
     isLoading = true;
     try {
       const result = await getHistoryChatMessages({ // result.code, result.messages
-        projectId: projectId,
+        projectId: $project.id,
         max_num: 20,
         last_timestamp: lastMessageTimestamp  // 获取当前时间前的20条消息或指定时间前的消息
       });
@@ -74,7 +73,7 @@
     isLoadingMore = true;
     try {
       const result = await getHistoryChatMessages({ // result.code, result.messages
-        projectId: projectId,
+        projectId: $project.id,
         max_num: 20,
         last_timestamp: lastMessageTimestamp || new Date() // 获取当前时间前的10条消息或指定时间前的消息
       });
