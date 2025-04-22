@@ -8,7 +8,8 @@
 	import { ChevronDown } from 'lucide-svelte';
 	import { ProjectFormCategory } from '$lib/types/dashboard';
   import { mpd } from '$lib/trans';
-	
+	import { user } from './store.svelte';
+
 	// 导航和资源数据
 	const navData = {
 		resources: [
@@ -115,7 +116,7 @@
 		</Sidebar.Content>
 
 		<Sidebar.Footer>
-			<NavUser user={data.user} />
+			<NavUser user={$user} />
 		</Sidebar.Footer>
 		<Sidebar.Rail />
 	</Sidebar.Root>

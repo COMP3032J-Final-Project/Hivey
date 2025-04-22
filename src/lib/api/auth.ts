@@ -45,9 +45,11 @@ export const getUserInfo = async (): Promise<User> => {
 };
 
 // 更新用户信息
-// TODO only username and email is allowed to be updated according to backend
-export const putUserInfo = async (form: any): Promise<User> => {
-    const response = await axiosClient.put<APIResponse<User>>(`/user/me`, form);
+export const putUserInfo = async (username: string, email: string): Promise<User> => {
+    const response = await axiosClient.put<APIResponse<User>>(`/user/me`, {
+        username,
+        email
+    });
     const data = response.data.data;
     return v.parse(User, data);
 };
@@ -65,4 +67,33 @@ export const logoutUser = async (): Promise<void> => {
         refresh_token: userAuth.refresh_token
     });
     clearUserSession();
+};
+
+// 获取用户头像文件的下载URL
+export const getMyAvatar = async (): Promise<string> => { 
+    const response = await axiosClient.get<APIResponse<string>>(`/user/avatar/`);
+    if (!response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data;
+};
+
+
+export const uploadUserAvatar = async (file: File, is_default: boolean = false): Promise<string> => {
+    // 获取用户头像文件的上传URL    
+    const response = await axiosClient.put<APIResponse<string>>(`/user/avatar/`, {
+        is_default
+    });
+    if (response.data.code !== 200 || !response.data.data) {
+        throw new Error(response.data.msg);
+    }
+    const uploadURL = response.data.data;
+    console.log("uploadURL", uploadURL);
+    await fetch(uploadURL, {method: 'PUT', body: file});
+    const downloadURL = await getMyAvatar();
+    if (!downloadURL) {
+        throw new Error("Failed to upload avatar!");
+    }
+    console.log("downloadURL", downloadURL);
+    return downloadURL;
 };

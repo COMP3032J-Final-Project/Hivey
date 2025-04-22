@@ -1,6 +1,23 @@
 import { writable } from 'svelte/store';
+import type { User } from '$lib/types/auth';
 import { ProjectFormCategory } from '$lib/types/dashboard';
 import type { Project } from '$lib/types/dashboard';
+
+// 用户
+const user = writable<User>({
+    username: '',
+    email: '',
+    avatar: '',
+});
+export function setUser(userInfo: User) {
+    user.set(userInfo);
+}
+export function updateUser(userInfo: Partial<User>) {
+    user.update(user => ({ ...user, ...userInfo }));
+}
+export { user };
+
+// ==============================================================================
 
 // 导航状态
 interface NavState {
@@ -16,6 +33,7 @@ export function updateNav(group: string, item: string) { // 更新导航状态
 }
 export { currentNav }; 
 
+// ==============================================================================
 
 // 项目对话框状态
 const dialogOpen = writable<boolean>(false);
@@ -29,6 +47,7 @@ export function closeProjectDialog() { // 关闭项目对话框
 }
 export { dialogOpen, dialogCategory }; 
 
+// ==============================================================================
 
 // 项目列表状态
 const projects = writable<Project[]>([]);
@@ -45,3 +64,5 @@ export function removeProjects(ids: string[]) { // 批量移除项目
     projects.update(list => list.filter(project => !ids.includes(project.id)));
 }
 export { projects }; 
+
+// ==============================================================================

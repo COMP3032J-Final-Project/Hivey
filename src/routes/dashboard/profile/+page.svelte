@@ -1,20 +1,17 @@
 <script lang="ts">
-	import { putUserInfo } from '$lib/api/auth';
+	import { putUserInfo, uploadUserAvatar } from '$lib/api/auth';
 	import { success, failure } from '$lib/components/ui/toast';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Input from '$lib/components/ui/input/index.js';
 	import * as Button from '$lib/components/ui/button/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Textarea from '$lib/components/ui/textarea/index.js';
-	import type { PageData } from './$types';
   import { m, me, mpd } from '$lib/trans';
 	import { onMount } from 'svelte';
 	import { updateNav, dialogOpen, dialogCategory } from '../store.svelte';
 	import NewProjectDialog from '../repository/[type]/[category]/components/alert-dialog.svelte';
 	import type { CreateProjectForm } from '$lib/types/dashboard';
-
-  // 获取页面数据
-	let { data } = $props<{ data: PageData }>();
+	import { user, updateUser } from '../store.svelte';
 
 	// 页面加载时更新导航状态
 	onMount(() => {
@@ -23,10 +20,9 @@
 
 	// 表单数据
 	let formData = $state({
-		  username: data.userInfo?.username || '',
-		  email: data.userInfo?.email || '',
-		  avatar: data.userInfo?.avatar || '',
-		  bio: data.userInfo?.bio || 'Hivey makes my document collaboration so easy!'
+		  username: $user.username || '',
+		  email: $user.email || '',
+      bio: 'Hivey makes my document collaboration so easy!'
 	});
 
 	let isSubmitting = $state(false); // 表单提交状态
@@ -43,23 +39,18 @@
 			    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 			    if (!emailRegex.test(formData.email)) throw new Error('Invalid email'); // 验证邮箱格式
 
-			    // 构建更新数据
-			    const updateData = {
-				      username: formData.username,
-				      email: formData.email,
-				      avatar: formData.avatar,
-				      bio: formData.bio
-			    };
-
 			    // 调用API更新用户信息
-			    const updatedUser = await putUserInfo(updateData);
+			    const updatedUser = await putUserInfo(formData.username, formData.email);
 
 			    // 更新表单数据
 			    formData.username = updatedUser.username;
 			    formData.email = updatedUser.email;
-          // FIXME update User type to contain `avatar` and `bio` type
-			    formData.avatar = (updatedUser as any).avatar || '';
-			    formData.bio = (updatedUser as any).bio || '';
+
+          // 更新全局用户状态
+          updateUser({
+              username: formData.username,
+              email: formData.email,
+          });
 
 			    // 显示成功消息
 			    success(mpd.success_profile_update());
@@ -72,7 +63,7 @@
 	}
 
 	// 处理头像文件上传
-	function handleFileUpload(event: Event) {
+	async function handleAvatarUpload(event: Event) {
 		  const target = event.target as HTMLInputElement;
 		  if (!target.files || target.files.length === 0) return;
 
@@ -82,19 +73,57 @@
 			    return;
 		  }
 
-		  const reader = new FileReader();
-		  reader.onload = (e) => {
-			    if (e.target?.result) {
-				      formData.avatar = e.target.result as string;
-			    }
-		  };
-		  reader.readAsDataURL(file);
+		  try {
+			    isSubmitting = true;
+			    const avatarUrl = await uploadUserAvatar(file);
+			    updateUser({
+              avatar: avatarUrl
+          });
+		  } catch (error) {
+			    failure(error instanceof Error ? error.message : me.unknown());
+			    
+			    // 上传失败时回退到本地预览
+			    const reader = new FileReader();
+			    reader.onload = (e) => {
+				      if (e.target?.result) {
+                updateUser({
+                  avatar: e.target.result as string
+                });
+				      }
+			    };
+			    reader.readAsDataURL(file);
+		  } finally {
+			    isSubmitting = false;
+			    target.value = ''; // 清空文件输入以便再次选择同一文件
+		  }
 	}
 
 	// 随机生成新头像
-	function generateNewAvatar() {
-		  const seed = Math.random().toString(36).substring(2, 8);
-		  formData.avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+	async function generateNewAvatar() {
+		  try {
+			    isSubmitting = true;
+			    const seed = Math.random().toString(36).substring(2, 8);
+			    const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+			    
+			    // 从URL获取图像数据
+			    const response = await fetch(avatarUrl);
+			    const blob = await response.blob();
+			    const file = new File([blob], `avatar-${seed}.svg`, { type: 'image/svg+xml' });
+			    
+			    // 上传到服务器
+			    const updatedAvatarUrl = await uploadUserAvatar(file);
+			    updateUser({
+              avatar: updatedAvatarUrl
+            });
+		  } catch (error) {
+			    failure(error instanceof Error ? error.message : me.unknown());
+			    const seed = Math.random().toString(36).substring(2, 8);
+			    updateUser({
+              avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
+            });
+		  } finally {
+			    isSubmitting = false;
+		  }
 	}
 
 </script>
@@ -130,16 +159,16 @@
 							class="relative mb-3 rounded-full border-2 border-primary/10 p-1 shadow-md"
 						>
 							<Avatar.Root class="h-24 w-24 rounded-full">
-								{#if formData.avatar}
+								{#if $user.avatar}
 									<Avatar.Image
-										src={formData.avatar}
-										alt={formData.username}
+										src={$user.avatar}
+										alt={$user.username}
 										class="rounded-full"
 									/>
 								{/if}
 								<Avatar.Fallback class="rounded-full text-xl">
-									{formData.username
-										? formData.username.substring(0, 2).toUpperCase()
+									{$user.username
+										? $user.username.substring(0, 2).toUpperCase()
 										: 'CN'}
 								</Avatar.Fallback>
 							</Avatar.Root>
@@ -163,7 +192,7 @@
 								}}
 								disabled={isSubmitting}
 							>
-								{mpd.upload_local_image()}
+								{isSubmitting ? m.loading() : mpd.upload_local_image()}
 							</Button.Root>
 
 							<input
@@ -171,7 +200,7 @@
 								accept="image/*"
 								class="hidden"
 								bind:this={fileInput}
-								onchange={handleFileUpload}
+								onchange={handleAvatarUpload}
 							/>
 						</div>
 					</Card.Content>

@@ -13,7 +13,7 @@
   import { localizeHref } from '$lib/paraglide/runtime';
 
   let { user }: {
-      user: (User & {avatar: string}) | null
+      user: User | null
   } = $props();
 	const sidebar = useSidebar();
 
