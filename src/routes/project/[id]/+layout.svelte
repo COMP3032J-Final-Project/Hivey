@@ -85,8 +85,8 @@
 				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 
-			wsClient.fileDeletedHandler = (fileId) => {
-				files.update((files) => files.filter((file) => file.id !== fileId)); // 更新当前文件列表
+			wsClient.fileDeletedHandler = (fileIdList) => {
+				files.update((files) => files.filter((file) => !fileIdList.includes(file.id))); // 更新当前文件列表
 				setFilesStruct(buildFileTree($files, $tempFolders));
 			}
 

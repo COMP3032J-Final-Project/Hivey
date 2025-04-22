@@ -32,6 +32,7 @@ export enum UserPermissionEnum {
 }
 
 export const User = v.object({
+    user_id: v.optional(v.string()),
     username: v.string(),
     email: v.pipe(v.string(), v.email()),
     avatar: v.optional(v.string()),

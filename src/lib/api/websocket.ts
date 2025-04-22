@@ -43,7 +43,7 @@ export class WebSocketClient {
     // file
     public fileAddedHandler: ((file: File) => void) | null = null;
     public fileRenamedHandler: ((file: File) => void) | null = null;
-    public fileDeletedHandler: ((id: string ) => void) | null = null;
+    public fileDeletedHandler: ((idList: string[]) => void) | null = null;
     public fileMoveHandler: ((file: File) => void) | null = null;
 
 
@@ -329,8 +329,8 @@ export class WebSocketClient {
                     console.warn("File deleted handler not set");
                     return;
                 }
-                const deletedFileId = response.payload.id;
-                this.fileDeletedHandler(deletedFileId);
+                const deletedFileIdList = response.payload;
+                this.fileDeletedHandler(deletedFileIdList);
                 break;
             default:
                 console.warn("Unknown file event type:", response.action);
