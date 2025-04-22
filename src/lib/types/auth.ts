@@ -27,7 +27,8 @@ export enum UserPermissionEnum {
     Owner = 'owner',
     Admin = 'admin',
     Writer = 'writer',
-    Viewer = 'viewer'
+    Viewer = 'viewer',
+    NonMember = 'non_member' // 仅favorite了一个模板但并非该目标的成员
 }
 
 export const User = v.object({

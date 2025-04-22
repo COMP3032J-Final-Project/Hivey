@@ -45,7 +45,7 @@ export const load: LayoutLoad = async ({ url, params }) => {
         if (project.type === 'template') {
             currentUser = {
                 ...currentUser,
-                permission: UserPermissionEnum.Viewer
+                permission: UserPermissionEnum.NonMember
             };
         } else {
             currentUser = await getProjectMemberInfo(params.id, currentUser.username);

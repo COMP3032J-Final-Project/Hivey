@@ -264,7 +264,7 @@
 					    console.log(`Importing ops/snapshot for ${fileId}`);
 					    loroDoc.import(missingOpLogs);
       
-              const isReadOnly = untrack(() => permission) === UserPermissionEnum.Viewer;
+              const isReadOnly = untrack(() => permission) === UserPermissionEnum.Viewer || untrack(() => permission) === UserPermissionEnum.NonMember;
 			        const extensions = [
 					        basicSetup,
 					        lineNumbers(),
@@ -338,15 +338,14 @@
   
   // read only state change
   $effect(() => {
-      const isReadOnly = permission === UserPermissionEnum.Viewer;
-      if (isReadOnly && editorView) {
+      const isReadOnly = permission === UserPermissionEnum.Viewer || permission === UserPermissionEnum.NonMember;
+      if (editorView) {
   				editorView.dispatch({
 					    effects: readOnlyCompartment.reconfigure([
 						      EditorState.readOnly.of(isReadOnly),
 						      EditorView.editable.of(!isReadOnly)
 					    ])
 				  });
-        
       }
   })
 
