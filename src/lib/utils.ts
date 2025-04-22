@@ -112,6 +112,11 @@ export function base64ToUint8Array(base64: string): Uint8Array {
     return bytes;
 }
 
+// Uint8Array to string
+export function uint8ArrayToString(array: Uint8Array): string {
+  console.log('[utils] uint8ArrayToString', array);
+  return new TextDecoder().decode(array);
+}
 
 export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[] {
   interface TreeLevel {
@@ -177,7 +182,6 @@ export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[
 
   return root.children;
 }
-
 
 
 export function getFolders(files: File[], tempFolders: TreeNode[]){

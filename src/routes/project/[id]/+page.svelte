@@ -33,6 +33,7 @@
 	let membersDialogOpen = $state(false);
 	let shareTemplateDialogOpen = $state(false); // 新增：控制对话框显示状态
 	let currentFileType = $derived($currentFile.filetype || 'Format');
+	let docContent = $state('');
 
 	function formatMarkdown() {
 		//TODO Implement markdown formatting logic here
@@ -352,6 +353,7 @@
 				{/if}
 				<div class="flex-1 overflow-auto">
 					<Editor
+						bind:docContent={docContent}
 						bind:this={editorRef}
 						username={data.currentUser.username}
 						permission={data.currentUser.permission ?? UserPermissionEnum.Viewer}
@@ -363,7 +365,7 @@
 		<Resizable.Handle />
 
 		<Resizable.Pane defaultSize={50}>
-			<Previewer />
+			<Previewer docContent={docContent}/>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>

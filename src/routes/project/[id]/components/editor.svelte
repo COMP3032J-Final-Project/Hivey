@@ -24,9 +24,11 @@
   
   let {
       // NOTE: they are also state-ful (can be tracked as dependency inside `$effect`)
+      docContent = $bindable(),
       username,
       permission,
   }: {
+      docContent: string,
       username: string;
       permission: UserPermissionEnum;
   } = $props();
@@ -264,6 +266,12 @@
       loroDoc = new LoroDoc();
 		  loroAwareness = new Awareness(loroDoc.peerIdStr);
 		  undoManager = new UndoManager(loroDoc, {});
+
+			const updateListener = EditorView.updateListener.of(update => {
+				if (update.docChanged) {
+					docContent = update.state.doc.toString();
+				}
+			});
       
       // TODO setup editor onMount
       getFileMissingOps(pid, fileId, loroDoc)
@@ -301,9 +309,13 @@
 							            },
 							            undoManager
 						          )
-					        )
+					        ),
+									updateListener
 			        ];
 
+							if (editorView) {
+								docContent = editorView.state.doc.toString();
+							}
               try {
 					        const editorState = EditorState.create({ extensions });
 					        editorView = new EditorView({ state: editorState, parent: editorContainerElem });
