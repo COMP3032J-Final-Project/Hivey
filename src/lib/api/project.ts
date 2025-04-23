@@ -5,8 +5,14 @@ import { type User, UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
 
 export async function initializeProject(projectId: string) {
-    axiosClient.get(`/project/${projectId}/initialize`);
+    await axiosClient.get(`/project/${projectId}/initialize`);
 }
+
+export async function getProjectInitializationStatus(projectId: string) {
+    const resp = await axiosClient.get(`/project/${projectId}/initialization_status`);
+    return resp.data.data;
+}
+
 
 // 获取项目聊天室的聊天记录
 export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{ code: number, messages: ChatMessage[] }> => {

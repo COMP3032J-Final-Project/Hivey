@@ -18,11 +18,11 @@
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { localizeHref } from '$lib/paraglide/runtime';
   import type { Project } from '$lib/types/dashboard';
-  import { buildFileTree } from '$lib/utils';
+  import { buildFileTree, sleep } from '$lib/utils';
   
   import { getFiles } from '$lib/api/editor';
   import { WebSocketClient } from '$lib/api/websocket';
-  import { initializeProject } from '$lib/api/project';
+  import { initializeProject, getProjectInitializationStatus } from '$lib/api/project';
   
   import {
       files, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember,
@@ -132,18 +132,6 @@
               setFilesStruct(buildFileTree($files, $tempFolders));
           }
 
-          wsClient.projectInitializationHandler = (response) => {
-              const payload = response.payload;
-              
-              if (payload == "success") {
-                  backendProjectInitializeStatus = "success";
-              } else if (payload == "failed") {
-                  backendProjectInitializeStatus = "failed";
-              } else {
-                  console.log(`projectInitializationHandler unknown payload: ${payload}`);
-              }
-          }
-      
           wsClient.connect(); // 连接到服务器
           
           websocketConnected = true;
@@ -164,9 +152,16 @@
   onMount(async () => {
       const userSession = getUserSession() as UserAuth;
       processInitialData();
-      initWebSocketClient(userSession, data.currentUser).then(async () => {
-          await initializeProject(data.project_id);
-      })
+      initializeProject(data.project_id).then(async () => {
+          let status = await getProjectInitializationStatus(data.project_id);
+          while (status == null) {
+              await sleep(100);
+              status = await getProjectInitializationStatus(data.project_id);
+          }
+
+          backendProjectInitializeStatus = status;
+      });
+      initWebSocketClient(userSession, data.currentUser);
   });
 
   onDestroy(() => {

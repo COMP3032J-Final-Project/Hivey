@@ -92,6 +92,10 @@ export function titleCase(str: string) {
     );
 }
 
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[] {
   interface TreeLevel {

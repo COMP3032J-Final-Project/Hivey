@@ -31,7 +31,6 @@ export class WebSocketClient {
     // project
     public projectUpdateHandler: ((data: { name: string }) => void) | null = null;
     public projectDeletedHandler: ((data: { id: string }) => void) | null = null;
-    public projectInitializationHandler: ((response: WSResponse) => void) | null = null;
     // member
     public memberJoinedHandler: ((onlineMembers: User[]) => void) | null = null;
     public memberInvitedHandler: ((invitee: User) => void) | null = null;
@@ -234,9 +233,6 @@ export class WebSocketClient {
                 } catch (error) {
                     console.error('Error handling project deletion:', error);
                 }
-                break;
-            case 'initialize':
-                this.projectInitializationHandler?.(response);
                 break;
             default:
                 console.warn("Unknown project event type:", response.action);
