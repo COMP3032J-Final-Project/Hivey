@@ -11,7 +11,6 @@
   import { buttonVariants } from '$lib/components/ui/button/index.js';
   import { goto } from '$app/navigation';
   import type { User, UserAuth } from '$lib/types/auth';
-  import { WebSocketClient } from '$lib/api/websocket';
   import { getUserSession } from '$lib/auth';
   import { onMount, onDestroy } from 'svelte';
   import { notification } from '$lib/components/ui/toast';
@@ -19,8 +18,11 @@
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { localizeHref } from '$lib/paraglide/runtime';
   import type { Project } from '$lib/types/dashboard';
-  import { getFiles } from '$lib/api/editor';
   import { buildFileTree } from '$lib/utils';
+  
+  import { getFiles } from '$lib/api/editor';
+  import { WebSocketClient } from '$lib/api/websocket';
+  import { initializeProject } from '$lib/api/project';
   
   import {
       files, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember,
@@ -47,8 +49,10 @@
 
   let dataProcessed: boolean = $state(false);
   let websocketConnected = $state(false);
-  let backendProjectInitialized = $state(false);
-  const finishLoading = $derived(dataProcessed && websocketConnected && backendProjectInitialized);
+  let backendProjectInitializeStatus: string | undefined = $state(undefined);
+  const finishLoading = $derived(
+      dataProcessed && websocketConnected && backendProjectInitializeStatus == "success"
+  );
   
   let sidebarMode = $state(SidebarMode.FileTree);
   let sidebarResizeOffset = $state({x: 0, y: 0});
@@ -129,7 +133,15 @@
           }
 
           wsClient.projectInitializationHandler = (response) => {
-              console.log("El Psy Congroo");
+              const payload = response.payload;
+              
+              if (payload == "success") {
+                  backendProjectInitializeStatus = "success";
+              } else if (payload == "failed") {
+                  backendProjectInitializeStatus = "failed";
+              } else {
+                  console.log(`projectInitializationHandler unknown payload: ${payload}`);
+              }
           }
       
           wsClient.connect(); // 连接到服务器
@@ -152,7 +164,9 @@
   onMount(async () => {
       const userSession = getUserSession() as UserAuth;
       processInitialData();
-      initWebSocketClient(userSession, data.currentUser);
+      initWebSocketClient(userSession, data.currentUser).then(async () => {
+          await initializeProject(data.project_id);
+      })
   });
 
   onDestroy(() => {
@@ -166,9 +180,13 @@
 {#if !finishLoading}
   <div class="w-screen h-screen flex items-center justify-center">
     <div class="flex items-center gap-4 text-3xl">
-      <div class="inline-block size-10 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-        role="status"> </div>
-      <span>Initializing Project...</span>
+      {#if backendProjectInitializeStatus == "failed"}
+        <span>Project Initialization Failed</span>
+      {:else}
+        <div class="inline-block size-10 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+          role="status"> </div>
+        <span>Initializing Project...</span>
+      {/if}
     </div>
   </div>
 {:else}

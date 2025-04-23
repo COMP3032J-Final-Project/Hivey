@@ -236,7 +236,7 @@ export class WebSocketClient {
                 }
                 break;
             case 'initialize':
-                console.log(respose);
+                this.projectInitializationHandler?.(response);
                 break;
             default:
                 console.warn("Unknown project event type:", response.action);

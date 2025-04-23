@@ -4,6 +4,10 @@ import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermis
 import { type User, UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
 
+export async function initializeProject(projectId: string) {
+    axiosClient.get(`/project/${projectId}/initialize`);
+}
+
 // 获取项目聊天室的聊天记录
 export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{ code: number, messages: ChatMessage[] }> => {
     const { projectId, max_num, last_timestamp } = form;
