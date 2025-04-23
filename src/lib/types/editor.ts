@@ -25,6 +25,23 @@ export const File = v.object({
 
 export type File = v.InferOutput<typeof File>;
 
+export enum HistoryAction {
+    ADDED = 'added',
+    RENAMED = 'renamed',
+    MOVED = 'moved',
+    DELETED = 'deleted',
+    UPDATE_NAME = 'update_name'
+}
+
+export const HistoryMessage = v.object({
+    user: User,
+    action: v.enum(HistoryAction),
+    timestamp: v.date(),
+    payload: v.any()
+})
+export type HistoryMessage = v.InferOutput<typeof HistoryMessage>;
+
+
 // 聊天消息接口
 export interface ChatMessage {
     message_type: string; // 默认为text

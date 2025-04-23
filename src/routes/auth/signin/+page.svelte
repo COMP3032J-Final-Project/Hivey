@@ -1,4 +1,3 @@
-<!-- TODO remember functionality -->
 <script lang="ts">
 	import { login } from '$lib/api/auth';
   import { saveUserSession } from '$lib/auth';
@@ -8,6 +7,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
   import { localizeHref } from '$lib/paraglide/runtime';
+  import { browser } from '$app/environment';
 
   import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -15,14 +15,12 @@
 	import { Label } from "$lib/components/ui/label/index.js";
   import { Checkbox } from "$lib/components/ui/checkbox/index.js";
   import { m, me, mpa, mpae } from '$lib/trans';
-  import { isAxiosError } from 'axios';
 
 	// 表单数据
 	let formData: LoginForm = {
 		  email: '',
 		  password: ''
 	};
-
 	
 	let rememberMe = true; // 记住我选项
 	let isLoading = false; // 加载状态
@@ -35,7 +33,16 @@
 				      email: state.email,
 				      password: state.password
 			    };
-		  }
+		  } else if (browser) { // 从localStorage获取保存的用户凭据
+          const savedEmail = localStorage.getItem('remember_email');
+          const savedPassword = localStorage.getItem('remember_password');
+          
+          if (savedEmail && savedPassword) {
+              formData.email = savedEmail;
+              formData.password = savedPassword;
+              rememberMe = true;
+          }
+      }
 	});
 
 	const handleSubmit = async (e: Event) => {
@@ -49,12 +56,21 @@
 			    if (!/^\S+@\S+\.\S+$/.test(formData.email)) throw new Error(mpae.invalid_email());
 			    if (!formData.password) throw new Error(mpae.empty_password());
 
-			    // 调用登录接口
 			    const userAuth: UserAuth = await login(formData);
-			      
-			    // 使用 Token 管理功能保存 Token
 			    saveUserSession(userAuth);
-
+          
+          // 保存记住我选项
+          if (browser) {
+              if (rememberMe) {
+                  localStorage.setItem('remember_email', formData.email);
+                  localStorage.setItem('remember_password', formData.password);
+              } else {
+                  localStorage.removeItem('remember_email');
+                  localStorage.removeItem('remember_password');
+              }
+          }
+          
+          console.log(userAuth);
 			    success(mpa.success_sign_in());
 
 			    // 延迟跳转到首页

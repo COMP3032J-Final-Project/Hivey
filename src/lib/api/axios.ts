@@ -31,8 +31,7 @@ const axiosClient = axios.create({
 });
 
 let isRefreshing = false;
-// Basically we wait the current refreshing request done, get the new access token
-// and apply access token to each request in this queue
+// Basically we wait the current refreshing request done, get the new access token and apply access token to each request in this queue
 let refreshQueue: Array<(token: string) => void> = [];
 
 // 执行请求队列中的请求
@@ -93,10 +92,10 @@ axiosClient.interceptors.request.use(
             isRefreshing = false;
             clearUserSession();
 
-            notification(me.session_expired());
-
-            // 如果不是登录页，跳转到登录页
+            // 只在非登录页显示会话过期通知
             if (browser && !window.location.pathname.includes('/auth/signin')) {
+                notification(me.session_expired());
+                // 跳转到登录页
                 goto(localizeHref('/auth/signin'));
             }
 
@@ -171,10 +170,10 @@ axiosClient.interceptors.response.use(
             isRefreshing = false;
             clearUserSession();
 
-            notification(me.session_expired());
-
-            // 如果不是登录页，跳转到登录页
+            // 只在非登录页显示会话过期通知
             if (browser && !window.location.pathname.includes('/auth/signin')) {
+                notification(me.session_expired());
+                // 跳转到登录页
                 goto(localizeHref('/auth/signin'));
             }
 

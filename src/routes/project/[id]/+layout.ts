@@ -8,17 +8,15 @@ import { getUserInfo } from '$lib/api/auth';
 import { getProjectMemberInfo } from '$lib/api/project';
 import { getProjectById } from '$lib/api/dashboard';
 import { UserPermissionEnum } from '$lib/types/auth';
-import type { File, TreeNode } from '$lib/types/editor';
-import { setFilesStruct, setFiles, updateCurrentFile, setProject, addOnlineMember } from './store.svelte';
+import { updateCurrentFile, setProject, addOnlineMember } from './store.svelte';
 
 export const ssr = false; // 禁用服务器端渲染，确保只在客户端执行
 export const prerender = false; // 禁用预渲染
 
 export const load: LayoutLoad = async ({ url, params }) => {
     const session: UserAuth | null = getUserSession();
-    // console.debug("Session:", session);
-    // 如果未登录，立即重定向到登录页面
-    if (!session || isSessionExpired()) {
+    console.log("session", session);
+    if (!session || isSessionExpired()) { // 如果未登录，立即重定向到登录页面
         // 显示错误提示
         failure(me.user_not_login());
         const returnUrl = encodeURIComponent(url.pathname + url.search);

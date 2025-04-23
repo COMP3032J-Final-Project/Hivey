@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { FilePlus, FileEdit, FileX, Eye } from 'lucide-svelte';
-	import { currentFile, switchCurrentFile } from '../store.svelte';
-
-	let { projectId } = $props<{ projectId: string }>();
+	import HistoryMessage from './history-message.svelte';
+  import {type HistoryMessage as HistoryMessageType, HistoryAction } from '$lib/types/editor';
+  import {project} from '../../store.svelte';
 
 	// 历史操作类型
 	type OperationType = 'add' | 'edit' | 'delete';
@@ -31,7 +30,6 @@
 	async function loadProjectHistory() {
 		loading = true;
 		try {
-			// 这里应该调用API获取项目历史记录
 			// 模拟数据，实际应该从后端获取
 			const now = new Date();
 			historyEntries = [
@@ -87,11 +85,6 @@
 				return 'Operation';
 		}
 	}
-
-	// 查看文件
-	async function viewFile(fileId: string, fileName: string) {
-		await switchCurrentFile(projectId, fileId, fileName);
-	}
 </script>
 
 <Sidebar.Content>
@@ -123,19 +116,6 @@
 						<div class="mb-2 ml-6 text-xs text-muted-foreground">
 							{entry.timestamp}
 						</div>
-						{#if entry.operation !== 'delete'}
-							<div class="mt-2 flex justify-end">
-								<Button
-									onclick={() => viewFile(entry.fileId, entry.fileName)}
-									variant="outline"
-									size="sm"
-									class="flex items-center bg-transparent px-2 py-0"
-								>
-									<Eye size={14} />
-									View file
-								</Button>
-							</div>
-						{/if}
 					</div>
 				{/each}
 			</div>

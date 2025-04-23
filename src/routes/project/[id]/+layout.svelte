@@ -5,7 +5,7 @@
   import type { File, TreeNode } from '$lib/types/editor';
   import NavMain from './components/sidebar-nav-main.svelte';
   import ChatRoom from './components/chatroom/sidebar-chatroom.svelte';
-  import HistoryPanel from './components/sidebar-history.svelte';
+  import HistoryPanel from './components/history/sidebar-history.svelte';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { setContext } from 'svelte';
   import { buttonVariants } from '$lib/components/ui/button/index.js';
@@ -247,7 +247,7 @@
       {:else if sidebarMode === SidebarMode.ChatRoom}
         <ChatRoom currentUser={data.currentUser} wsClient={wsClient} />
       {:else}
-        <HistoryPanel projectId={data.projectId} />
+        <HistoryPanel/>
       {/if}
     </Sidebar.Root>
 
