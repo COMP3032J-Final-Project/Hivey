@@ -116,6 +116,10 @@
               });
               setFilesStruct(buildFileTree($files, $tempFolders));
           }
+
+          wsClient.projectInitializationHandler = (response) => {
+              console.log("El Psy Congroo");
+          }
       
           wsClient.connect(); // 连接到服务器
       } catch (error) {
