@@ -255,14 +255,18 @@
 
   function readOnlyP() {
       const perm = untrack(() => permission);
+      const projectType = untrack(() => $project.type);
       return perm === UserPermissionEnum.Viewer
-          || perm === UserPermissionEnum.NonMember;
+          || perm === UserPermissionEnum.NonMember
+          || projectType === 'template';
   }
 
   function readOnlyP_trackable() {
       const perm = permission;
+      const projectType = $project.type;
       return perm === UserPermissionEnum.Viewer
-          || perm === UserPermissionEnum.NonMember;
+          || perm === UserPermissionEnum.NonMember
+          || projectType === 'template';
   }
 
   const updateListener = EditorView.updateListener.of(update => {
@@ -284,7 +288,10 @@
 					}),
           updateListener,
 					languageCompartment.of([]),
-					readOnlyCompartment.of([]),
+					readOnlyCompartment.of([
+            EditorState.readOnly.of(readOnlyP()),
+            EditorView.editable.of(!readOnlyP())
+          ]),
 					loroCompartment.of([]),
           keymap.of([
             {

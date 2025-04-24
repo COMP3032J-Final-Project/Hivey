@@ -162,7 +162,6 @@
           bind:value={selectedPermission}
           disabled={isUpdating}
         >
-          <option value="">Select permission</option>
           {#each getAvailablePermissions() as option}
             <option value={option.value}>{option.label}</option>
           {/each}
