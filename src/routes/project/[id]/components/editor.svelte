@@ -390,8 +390,15 @@
           }
           
           // TODO cancel getFileMissingOps if exists
+
+					// Destroy the editor instance
+					if (editorView) {
+						editorView.destroy();
+						editorView = undefined;
+					}
           
 				  // Reset state associated with the old editor instance
+					isEditorSettled = false;
 				  loroDoc = undefined;
 				  loroAwareness = undefined;
 				  undoManager = undefined;
@@ -450,6 +457,7 @@
 		PDF preview
 	</div>
 {:else}
+	{#key $currentFile.id}
 	<div class="relative size-full">
 		{#if isLoadingFileContent}
 			<div class="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
@@ -464,4 +472,5 @@
       on:close={() => showNotification = false}
     />
 	</div>
+	{/key}
 {/if}
