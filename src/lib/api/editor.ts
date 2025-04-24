@@ -1,7 +1,6 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
 import type { File as EditorFile, createFileFrom, updateFileFrom } from '$lib/types/editor';
-import type { F } from 'vitest/dist/chunks/config.d.DevWltVl.js';
 import { LoroDoc, VersionVector } from 'loro-crdt';
 import { Base64 } from 'js-base64';
 import { getFileType, getFileCategory } from '$lib/utils';
