@@ -21,6 +21,7 @@
   import { latex } from 'codemirror-lang-latex';
 	import { javascript } from '@codemirror/lang-javascript';
   import { LoroExtensions } from 'loro-codemirror';
+  import type { FileType } from '$lib/types/editor';
 
 
   import { project, currentFile } from './../store.svelte';
@@ -209,17 +210,17 @@
 
 
   // --- Language Mapping ---
-	function getLanguageExtension(filetype: string | undefined) {
-		  switch (filetype?.toLowerCase()) {
-			    case 'md':
+	function getLanguageExtension(filetype: FileType | undefined) {
+      if (filetype == null) return markdown(); // new doc
+      
+      switch (filetype) {
+			    case 'markdown':
               return markdown();
-			    case 'js':
-              return javascript();
-          case 'tex':
+          case 'latex':
               return latex();
 			    default:
-              return markdown();
-		  }
+              return [];
+      }
 	}
 
 

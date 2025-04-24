@@ -4,6 +4,7 @@ import  { type Project, ProjectType } from '$lib/types/dashboard';
 import type { ChatMessage, File, TreeNode } from '$lib/types/editor';
 import { getFiles, getFileURL } from '$lib/api/editor';
 import { buildFileTree } from '$lib/utils';
+import { getFileType } from '$lib/utils';
 
 // Project
 export const project = writable<Project>({
@@ -90,7 +91,7 @@ export async function switchCurrentFile(
     fileName: string
 ) {
     try {
-        const filetype = fileName.split('.').pop() || 'md';
+        const filetype = await getFileType(fileName);
         updateCurrentFile({
             id: fileId,
             filename: fileName,

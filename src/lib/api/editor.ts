@@ -4,6 +4,8 @@ import type { File as EditorFile, createFileFrom, updateFileFrom } from '$lib/ty
 import type { F } from 'vitest/dist/chunks/config.d.DevWltVl.js';
 import { LoroDoc, VersionVector } from 'loro-crdt';
 import { Base64 } from 'js-base64';
+import { getFileType, getFileCategory } from '$lib/utils';
+import { LORO_CRDT_CODEMIRROR_CONTAINER_ID } from '$lib/constants';
 
 export const getFiles = async (projectId: string): Promise<EditorFile[]> => {
     const response = await axiosClient.get<APIResponse<EditorFile[]>>(`/project/${projectId}/files/`);
@@ -26,17 +28,17 @@ export async function getFileURL(
 }
 
 const createEmptyFile = async (fileName: string): Promise<File> => {
-    const fileType = fileName.split(".")[-1];
+    const fileType = await getFileType(fileName);
     switch (fileType) {
         case 'pdf':
             return new File([new Blob()], fileName, { type: 'application/pdf' });
-        case 'md':
+        case 'markdown':
             return new File([new Blob()], fileName, { type: 'text/markdown' });
-        case 'tex':
+        case 'latex':
             return new File([new Blob()], fileName, { type: 'text/x-tex' });
         case 'bib':
             return new File([new Blob()], fileName, { type: 'application/x-bibtex' });
-        case 'typ':
+        case 'typst':
             return new File([new Blob()], fileName, { type: 'application/x-typ' });
         default:
             return new File([new Blob()], fileName, { type: 'text/plain' });
@@ -76,10 +78,11 @@ export const updateFile = async (projectId: string, fileId: string, fileForm: up
 
 export async function uploadFile(projectId: string, fileForm: createFileFrom, file: File) {
     const { title, path } = fileForm;
+    const filename = title;
     const response = await axiosClient.post<APIResponse<{file_id: string, url: string}>>(
         `/project/${projectId}/files/create_update`,
         {
-            filename: title,
+            filename,
             filepath: path,
         }
     );
@@ -89,7 +92,30 @@ export async function uploadFile(projectId: string, fileForm: createFileFrom, fi
     const data = response.data.data;
     const fileId = data.file_id;
     const fileUrl = data.url;
-    await fetch(fileUrl, {method: 'PUT', body: file});
+
+
+    // --- Step 2: Determine if file should be treated as editable (CRDT) or binary ---
+    const filetype = await getFileType(filename, file);
+    const file_category = getFileCategory(filetype);
+
+    let uploadBody;
+    if (file_category == "PlainText") {
+        const fileContent = await file.text();
+        
+        const doc = new LoroDoc();
+        const text = doc.getText(LORO_CRDT_CODEMIRROR_CONTAINER_ID);
+        text.insert(0, fileContent);
+        doc.commit();
+        const snapshot = doc.export({ mode: "snapshot" });
+        
+        uploadBody = snapshot;
+    } else {
+        uploadBody = file;
+    }
+
+    // console.debug("uploadBody: ", uploadBody);
+    
+    await fetch(fileUrl, {method: 'PUT', body: uploadBody});
 
     const result = await checkFileExistence(projectId, fileId);
     if (!result ) {

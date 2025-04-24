@@ -12,6 +12,23 @@ export interface TreeNode {
   children: TreeNode[] | null; 
 }
 
+export enum FileType {
+	  MARKDOWN = 'markdown',
+	  TYPST = 'typst',
+	  LATEX = 'latex',
+	  BIB = 'bib',
+	  PLAIN_TEXT = 'plain_text',
+    
+	  PNG = 'png',
+	  JPG = 'jpg',
+	  WEBP = 'webp',
+    
+	  PDF = 'pdf',
+	  GENERIC_BINARY = 'binary'
+}
+
+export type FileCategory = 'PlainText' | 'Image' | 'Binary';
+
 export const File = v.object({
     id: v.string(),
     project_id: v.string(), 
@@ -19,11 +36,12 @@ export const File = v.object({
     filepath: v.string(),
     created_at: v.optional(v.string()),
     updated_at: v.optional(v.string()),
-    filetype: v.optional(v.string()), // .md .tex .typst etc.
+    filetype: v.optional(v.enum(FileType)), // .md .tex .typst etc.
     rawData: v.any()  // FIXME uint8array (bytes)
 });
 
 export type File = v.InferOutput<typeof File>;
+
 
 export enum HistoryAction {
     ADDED = 'added',

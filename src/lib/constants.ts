@@ -31,3 +31,5 @@ export const LOCAL_STORAGE_KEY = {
     },
 };
 
+
+export const LORO_CRDT_CODEMIRROR_CONTAINER_ID = "codemirror";

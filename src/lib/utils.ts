@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { File, TreeNode } from "$lib/types/editor";
+import type { File as EditorFile, FileCategory, TreeNode } from "$lib/types/editor";
+import { FileType } from '$lib/types/editor';
 
 /**
  * Combines multiple class values into a single string, handling Tailwind CSS conflicts.
@@ -97,7 +98,7 @@ export function sleep(ms: number) {
 }
 
 
-export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[] {
+export function buildFileTree(files: EditorFile[], tempFolders: TreeNode[]): TreeNode[] {
   interface TreeLevel {
     children: TreeNode[];
   }
@@ -164,7 +165,7 @@ export function buildFileTree(files: File[], tempFolders: TreeNode[]): TreeNode[
 
 
 
-export function getFolders(files: File[], tempFolders: TreeNode[]){
+export function getFolders(files: EditorFile[], tempFolders: TreeNode[]){
 	console.log('[utils] getFolders', files, tempFolders);
 	const folderInfoMap = new Map<string, { value: string, label: string }>();
 	folderInfoMap.set('/', { value: 'root', label: 'root' });
@@ -199,3 +200,108 @@ export function getFolders(files: File[], tempFolders: TreeNode[]){
 
 	return Array.from(folderInfoMap.values());
 }
+
+
+
+
+
+
+/**
+ * Checks if the beginning of a file is likely binary content.
+ * Reads a chunk of the file and looks for null bytes.
+ *
+ * @param file The File object to check.
+ * @param chunkSize The number of bytes to read from the beginning of the file (default: 4096).
+ * @returns Promise<boolean> True if the file chunk suggests binary content, false otherwise.
+ */
+export async function isLikelyBinary(file: File, chunkSize = 4096): Promise<boolean> {
+    if (file.size === 0) return false;
+    
+
+    // Read the first chunk (or the whole file if smaller than chunkSize)
+    const buffer = await file.slice(0, chunkSize).arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    // Check for Null Bytes
+    for (let i = 0; i < bytes.length; i++) {
+        if (bytes[i] === 0) {
+            console.debug(`File ${file.name} detected as likely binary due to null byte at position ${i}`);
+            return true; // Found a null byte, strong indicator of binary
+        }
+    }
+
+    return false;
+}
+
+
+export function getFileExtension(filename: string): string {
+    const lastDotIndex = filename.lastIndexOf('.');
+    if (lastDotIndex === -1 || lastDotIndex === filename.length) return ''; // No extension
+    return filename.substring(lastDotIndex).toLowerCase();
+}
+
+
+export async function getFileType(
+    filename: string,
+    file: File | undefined = undefined
+): Promise<FileType> {
+    const fileExtension = getFileExtension(filename);
+    switch (fileExtension) {
+        case 'md':
+        case 'markdown':
+            return FileType.MARKDOWN;
+        case 'typ':
+        case 'typst':
+            return FileType.TYPST;
+        case 'tex':
+        case 'latex':
+            return FileType.LATEX;
+        case 'bib':
+            return FileType.BIB;
+        case 'png':
+            return FileType.PNG;
+        case 'jpg':
+        case 'jpeg':
+            return FileType.JPG;
+        case 'webp':
+            return FileType.WEBP;
+        case 'pdf':
+            return FileType.PDF;
+        case 'txt':
+            return FileType.PLAIN_TEXT;
+        default:
+            if (file && await isLikelyBinary(file)) 
+                return FileType.GENERIC_BINARY;
+            else 
+                return FileType.PLAIN_TEXT;
+    }
+}
+
+
+export function getFileCategory(fileType: FileType): FileCategory {
+	  switch (fileType) {
+		    case FileType.PNG:
+		    case FileType.JPG:
+		    case FileType.WEBP:
+			      return 'Image';
+    
+		    case FileType.MARKDOWN:
+		    case FileType.TYPST:
+		    case FileType.LATEX:
+		    case FileType.BIB:
+		    case FileType.PLAIN_TEXT:
+			      return 'PlainText';
+    
+		    case FileType.PDF:
+		    case FileType.GENERIC_BINARY:
+			      return 'Binary';
+    
+		    default:
+			      // This line helps ensure you handle all FileType members.
+			      // If you add a new FileType member and forget a case, TypeScript will error here.
+			      const _exhaustiveCheck: never = fileType;
+			      return 'Binary';
+	  }
+}
+
+
