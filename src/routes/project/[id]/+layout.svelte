@@ -17,7 +17,6 @@
   import  DragOffsetCalculator from '$lib/components/drag-offset-calculator.svelte';
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { localizeHref } from '$lib/paraglide/runtime';
-  import type { Project } from '$lib/types/dashboard';
   import { buildFileTree, sleep } from '$lib/utils';
   
   import { getFiles } from '$lib/api/editor';

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
+import { isSessionExpired } from '$lib/auth';
 
 import {
     UserAuth,
@@ -71,11 +72,19 @@ export const logoutUser = async (): Promise<void> => {
 
 // 获取用户头像文件的下载URL
 export const getMyAvatar = async (): Promise<string> => { 
-    const response = await axiosClient.get<APIResponse<string>>(`/user/avatar/`);
-    if (response.data.data == null) {
-        throw new Error(response.data.msg);
+    if (isSessionExpired()) {
+        return '';
     }
-    return response.data.data;
+    try {
+        const response = await axiosClient.get<APIResponse<string>>(`/user/avatar/`);
+        if (response.data.data == null || response.data.data === '' || response.data.data === undefined) {
+            return '';
+        }
+        return response.data.data;
+    } catch (error) {
+        console.error("getMyAvatar error", error);
+        return '';
+    }
 };
 
 
