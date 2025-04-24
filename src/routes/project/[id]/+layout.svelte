@@ -25,7 +25,7 @@
   
   import {
       files, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember,
-      setFilesStruct, setFiles, updateCurrentFile, setProject
+      setFilesStruct, setFiles, updateCurrentFile, setProject, compiledPdfPreviewUrl
   } from './store.svelte';
   
   
@@ -129,6 +129,10 @@
                   return files;
               });
               setFilesStruct(buildFileTree($files, $tempFolders));
+          }
+
+          wsClient.projectCompiledPdfHanlder = (url) => {
+              compiledPdfPreviewUrl.set(url);
           }
 
           wsClient.connect(); // 连接到服务器

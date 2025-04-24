@@ -27,6 +27,8 @@ export function updateProject(newProject: Partial<Project>) {
     }));
 }
 
+export const compiledPdfPreviewUrl = writable<string | null>(null);
+
 // ==============================================================================
 
 // 项目的文件列表

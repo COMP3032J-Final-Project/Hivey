@@ -4,11 +4,13 @@
   import { Button } from "$lib/components/ui/button/index.js";
 	import ExportButton from './button/export-button.svelte';
   import * as pdfjsLib from 'pdfjs-dist';
-  import { currentFile } from './../store.svelte';
+  import { currentFile, compiledPdfPreviewUrl } from './../store.svelte';
   import workerEntry from 'pdfjs-dist/build/pdf.worker.mjs?worker';
   import 'pdfjs-dist/web/pdf_viewer.css';
   import { EventBus, PDFViewer, PDFLinkService } from 'pdfjs-dist/web/pdf_viewer.mjs';
   import { ZoomIn, ZoomOut } from 'lucide-svelte';
+  import { onDestroy, onMount, untrack } from 'svelte';
+  import { sleep } from '$lib/utils';
 
   let {
       docContent,
@@ -23,7 +25,7 @@
 
   let container = $state<HTMLDivElement | null>(null);
   let viewer = $state<HTMLDivElement | null>(null);
-  let pdfUrl = '/GroupProject.pdf';
+  let pdfUrl: string | null  = null;
   let pdfViewer = $state<PDFViewer | null>(null);
   let userScaled = $state(false);
     
@@ -34,6 +36,10 @@
       typographer: true,
   });
   let renenderedHTML = $state('');
+
+  const shouldRenenderHTML = $derived(
+      $currentFile.filetype === 'markdown'
+  )
 
   const zoomIn = () => {
       console.log('zoomIn() called');
@@ -53,10 +59,12 @@
       }
   };
 
+  
+
   const renderPDF = async () => {
-      console.log('renderPDF() called with rawContent:', $currentFile.rawData);
+      console.log('renderPDF() is called');
+      if (pdfUrl == null) return;
       try {
-          // const loadingTask = pdfjsLib.getDocument(new Uint8Array($currentFile.rawData));
           const loadingTask = pdfjsLib.getDocument(pdfUrl);
           const pdfDoc = await loadingTask.promise;
           const eventBus = new EventBus();
@@ -107,13 +115,22 @@
       const filetype = $currentFile.filetype;
       if (!filetype) return;
       
-      if (filetype === 'markdown') {
-          renenderedHTML = markdownRender.render(docContent || '');
-      } 
-      else if (filetype === 'pdf') {
-          renderPDF();
-      }
+      const content = docContent || '';
+      
+      
+      if (filetype === 'markdown') 
+          markdownRender.render(content);
   });
+
+  $effect(() => {
+      const filetype = $currentFile.filetype;
+      if (!filetype) return;
+      pdfUrl = $compiledPdfPreviewUrl;
+      
+      if (filetype !== 'markdown') renderPDF();
+      
+  });
+
 </script>
 
 <style>
@@ -140,14 +157,14 @@
   </div>
 {/if}
 <div class={cn("relative flex flex-col size-full shadow-inner group", className)}>
-  {#if $currentFile.filetype === 'markdown'}
+  {#if shouldRenenderHTML}
     <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block z-index:100">
       <ExportButton />
     </div>
     <div class="prose lg:prose-md overflow-y-auto p-2 break-words">
       {@html renenderedHTML}
     </div>
-  {:else if $currentFile.filetype === 'pdf'}
+  {:else}
     <div bind:this={container} class="documentContainer">
       <div bind:this={viewer} class="pdfViewer"></div>
     </div>

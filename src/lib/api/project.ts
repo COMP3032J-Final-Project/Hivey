@@ -13,6 +13,11 @@ export async function getProjectInitializationStatus(projectId: string) {
     return resp.data.data;
 }
 
+// export async function getProjectCompiledPdfUrl(projectId: string) {
+//     const resp = await axiosClient.get(`/project/${projectId}/get_compiled_pdf_url`);
+//     return resp.data.data;
+// }
+
 
 // 获取项目聊天室的聊天记录
 export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{ code: number, messages: ChatMessage[] }> => {
