@@ -1,12 +1,14 @@
 <script lang="ts">
   import { cn } from '$lib/utils.js';
   import MarkdownIt from 'markdown-it';
+  import { Button } from "$lib/components/ui/button/index.js";
 	import ExportButton from './button/export-button.svelte';
   import * as pdfjsLib from 'pdfjs-dist';
   import { currentFile } from './../store.svelte';
   import workerEntry from 'pdfjs-dist/build/pdf.worker.mjs?worker';
   import 'pdfjs-dist/web/pdf_viewer.css';
   import { EventBus, PDFViewer, PDFLinkService } from 'pdfjs-dist/web/pdf_viewer.mjs';
+  import { ZoomIn, ZoomOut } from 'lucide-svelte';
 
   let {
       docContent,
@@ -129,15 +131,19 @@
       width: 100% !important;
   }
 </style>
+
 {#if $currentFile.filetype === "pdf"}
-  <button onclick={zoomIn} class="zoom-button" title="放大">+</button>
-  <button onclick={zoomOut} class="zoom-button" title="缩小">-</button>
-{/if}
-<div class={cn("relative flex flex-col size-full shadow-inner group", className)}>
-  <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block z-index:100">
+  <div class="flex justify-normal">
+    <Button class="m-1" variant="ghost" size="icon" onclick={zoomIn}><ZoomIn/></Button>
+    <Button class="m-1" variant="ghost" size="icon" onclick={zoomOut}><ZoomOut/></Button>
     <ExportButton />
   </div>
-  {#if $currentFile.filetype === "md"}
+{/if}
+<div class={cn("relative flex flex-col size-full shadow-inner group", className)}>
+  {#if $currentFile.filetype === 'markdown'}
+    <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block z-index:100">
+      <ExportButton />
+    </div>
     <div class="prose lg:prose-md overflow-y-auto p-2 break-words">
       {@html renenderedHTML}
     </div>
