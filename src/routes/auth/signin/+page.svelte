@@ -7,7 +7,6 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
   import { localizeHref } from '$lib/paraglide/runtime';
-  import { browser } from '$app/environment';
 
   import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -33,16 +32,7 @@
 				      email: state.email,
 				      password: state.password
 			    };
-		  } else if (browser) { // 从localStorage获取保存的用户凭据
-          const savedEmail = localStorage.getItem('remember_email');
-          const savedPassword = localStorage.getItem('remember_password');
-          
-          if (savedEmail && savedPassword) {
-              formData.email = savedEmail;
-              formData.password = savedPassword;
-              rememberMe = true;
-          }
-      }
+		  }
 	});
 
 	const handleSubmit = async (e: Event) => {
@@ -58,19 +48,7 @@
 
 			    const userAuth: UserAuth = await login(formData);
 			    saveUserSession(userAuth);
-          
-          // 保存记住我选项
-          if (browser) {
-              if (rememberMe) {
-                  localStorage.setItem('remember_email', formData.email);
-                  localStorage.setItem('remember_password', formData.password);
-              } else {
-                  localStorage.removeItem('remember_email');
-                  localStorage.removeItem('remember_password');
-              }
-          }
-          
-          console.log(userAuth);
+        
 			    success(mpa.success_sign_in());
 
 			    // 延迟跳转到首页

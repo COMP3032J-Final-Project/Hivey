@@ -130,7 +130,14 @@ export function addOnlineMember(member: User) {
     if (!member.avatar) {
         member.avatar = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
     }
-    onlineMembers.update(currentMembers => [...currentMembers, member]);
+    onlineMembers.update(currentMembers => {
+        // 检查是否已存在相同用户名的成员
+        const exists = currentMembers.some(m => m.username === member.username);
+        if (!exists) {
+            return [...currentMembers, member];
+        }
+        return currentMembers;
+    });
 }
 export function removeOnlineMember(username: string) {
     onlineMembers.update(currentMembers => currentMembers.filter(member => member.username !== username));
