@@ -28,6 +28,7 @@
 	let dialogOpen = $state(open || false);
 	let templateNameValue = $state(project?.name || '');
 	let isPublicValue = $state('public');
+  let isCreating = $state(false);
 
 	const visibilityOptions = [
 		{ value: 'public', label: 'Public' },
@@ -46,6 +47,7 @@
 			if (!templateNameValue) {
 				throw new Error('Enter Template Name');
 			}
+      isCreating = true;
 			const form: ShareProject2TemplateForm = {
 				projectId,
 				currentUser,
@@ -65,7 +67,9 @@
 		} catch (error) {
 			const errorMessage = (error as Error).message;
 			failure(errorMessage || 'Unknown Error');
-		}
+		} finally {
+      isCreating = false;
+    }
 	};
 
 	const handleTriggerClick = (e: MouseEvent) => {
@@ -145,7 +149,9 @@
 				</div>
 			</div>
 			<Dialog.Footer>
-				<Button type="submit">Confirm</Button>
+				<Button type="submit" disabled={isCreating}>
+          {isCreating ? 'Creating...' : 'Confirm'}
+        </Button>
 				<Dialog.Close id="share-dialog-close-btn" class="hidden" />
 			</Dialog.Footer>
 		</form>

@@ -190,7 +190,7 @@ export const getColumns = (type: string, currentUser: User | null): ColumnDef<Pr
 					onDelete: () => {
 						table.toggleAllPageRowsSelected(false);
 					},
-					isFavorite: row.original.isFavorite === true ? true : category === 'favourite',
+					isFavorite: row.original.isFavorite === true,
 					isOwner: currentUser?.email === row.original.owner?.email
 				});
 			},

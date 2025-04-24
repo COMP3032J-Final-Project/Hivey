@@ -108,6 +108,7 @@
       }
       isFavorite = newStatus;
       await invalidateAll();
+      window.location.reload();
     } catch (error) {
       if (error instanceof Error) {
         failure(error.message);
