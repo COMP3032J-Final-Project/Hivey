@@ -8,6 +8,9 @@
   import { getContext } from 'svelte';
 	import { getFileMissingOps } from '$lib/api/editor';
   import { Base64 } from 'js-base64';
+  import { keymap } from '@codemirror/view';
+  import { debounce } from 'lodash-es';
+  import Notification from './notification.svelte';
 
   // code mirror
   import { EditorView, basicSetup } from 'codemirror';
@@ -50,6 +53,11 @@
 	let readOnlyCompartment = new Compartment();
 	let loroCompartment = new Compartment(); // To reconfigure LoroExtensions with new instances
 
+  let showNotification = $state(false);
+
+  const showNotificationDebounced = debounce(() => {
+    showNotification = true;
+  }, 1000, { leading: true, trailing: false });
 
   // --- Export Functions ---
   export function hasSurroundingSymbols(prefix: string, suffix: string) {
@@ -277,7 +285,16 @@
           updateListener,
 					languageCompartment.of([]),
 					readOnlyCompartment.of([]),
-					loroCompartment.of([])
+					loroCompartment.of([]),
+          keymap.of([
+            {
+              key: 'Mod-s',
+              run: () => {
+                showNotificationDebounced();
+                return true;
+              }
+            }
+          ])
 			];
 
 			const editorState = EditorState.create({ extensions });
@@ -437,5 +454,11 @@
 			</div>
 		{/if}
 		<div bind:this={editorContainerElem} class="editor size-full"></div>
+    <Notification
+      title="Auto Save"
+      description="File is automatically saved, no need to save manually"
+      show={showNotification}
+      on:close={() => showNotification = false}
+    />
 	</div>
 {/if}
