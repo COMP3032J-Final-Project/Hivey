@@ -256,17 +256,13 @@
   function readOnlyP() {
       const perm = untrack(() => permission);
       const projectType = untrack(() => $project.type);
-      return perm === UserPermissionEnum.Viewer
-          || perm === UserPermissionEnum.NonMember
-          || projectType === 'template';
+      return projectType === 'template' || perm === UserPermissionEnum.Viewer || perm === UserPermissionEnum.NonMember;
   }
 
   function readOnlyP_trackable() {
       const perm = permission;
       const projectType = $project.type;
-      return perm === UserPermissionEnum.Viewer
-          || perm === UserPermissionEnum.NonMember
-          || projectType === 'template';
+      return projectType === 'template' || perm === UserPermissionEnum.Viewer || perm === UserPermissionEnum.NonMember;
   }
 
   const updateListener = EditorView.updateListener.of(update => {

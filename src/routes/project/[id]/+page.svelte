@@ -316,7 +316,7 @@
 			<div class="flex h-full flex-col">
 				<!-- TODO make overflowed area float above editor -->
         <!-- TODO toggleable-toolbar from ./components/toggleable-toolbar.svelte -->
-				{#if ['md', 'typ', 'tex'].includes(currentFileType) && $project.type !== 'template' && currentUser.permission !== UserPermissionEnum.Viewer}
+				{#if ['md', 'typ', 'tex'].includes(currentFileType) && $project.type !== 'template' && currentUser.permission !== UserPermissionEnum.Viewer && currentUser.permission !== UserPermissionEnum.NonMember}
 					<div class="border-b p-1 flex justify-normal">
 						<Button class="mr-1" size="icon" onclick={formatMarkdown}>{currentFileType}</Button>
 						<Tooltip.Root>
