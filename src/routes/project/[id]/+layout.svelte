@@ -21,11 +21,12 @@
   
   import { getFiles } from '$lib/api/editor';
   import { WebSocketClient } from '$lib/api/websocket';
+  import { WSResponse } from '$lib/types/websocket';
+  import { HistoryAction, type HistoryMessage } from '$lib/types/editor';
   import { initializeProject, getProjectInitializationStatus } from '$lib/api/project';
-  
   import {
       files, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember,
-      setFilesStruct, setFiles, updateCurrentFile, setProject, compiledPdfPreviewUrl
+      setFilesStruct, setFiles, compiledPdfPreviewUrl, addHistoryMessage
   } from './store.svelte';
   
   
@@ -91,40 +92,121 @@
               goto(localizeHref('/dashboard/repository/projects/all')); // 重定向到项目列表页面
           }
 
-          wsClient.projectUpdateHandler = (data) => {
-              if (data.name) {
-                  updateProject({name: data.name});
+          wsClient.projectUpdateHandler = (response: WSResponse) => {
+              if (response.payload.name) {
+                  updateProject({name: response.payload.name});
               }
+              const historyMessage: HistoryMessage = {
+                action: HistoryAction.UPDATE_NAME,
+                project_id: $project.id,
+                user_id: response.client_id,
+                file_id: null,
+                state_before: null,
+                state_after: { name: response.payload.name },
+                timestamp: new Date(),
+              }
+              addHistoryMessage(historyMessage);
           }
 
-          wsClient.fileAddedHandler = (file) => {
-              files.update((files) => [ ...files, file ]); // 更新当前文件列表
+          wsClient.fileAddedHandler = (response: WSResponse) => {
+              // 更新当前文件列表
+              files.update((files) => [ ...files, response.payload ]); 
               setFilesStruct(buildFileTree($files, $tempFolders));
+
+              // 添加历史记录
+              const historyMessage: HistoryMessage = {
+                action: HistoryAction.ADDED,
+                project_id: $project.id,
+                user_id: response.client_id,
+                file_id: response.payload.id,
+                state_before: null,
+                state_after: {
+                  filename: response.payload.filename,
+                  filepath: response.payload.filepath,
+                },
+                timestamp: new Date(),
+              }
+              addHistoryMessage(historyMessage);
           }
 
-          wsClient.fileDeletedHandler = (fileIdList) => {
-              files.update((files) => files.filter((file) => !fileIdList.includes(file.id))); // 更新当前文件列表
-              setFilesStruct(buildFileTree($files, $tempFolders));
-          }
-
-          wsClient.fileRenamedHandler = (updatedFile) => {
+          wsClient.fileDeletedHandler = (response: WSResponse) => {
+              const fileIdList: string[] = response.payload;  
               files.update((files) => {
-                  const file = files.find((file) => file.id === updatedFile.id);
+                files.forEach((file) => {
+                  if (fileIdList.includes(file.id)) {
+                    // 添加历史记录
+                    const historyMessage: HistoryMessage = {
+                      action: HistoryAction.DELETED,
+                      project_id: $project.id,
+                      user_id: response.client_id,
+                      file_id: file.id,
+                      state_before: {
+                        filename: file.filename,
+                        filepath: file.filepath,
+                      },
+                      state_after: null,
+                      timestamp: new Date(),
+                    }
+                    addHistoryMessage(historyMessage);
+                  }
+                });
+                return files.filter((file) => !fileIdList.includes(file.id));
+              });
+              setFilesStruct(buildFileTree($files, $tempFolders));
+          }
+
+          wsClient.fileRenamedHandler = (response: WSResponse) => {
+              files.update((files) => {
+                  const file = files.find((file) => file.id === response.payload.id);
                   if (file) {
-                      file.filename = updatedFile.filename; // 更新文件名称
-                      file.filepath = updatedFile.filepath; // 更新文件路径(应对移动+重命名的情况)
+                      // 添加历史记录
+                      const historyMessage: HistoryMessage = {
+                        action: HistoryAction.RENAMED,
+                        project_id: $project.id,
+                        user_id: response.client_id,
+                        file_id: response.payload.id,
+                        state_before: { 
+                          filename: file.filename,
+                          filepath: file.filepath,
+                        },
+                        state_after: {
+                          filename: response.payload.filename,
+                          filepath: response.payload.filepath,
+                        },
+                        timestamp: new Date(),
+                      }
+                      addHistoryMessage(historyMessage);
+                      file.filename = response.payload.filename; // 更新文件名称
+                      file.filepath = response.payload.filepath; // 更新文件路径(应对移动+重命名的情况)
                   }
                   return files;
               });
               setFilesStruct(buildFileTree($files, $tempFolders));
           }
 
-          wsClient.fileMoveHandler = (updatedFile) => {
+          wsClient.fileMoveHandler = (response: WSResponse) => {
               files.update((files) => {
-                  const file = files.find((file) => file.id === updatedFile.id);
+                  const file = files.find((file) => file.id === response.payload.id);
                   if (file) {
-                      file.filepath = updatedFile.filepath; // 更新文件父级ID
-                      file.filename = updatedFile.filename; // 更新文件名称(应对移动+重命名的情况)
+                      // 添加历史记录
+                      const historyMessage: HistoryMessage = {
+                        action: HistoryAction.MOVED,
+                        project_id: $project.id,
+                        user_id: response.client_id,
+                        file_id: response.payload.id,
+                        state_before: { 
+                          filename: file.filename,
+                          filepath: file.filepath,
+                        },
+                        state_after: {
+                          filename: response.payload.filename,
+                          filepath: response.payload.filepath,
+                        },
+                        timestamp: new Date(),
+                      }
+                      addHistoryMessage(historyMessage);
+                      file.filepath = response.payload.filepath; // 更新文件父级ID
+                      file.filename = response.payload.filename; // 更新文件名称(应对移动+重命名的情况)
                   }
                   return files;
               });

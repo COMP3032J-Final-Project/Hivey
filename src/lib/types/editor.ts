@@ -44,21 +44,61 @@ export type File = v.InferOutput<typeof File>;
 
 
 export enum HistoryAction {
-    ADDED = 'added',
-    RENAMED = 'renamed',
-    MOVED = 'moved',
-    DELETED = 'deleted',
-    UPDATE_NAME = 'update_name'
+    ADDED = 'added', // file_id: "f7wdadwa"; state_before: null; state_after: {"filename":"Test.md","filepath":""}
+    RENAMED = 'renamed', // file_id: "f7wdadwa"; state_before: {"filename":"Test.md","filepath":""}; state_after: {"filename":"Test22.md","filepath":""}
+    MOVED = 'moved', // file_id: "f7wdadwa"; state_before: {"filename":"Test.md","filepath":""}; state_after: {"filename":"Test.md","filepath":"folder/Test22.md"}
+    DELETED = 'deleted', // file_id: "f7wdadwa"; state_before: {"filename":"Test.md","filepath":""}; state_after: null
+    UPDATE_NAME = 'update_name' // file_id: null; state_before: null; state_after: {"name":"Test11"}
 }
 
-export const HistoryMessage = v.object({
-    user: User,
-    action: v.enum(HistoryAction),
-    timestamp: v.date(),
-    payload: v.any()
-})
+export const HistoryMessage = v.union([
+    v.object({
+        action: v.literal(HistoryAction.ADDED),
+        project_id: v.string(),
+        user_id: v.string(),
+        file_id: v.string(),
+        state_before: v.null(),
+        state_after: v.object({ filename: v.string(), filepath: v.string() }),
+        timestamp: v.date(),
+    }),
+    v.object({
+        action: v.literal(HistoryAction.RENAMED),
+        project_id: v.string(),
+        user_id: v.string(),
+        file_id: v.string(),
+        state_before: v.object({ filename: v.string(), filepath: v.string() }),
+        state_after: v.object({ filename: v.string(), filepath: v.string() }),
+        timestamp: v.date(),
+    }),
+    v.object({
+        action: v.literal(HistoryAction.MOVED),
+        project_id: v.string(),
+        user_id: v.string(),
+        file_id: v.string(),
+        state_before: v.object({ filename: v.string(), filepath: v.string() }),
+        state_after: v.object({ filename: v.string(), filepath: v.string() }),
+        timestamp: v.date(),
+    }),
+    v.object({
+        action: v.literal(HistoryAction.DELETED),
+        project_id: v.string(),
+        user_id: v.string(),
+        file_id: v.string(),
+        state_before: v.object({ filename: v.string(), filepath: v.string() }),
+        state_after: v.null(),
+        timestamp: v.date(),
+    }),
+    v.object({
+        action: v.literal(HistoryAction.UPDATE_NAME),
+        project_id: v.string(),
+        user_id: v.string(),
+        file_id: v.optional(v.nullable(v.string())),
+        state_before: v.null(),
+        state_after: v.object({ name: v.string() }),
+        timestamp: v.date(),
+    }),
+]);
 export type HistoryMessage = v.InferOutput<typeof HistoryMessage>;
-
 
 // 聊天消息接口
 export interface ChatMessage {

@@ -29,7 +29,7 @@ export class WebSocketClient {
     // chat
     public chatMessageHandler: ((message: ChatMessage) => void) | null = null;
     // project
-    public projectUpdateHandler: ((data: { name: string }) => void) | null = null;
+    public projectUpdateHandler: ((response: WSResponse) => void) | null = null;
     public projectDeletedHandler: ((data: { id: string }) => void) | null = null;
     public projectCompiledPdfHanlder: ((url: string | null) => void) | null = null;
     // member
@@ -42,10 +42,10 @@ export class WebSocketClient {
     // CRDT
     public crdtEventHandler: ((response: WSResponse) => void) | null = null;
     // file
-    public fileAddedHandler: ((file: File) => void) | null = null;
-    public fileRenamedHandler: ((file: File) => void) | null = null;
-    public fileDeletedHandler: ((idList: string[]) => void) | null = null;
-    public fileMoveHandler: ((file: File) => void) | null = null;
+    public fileAddedHandler: ((response: WSResponse) => void) | null = null;
+    public fileRenamedHandler: ((response: WSResponse) => void) | null = null;
+    public fileDeletedHandler: ((response: WSResponse) => void) | null = null;
+    public fileMoveHandler: ((response: WSResponse) => void) | null = null;
 
 
     constructor(
@@ -216,7 +216,7 @@ export class WebSocketClient {
                     return;
                 }
                 console.log('Calling project update handler with payload:', response.payload);
-                this.projectUpdateHandler(response.payload);
+                this.projectUpdateHandler(response);
                 break;
             case "delete_project":
                 if (!this.projectDeletedHandler) {
@@ -309,31 +309,28 @@ export class WebSocketClient {
                 }
                 const addedFile: File = response.payload;
                 console.log('File added:', addedFile);
-                this.fileAddedHandler(addedFile);
+                this.fileAddedHandler(response);
                 break;
             case "renamed":
                 if (!this.fileRenamedHandler) {
                     console.warn("File rename handler not set");
                     return;
                 }
-                const renamedFile: File = response.payload;
-                this.fileRenamedHandler(renamedFile);
+                this.fileRenamedHandler(response);
                 break;
             case "moved":
                 if (!this.fileMoveHandler) {
                     console.warn("File moved handler not set");
                     return;
                 }
-                const movedFile: File = response.payload;
-                this.fileMoveHandler(movedFile);
+                this.fileMoveHandler(response);
                 break;
             case "deleted":
                 if (!this.fileDeletedHandler) {
                     console.warn("File deleted handler not set");
                     return;
                 }
-                const deletedFileIdList = response.payload;
-                this.fileDeletedHandler(deletedFileIdList);
+                this.fileDeletedHandler(response);
                 break;
             default:
                 console.warn("Unknown file event type:", response.action);

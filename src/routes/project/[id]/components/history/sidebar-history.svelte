@@ -1,26 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { FilePlus, FileEdit, FileX, Eye } from 'lucide-svelte';
 	import HistoryMessage from './history-message.svelte';
-  import {type HistoryMessage as HistoryMessageType, HistoryAction } from '$lib/types/editor';
-  import {project} from '../../store.svelte';
+	import { project, historyMessages, setHistoryMessages } from '../../store.svelte';
+  import { getProjectHistory } from '$lib/api/project';
 
-	// 历史操作类型
-	type OperationType = 'add' | 'edit' | 'delete';
-
-	// 历史记录条目
-	type HistoryEntry = {
-		id: string;
-		fileId: string;
-		fileName: string;
-		operation: OperationType;
-		timestamp: string;
-		user: string;
-	};
-
-	let historyEntries = $state<HistoryEntry[]>([]);
 	let loading = $state(false);
+	let error = $state<string | null>(null);
 
 	// 在组件挂载时加载项目历史记录
 	onMount(() => {
@@ -29,60 +15,14 @@
 
 	async function loadProjectHistory() {
 		loading = true;
+		error = null;
 		try {
-			// 模拟数据，实际应该从后端获取
-			const now = new Date();
-			historyEntries = [
-				{
-					id: '1',
-					fileId: 'file1',
-					fileName: 'document.md',
-					operation: 'edit',
-					timestamp: new Date(now.getTime() - 30 * 60 * 1000).toLocaleString(),
-					user: 'Yiran Zhao'
-				},
-				{
-					id: '2',
-					fileId: 'file2',
-					fileName: 'introduction.tex',
-					operation: 'add',
-					timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toLocaleString(),
-					user: 'Jiawen Chen'
-				},
-				{
-					id: '3',
-					fileId: 'file3',
-					fileName: 'unused.md',
-					operation: 'delete',
-					timestamp: new Date(now.getTime() - 5 * 60 * 60 * 1000).toLocaleString(),
-					user: 'Ziqi Yang'
-				},
-				{
-					id: '4',
-					fileId: 'file1',
-					fileName: 'document.md',
-					operation: 'edit',
-					timestamp: new Date(now.getTime() - 24 * 60 * 60 * 1000).toLocaleString(),
-					user: 'Liyan Tao'
-				}
-			];
-		} catch (error) {
-			console.error('Failed to load project history:', error);
+			const messages = await getProjectHistory($project.id);
+      setHistoryMessages(messages);
+		} catch (err) {
+			error = err instanceof Error ? err.message : String(err);
 		} finally {
 			loading = false;
-		}
-	}
-
-	function getOperationText(operation: OperationType) {
-		switch (operation) {
-			case 'add':
-				return 'Add';
-			case 'edit':
-				return 'Edit';
-			case 'delete':
-				return 'Delete';
-			default:
-				return 'Operation';
 		}
 	}
 </script>
@@ -93,30 +33,24 @@
 			<div class="flex flex-1 items-center justify-center text-muted-foreground">
 				Loading history...
 			</div>
-		{:else if historyEntries.length === 0}
+		{:else if error}
+			<div class="flex flex-1 flex-col items-center justify-center gap-2 text-muted-foreground">
+				<p class="text-red-500">{error}</p>
+				<button 
+					class="rounded-md bg-amber-100 px-3 py-1 text-sm text-amber-700 hover:bg-amber-200" 
+					onclick={loadProjectHistory}
+				>
+					Retry
+				</button>
+			</div>
+		{:else if $historyMessages.length === 0}
 			<div class="flex flex-1 items-center justify-center text-muted-foreground">
 				No history records
 			</div>
 		{:else}
 			<div class="flex-1 overflow-y-auto">
-				{#each historyEntries as entry}
-					<div class="mb-2 rounded-md border p-3 hover:bg-muted">
-						<div class="mb-1 flex items-center gap-2">
-							{#if entry.operation === 'add'}
-								<FilePlus size={20} class="text-green-500" />
-							{:else if entry.operation === 'edit'}
-								<FileEdit size={20} class="text-blue-500" />
-							{:else if entry.operation === 'delete'}
-								<FileX size={20} class="text-red-500" />
-							{/if}
-							<span class="text-sm font-medium"
-								>{entry.user} {getOperationText(entry.operation)} {entry.fileName}</span
-							>
-						</div>
-						<div class="mb-2 ml-6 text-xs text-muted-foreground">
-							{entry.timestamp}
-						</div>
-					</div>
+				{#each $historyMessages as message}
+					<HistoryMessage historyMessage={message} />
 				{/each}
 			</div>
 		{/if}

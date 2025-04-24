@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import type { User } from '$lib/types/auth';
 import  { type Project, ProjectType } from '$lib/types/dashboard';
-import type { ChatMessage, File, TreeNode } from '$lib/types/editor';
+import type { ChatMessage, File, TreeNode, HistoryMessage } from '$lib/types/editor';
 import { getFiles, getFileURL } from '$lib/api/editor';
 import { buildFileTree } from '$lib/utils';
 import { getFileType } from '$lib/utils';
@@ -202,4 +202,24 @@ export function addChatMessages(newMessages: ChatMessage[]) { // 添加多条聊
             new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
     });
+}
+
+// ==============================================================================
+
+// 历史记录状态
+export const historyMessages = writable<HistoryMessage[]>([]);
+export function setHistoryMessages(messages: HistoryMessage[]) {
+    // 按时间戳排序（从旧到新）
+    messages.sort((a, b) => 
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    );
+    historyMessages.set(messages);
+}
+export function addHistoryMessage(message: HistoryMessage) {
+    historyMessages.update(messages => {
+        const updatedMsgs = [...messages, message].sort((a, b) =>
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
+        return updatedMsgs;
+    }); 
 }

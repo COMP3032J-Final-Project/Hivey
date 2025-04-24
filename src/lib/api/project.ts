@@ -1,6 +1,6 @@
 import axiosClient from './axios';
 import type { APIResponse } from '$lib/types/public';
-import type { ChatMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm, AddProjectMemberForm, ShareProject2TemplateForm } from '$lib/types/editor';
+import type { ChatMessage, HistoryMessage, GetHistoryChatMessagesForm, UpdateProjectMemberPermissionForm, RemoveProjectMemberForm, AddProjectMemberForm, ShareProject2TemplateForm } from '$lib/types/editor';
 import { type User, UserPermissionEnum } from '$lib/types/auth';
 import { mpp } from '$lib/trans';
 
@@ -18,6 +18,14 @@ export async function getProjectInitializationStatus(projectId: string) {
 //     return resp.data.data;
 // }
 
+// 获取项目的历史记录
+export const getProjectHistory = async (projectId: string): Promise<HistoryMessage[]> => {
+    const response = await axiosClient.get<APIResponse<HistoryMessage[]>>(`/project/${projectId}/history`);
+    if (response.data.code !== 200) {
+        throw new Error(response.data.msg);
+    }
+    return response.data.data || [];
+}
 
 // 获取项目聊天室的聊天记录
 export const getHistoryChatMessages = async (form: GetHistoryChatMessagesForm): Promise<{ code: number, messages: ChatMessage[] }> => {

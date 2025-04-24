@@ -73,16 +73,16 @@ export const logoutUser = async (): Promise<void> => {
 // 获取用户头像文件的下载URL
 export const getMyAvatar = async (): Promise<string> => { 
     if (isSessionExpired()) {
+        clearUserSession()
         return '';
     }
     try {
         const response = await axiosClient.get<APIResponse<string>>(`/user/avatar/`);
-        if (response.data.data == null || response.data.data === '' || response.data.data === undefined) {
+        if (response.data.code !== 200 || response.data.data == null) {
             return '';
         }
         return response.data.data;
     } catch (error) {
-        console.error("getMyAvatar error", error);
         return '';
     }
 };
@@ -97,10 +97,9 @@ export const uploadUserAvatar = async (file: File, is_default: boolean = false):
         throw new Error(response.data.msg);
     }
     const uploadURL = response.data.data;
-    console.log("uploadURL", uploadURL);
     await fetch(uploadURL, {method: 'PUT', body: file});
     const downloadURL = await getMyAvatar();
-    if (!downloadURL) {
+    if (!downloadURL || downloadURL === '') {
         throw new Error("Failed to upload avatar!");
     }
     console.log("downloadURL", downloadURL);
