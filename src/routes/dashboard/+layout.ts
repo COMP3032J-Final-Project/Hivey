@@ -28,12 +28,12 @@ export const load: LayoutLoad = async ({ url }): Promise<DashboardLayoutData> =>
     try {
         // 获取用户详细信息
         let user: User = await getUserInfo();
-        if (!user.avatar) {
+        if (!user.avatar_url) {
             const avatar = await getMyAvatar();
-            user.avatar = avatar;
+            user.avatar_url = avatar;
         }
-        if (!user.avatar) {
-            user.avatar = `https://ui-avatars.com/api/?name=${user.username.slice(0, 2)}`;
+        if (!user.avatar_url) {
+            user.avatar_url = `https://ui-avatars.com/api/?name=${user.username.slice(0, 2)}`;
         }
         setUser(user); // 设置全局用户信息状态
         return { user };

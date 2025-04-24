@@ -9,9 +9,9 @@
 <div class="flex items-start gap-3 rounded-lg px-1 transition-colors hover:bg-secondary/20">
 	<!-- 用户头像 -->
 	<div class="flex-shrink-0">
-		{#if chatMessage.user.avatar}
+		{#if chatMessage.user.avatar_url}
 			<img
-				src={chatMessage.user.avatar}
+				src={chatMessage.user.avatar_url}
 				alt={chatMessage.user.username}
 				class="h-8 w-8 rounded-full object-cover"
 			/>

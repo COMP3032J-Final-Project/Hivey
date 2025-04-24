@@ -53,7 +53,6 @@ export const load: LayoutLoad = async ({ url, params }) => {
     
     // console.debug("project:", project);
     setProject(project);
-    addOnlineMember(currentUser);
     updateCurrentFile({project_id: project_id}); // 设置currentFile的project_id
     
     return {

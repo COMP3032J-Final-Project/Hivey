@@ -11,13 +11,13 @@ export const load: PageLoad = async ({ params, parent }) => {
     const { currentUser } = layoutData;
 
     const membersData: User[] = await getProjectMembers(params.id);
-    membersData.forEach(member => { // 检查每个members的头像, 如果头像为空, 则使用用户名简写作为头像
-        if (!member.avatar) {
+    membersData.forEach(member => { 
+        if (!member.avatar_url || member.avatar_url === '') {
             const avatar = member.username.slice(0, 2).toUpperCase();
-            member.avatar = `https://ui-avatars.com/api/?name=${avatar}`;
+            member.avatar_url = `https://ui-avatars.com/api/?name=${avatar}`;
         }
     });
-    setMembers(membersData); // 设置全局状态
+    setMembers(membersData);
 
     return {
         currentUser: currentUser,

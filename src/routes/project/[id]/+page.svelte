@@ -280,7 +280,7 @@
 				<AvatarGroup.Root>
 					{#each $onlineMembers.slice(0, 5) as member (member.username)}
 						<AvatarGroup.Member class="size-8">
-							<AvatarGroup.MemberImage src={member.avatar} alt={member.username} />
+							<AvatarGroup.MemberImage src={member.avatar_url} alt={member.username} />
 							<AvatarGroup.MemberFallback>
 								{member.username[0]}
 							</AvatarGroup.MemberFallback>

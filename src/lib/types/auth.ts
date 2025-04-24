@@ -35,7 +35,7 @@ export const User = v.object({
     user_id: v.optional(v.string()),
     username: v.string(),
     email: v.pipe(v.string(), v.email()),
-    avatar: v.optional(v.string()),
+    avatar_url: v.optional(v.string()),
     permission: v.optional(v.enum(UserPermissionEnum)),
     is_active: v.optional(v.boolean()),
     is_superuser: v.optional(v.boolean()),

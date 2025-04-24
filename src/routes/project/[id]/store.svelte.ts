@@ -119,16 +119,16 @@ export const onlineMembers = writable<User[]>([]);
 export function setOnlineMembers(newMembers: User[]) {
     // 如果成员没有头像，则将用户名的前两个字母作为头像
     newMembers.forEach(member => {
-        if (!member.avatar) {
-            member.avatar = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
+        if (!member.avatar_url || member.avatar_url === '') {
+            member.avatar_url = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
         }
     });
     onlineMembers.set(newMembers);
 }
 export function addOnlineMember(member: User) {
     // 如果成员没有头像，则将用户名的前两个字母作为头像
-    if (!member.avatar) {
-        member.avatar = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
+    if (!member.avatar_url || member.avatar_url === '') {
+        member.avatar_url = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
     }
     onlineMembers.update(currentMembers => {
         // 检查是否已存在相同用户名的成员
@@ -156,8 +156,8 @@ export function addMember(member: User) { // 添加新成员
         const exists = currentMembers.some(m => m.username === member.username);
         if (!exists) { // 如果成员不存在则添加成员
             // 如果成员没有头像，则将用户名的前两个字母作为头像
-            if (!member.avatar) {
-                member.avatar = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
+            if (!member.avatar_url) {
+                member.avatar_url = "https://ui-avatars.com/api/?name=" + member.username.slice(0, 2);
             }
             return [...currentMembers, member];
         }

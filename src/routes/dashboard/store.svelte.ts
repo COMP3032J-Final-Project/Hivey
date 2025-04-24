@@ -7,7 +7,7 @@ import type { Project } from '$lib/types/dashboard';
 const user = writable<User>({
     username: '',
     email: '',
-    avatar: '',
+    avatar_url: '',
 });
 export function setUser(userInfo: User) {
     user.set(userInfo);

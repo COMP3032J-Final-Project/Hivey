@@ -47,8 +47,8 @@
 						{...props}
 					>
 						<Avatar.Root class="h-8 w-8 rounded-lg">
-							{#if user?.avatar}
-								<Avatar.Image src={user.avatar} alt={user.username || ''} />
+							{#if user?.avatar_url}
+								<Avatar.Image src={user.avatar_url} alt={user.username || ''} />
 							{/if}
 							<Avatar.Fallback class="rounded-lg">
 								{user?.username
@@ -77,8 +77,8 @@
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 						<Avatar.Root class="h-8 w-8 rounded-lg">
-							{#if user?.avatar}
-								<Avatar.Image src={user.avatar} alt={user.username || ''} />
+							{#if user?.avatar_url}
+								<Avatar.Image src={user.avatar_url} alt={user.username || ''} />
 							{/if}
 							<Avatar.Fallback class="rounded-lg">
 								{user?.username

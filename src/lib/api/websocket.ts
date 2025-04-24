@@ -248,7 +248,6 @@ export class WebSocketClient {
                     console.warn("Member joined handler not set");
                     return;
                 }
-                console.log('Member joined:', response.payload);
                 const onlineMembers: User[] = response.payload;
                 this.memberJoinedHandler(onlineMembers);
                 break;

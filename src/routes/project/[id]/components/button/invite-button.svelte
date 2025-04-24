@@ -73,9 +73,9 @@
       // 更新全局成员状态
       const membersData: User[] = await getProjectMembers(projectId);
       membersData.forEach(member => {
-          if (!member.avatar) {
+          if (!member.avatar_url) {
               const avatar = member.username.slice(0, 2).toUpperCase();
-              member.avatar = `https://ui-avatars.com/api/?name=${avatar}`;
+              member.avatar_url = `https://ui-avatars.com/api/?name=${avatar}`;
           }
       });
       setMembers(membersData);

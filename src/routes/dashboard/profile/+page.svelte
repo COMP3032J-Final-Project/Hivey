@@ -77,7 +77,7 @@
 			    isSubmitting = true;
 			    const avatarUrl = await uploadUserAvatar(file);
 			    updateUser({
-              avatar: avatarUrl
+              avatar_url: avatarUrl
           });
 		  } catch (error) {
 			    failure(error instanceof Error ? error.message : me.unknown());
@@ -87,7 +87,7 @@
 			    reader.onload = (e) => {
 				      if (e.target?.result) {
                 updateUser({
-                  avatar: e.target.result as string
+                  avatar_url: e.target.result as string
                 });
 				      }
 			    };
@@ -113,13 +113,13 @@
 			    // 上传到服务器
 			    const updatedAvatarUrl = await uploadUserAvatar(file);
 			    updateUser({
-              avatar: updatedAvatarUrl
+              avatar_url: updatedAvatarUrl
             });
 		  } catch (error) {
 			    failure(error instanceof Error ? error.message : me.unknown());
 			    const seed = Math.random().toString(36).substring(2, 8);
 			    updateUser({
-              avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
+              avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
             });
 		  } finally {
 			    isSubmitting = false;
@@ -159,9 +159,9 @@
 							class="relative mb-3 rounded-full border-2 border-primary/10 p-1 shadow-md"
 						>
 							<Avatar.Root class="h-24 w-24 rounded-full">
-								{#if $user.avatar}
+								{#if $user.avatar_url}
 									<Avatar.Image
-										src={$user.avatar}
+										src={$user.avatar_url}
 										alt={$user.username}
 										class="rounded-full"
 									/>
