@@ -22,6 +22,8 @@
   let container = $state<HTMLDivElement | null>(null);
   let viewer = $state<HTMLDivElement | null>(null);
   let pdfUrl = '/GroupProject.pdf';
+  let pdfViewer = $state<PDFViewer | null>(null);
+  let userScaled = $state(false);
     
   // Initialize MarkdownIt instance
   const markdownRender = new MarkdownIt({
@@ -31,10 +33,29 @@
   });
   let renenderedHTML = $state('');
 
-  const renderPDF = async (url: string) => {
-    console.log('🚀 renderPDF() called with URL:', url);
+  const zoomIn = () => {
+    console.log('zoomIn() called');
+    if (pdfViewer) {
+      userScaled = true;
+      const newScale = Math.min(pdfViewer.currentScale * 1.2, 3.0);
+      pdfViewer.currentScale = newScale;
+    }
+  };
+
+  const zoomOut = () => {
+    console.log('zoomOut() called');
+    if (pdfViewer) {
+      userScaled = true;
+      const newScale = Math.max(pdfViewer.currentScale / 1.2, 0.5);
+      pdfViewer.currentScale = newScale;
+    }
+  };
+
+  const renderPDF = async () => {
+    console.log('renderPDF() called with rawContent:', $currentFile.rawData);
     try {
-      const loadingTask = pdfjsLib.getDocument(url);
+      // const loadingTask = pdfjsLib.getDocument(new Uint8Array($currentFile.rawData));
+      const loadingTask = pdfjsLib.getDocument(pdfUrl);
       const pdfDoc = await loadingTask.promise;
       const eventBus = new EventBus();
       const linkService = new PDFLinkService({ eventBus });
@@ -48,7 +69,7 @@
         return;
       }
 
-      const pdfViewer = new PDFViewer({
+      pdfViewer = new PDFViewer({
         container: containerEl,
         viewer: viewerEl,
         eventBus,
@@ -65,15 +86,14 @@
 
         // 查找已渲染的第一页
         const firstPageEl = viewerEl.querySelector('.page');
-        if (firstPageEl) {
+        if (firstPageEl && pdfViewer) {
           const renderedPageWidth = firstPageEl.getBoundingClientRect().width;
           const scale = (containerEl.clientWidth / renderedPageWidth) * 0.95;
 
           pdfViewer.currentScale = scale;
-
-          console.log('Applied scale based on rendered page:', scale);
-          console.log('container:', containerEl.clientWidth, containerEl.scrollWidth);
-          console.log('viewer:', viewerEl.clientWidth, viewerEl.scrollWidth);
+          // console.log('Applied scale based on rendered page:', scale);
+          // console.log('container:', containerEl.clientWidth, containerEl.scrollWidth);
+          // console.log('viewer:', viewerEl.clientWidth, viewerEl.scrollWidth);
         }
       });
     } catch (error) {
@@ -84,15 +104,11 @@
   $effect(() => {
     const file = $currentFile;
     if (!file) return;
-
-    console.log('File changed:', file.filename);
-
     if (file.filetype === 'md') {
       renenderedHTML = markdownRender.render(docContent || '');
-      console.log('Markdown rendered', docContent);
     } 
     else if (file.filetype === 'pdf') {
-      renderPDF(pdfUrl);
+      renderPDF();
     }
   });
 </script>
@@ -112,9 +128,12 @@
     width: 100% !important;
   }
 </style>
-
+{#if $currentFile.filetype === "pdf"}
+  <button onclick={zoomIn} class="zoom-button" title="放大">+</button>
+  <button onclick={zoomOut} class="zoom-button" title="缩小">-</button>
+{/if}
 <div class={cn("relative flex flex-col size-full shadow-inner group", className)}>
-  <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block">
+  <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block z-index:100">
     <ExportButton />
   </div>
   {#if $currentFile.filetype === "md"}
