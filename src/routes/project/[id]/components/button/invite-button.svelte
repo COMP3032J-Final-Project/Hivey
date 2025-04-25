@@ -23,6 +23,12 @@
   let errorMessage = $state('');
   let permissionOptions = $state<Array<{value: UserPermissionEnum, label: string}>>([]);
 
+  // 检查当前用户是否有权限邀请成员
+  let canInvite = $derived(
+    currentUser.permission === UserPermissionEnum.Owner || 
+    currentUser.permission === UserPermissionEnum.Admin
+  );
+
   $effect(() => {
     if (wsClient) {
       if (!wsClient.memberInvitedHandler) {
@@ -90,61 +96,63 @@
   }
 </script>
 
-<div>
-  <AlertDialog.Root bind:open={isOpen}>
-    <AlertDialog.Trigger>
-      <Tooltip.Root>
-        <Tooltip.Trigger>
-          <Button class="rounded-full" variant="ghost" size="icon">
-            <UserRoundPlus />
-          </Button>
-        </Tooltip.Trigger>
-        <Tooltip.Content>
-          Invite Member
-        </Tooltip.Content>
-      </Tooltip.Root>
-    </AlertDialog.Trigger>
-    <AlertDialog.Content>
-      <AlertDialog.Header>
-        <AlertDialog.Title>{mpp.invite_member()}</AlertDialog.Title>
-        <AlertDialog.Description>
-          {mpp.invite_member_description()}
-        </AlertDialog.Description>
-      </AlertDialog.Header>
-      <div class="space-y-4">
-        <Input 
-          type="text" 
-          placeholder={mpp.invite_member_placeholder()} 
-          bind:value={inviteeName}
-          onkeydown={(e) => {
-            if (e.key === 'Enter') handleInvite();
-          }}
-        />
-        
-        <div class="pt-2">
-          <label for="permission-select" class="text-sm font-medium mb-2 block">
-            {mpp.member_permission()}
-          </label>
-          <select 
-            id="permission-select"
-            class="w-full border rounded-md h-10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-background"
-            value={inviteePermission}
-            onchange={handleSelectChange}
-          >
-            {#each permissionOptions as option}
-              <option value={option.value}>{option.label}</option>
-            {/each}
-          </select>
+{#if canInvite}
+  <div>
+    <AlertDialog.Root bind:open={isOpen}>
+      <AlertDialog.Trigger>
+        <Tooltip.Root>
+          <Tooltip.Trigger>
+            <Button class="rounded-full" variant="ghost" size="icon">
+              <UserRoundPlus />
+            </Button>
+          </Tooltip.Trigger>
+          <Tooltip.Content>
+            Invite Member
+          </Tooltip.Content>
+        </Tooltip.Root>
+      </AlertDialog.Trigger>
+      <AlertDialog.Content>
+        <AlertDialog.Header>
+          <AlertDialog.Title>{mpp.invite_member()}</AlertDialog.Title>
+          <AlertDialog.Description>
+            {mpp.invite_member_description()}
+          </AlertDialog.Description>
+        </AlertDialog.Header>
+        <div class="space-y-4">
+          <Input 
+            type="text" 
+            placeholder={mpp.invite_member_placeholder()} 
+            bind:value={inviteeName}
+            onkeydown={(e) => {
+              if (e.key === 'Enter') handleInvite();
+            }}
+          />
+          
+          <div class="pt-2">
+            <label for="permission-select" class="text-sm font-medium mb-2 block">
+              {mpp.member_permission()}
+            </label>
+            <select 
+              id="permission-select"
+              class="w-full border rounded-md h-10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-background"
+              value={inviteePermission}
+              onchange={handleSelectChange}
+            >
+              {#each permissionOptions as option}
+                <option value={option.value}>{option.label}</option>
+              {/each}
+            </select>
+          </div>
+          
+          {#if errorMessage}
+            <div class="text-destructive text-sm">{errorMessage}</div>
+          {/if}
         </div>
-        
-        {#if errorMessage}
-          <div class="text-destructive text-sm">{errorMessage}</div>
-        {/if}
-      </div>
-      <AlertDialog.Footer>
-        <AlertDialog.Cancel>{mpd.cancel()}</AlertDialog.Cancel>
-        <AlertDialog.Action onclick={handleInvite}>{mpp.invite()}</AlertDialog.Action>
-      </AlertDialog.Footer>
-    </AlertDialog.Content>
-  </AlertDialog.Root>
-</div>
+        <AlertDialog.Footer>
+          <AlertDialog.Cancel>{mpd.cancel()}</AlertDialog.Cancel>
+          <AlertDialog.Action onclick={handleInvite}>{mpp.invite()}</AlertDialog.Action>
+        </AlertDialog.Footer>
+      </AlertDialog.Content>
+    </AlertDialog.Root>
+  </div>
+{/if}
