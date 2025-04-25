@@ -22,13 +22,11 @@
 		const filename = filenameInput.value.trim();
 		console.log('Edit file:', file.id, ' to:', filename);
 
-		let formData: updateFileFrom = {
+		const formData: updateFileFrom = {
 			filename: filename,
 			filepath: file.filepath
 		};
 		updateFile(file.project_id, file.id, formData);
-		await new Promise((resolve) => setTimeout(resolve, 200));
-		loadFiles(file.project_id, $tempFolders);
 		renameDialogRef?.click();
 	};
 </script>
