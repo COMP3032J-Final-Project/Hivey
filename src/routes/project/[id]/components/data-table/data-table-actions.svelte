@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Ellipsis from '@lucide/svelte/icons/ellipsis';
+	import { MoreHorizontal, Trash2, Pencil } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -166,7 +166,7 @@
 		{#snippet child({ props })}
 			<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
 				<span class="sr-only">Open menu</span>
-				<Ellipsis />
+				<MoreHorizontal />
 			</Button>
 		{/snippet}
 	</DropdownMenu.Trigger>
@@ -174,11 +174,15 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
 			{#if canEditPermission()}
-				<DropdownMenu.Item onclick={handleEditPermission}>Edit Permission</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={handleEditPermission} class="flex items-center justify-between">
+					<span>Edit Permission</span>
+					<Pencil class="size-4" />
+				</DropdownMenu.Item>
 			{/if}
-			<DropdownMenu.Item onclick={() => (dialogOpen = true)} class="text-destructive"
-				>Delete Member</DropdownMenu.Item
-			>
+			<DropdownMenu.Item onclick={() => (dialogOpen = true)} class="flex items-center justify-between">
+				<span>Delete Member</span>
+				<Trash2 class="size-4" />
+			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
@@ -227,8 +231,7 @@
 		</div>
 		<Dialog.Footer>
 			<Button variant="outline" onclick={() => (permissionDialogOpen = false)} disabled={isUpdating}
-				>Cancel</Button
-			>
+				>Cancel</Button>
 			<Button variant="default" onclick={handlePermissionUpdate} disabled={isUpdating}>
 				{isUpdating ? 'Updating...' : 'Save'}
 			</Button>
