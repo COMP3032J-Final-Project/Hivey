@@ -26,10 +26,11 @@
 
   let container = $state<HTMLDivElement | null>(null);
   let viewer = $state<HTMLDivElement | null>(null);
-  let pdfUrl: string | null  = null;
   let pdfViewer = $state<PDFViewer | null>(null);
   let userScaled = $state(false);
-    
+
+  let pdfSource: Parameters<typeof pdfjsLib.getDocument>[0] | null  = null;
+  
   // Initialize MarkdownIt instance
   const markdownRender = new MarkdownIt({
       html: true,
@@ -64,9 +65,10 @@
 
   const renderPDF = async () => {
       console.log('renderPDF() is called');
-      if (pdfUrl == null) return;
+      if (pdfSource == null) return;
       try {
-          const loadingTask = pdfjsLib.getDocument(pdfUrl);
+          // const loadingTask = pdfjsLib.getDocument(new Uint8Array($currentFile.rawData));
+          const loadingTask = pdfjsLib.getDocument(pdfSource);
           const pdfDoc = await loadingTask.promise;
           const eventBus = new EventBus();
           const linkService = new PDFLinkService({ eventBus });
@@ -127,7 +129,14 @@
   $effect(() => {
       const filetype = $currentFile.filetype;
       if (!filetype) return;
-      pdfUrl = $compiledPdfPreviewUrl;
+      const fileData = $currentFile.rawData;
+
+      if (filetype == "pdf") {
+          if (fileData == null) return;
+          pdfSource = new Uint8Array(fileData);
+      } else  {
+          pdfSource = $compiledPdfPreviewUrl;
+      }
       
       if (filetype !== 'markdown') renderPDF();
       

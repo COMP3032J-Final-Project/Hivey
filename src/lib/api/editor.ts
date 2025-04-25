@@ -21,6 +21,7 @@ export async function getFileURL(
 ): Promise<string> {
     let url = `/project/${projectId}/files/${fileId}`;
     if (crdt_protected) url += "?crdt_protected=true";
+    console.log(url);
     
     const response = await axiosClient.get<APIResponse<{url: string}>>(url);
     return response.data.data!.url;

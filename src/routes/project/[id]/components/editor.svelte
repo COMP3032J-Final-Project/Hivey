@@ -11,6 +11,7 @@
   import { keymap } from '@codemirror/view';
   import { debounce } from 'lodash-es';
   import Notification from './notification.svelte';
+  import { getFileCategory  } from '$lib/utils';
 
   // code mirror
   import { EditorView, basicSetup } from 'codemirror';
@@ -45,6 +46,12 @@
   let loroDoc: LoroDoc | undefined;
 	let loroAwareness: Awareness | undefined;
 	let undoManager: UndoManager | undefined;
+  
+  let noFileEditing = $derived(
+      $currentFile.id == null ||
+      $currentFile.filetype == null || 
+      getFileCategory($currentFile.filetype) !== "PlainText"
+  );
 
 	let isLoadingFileContent = $state(false);
   let editorContainerElem: HTMLElement | undefined = $state();
@@ -315,7 +322,10 @@
       const loroUserName = username;
       const pid = $project.id;
 
-      if (!fileId) return;
+      if (!fileId || !fileType) return;
+
+      const fileCategory = getFileCategory(fileType);
+      if (fileCategory !== "PlainText") return;
       
       if (!isEditorSettled) {
           setupEditor();
@@ -449,13 +459,9 @@
 </script>
 
 
-{#if !$currentFile.id}
+{#if noFileEditing}
 	<div class="flex items-center justify-center size-full text-muted-foreground">
 		Select a file to start editing.
-	</div>
-{:else if $currentFile.filetype === 'pdf'}
-  <div class="flex items-center justify-center size-full text-muted-foreground">
-		PDF preview
 	</div>
 {:else}
 	{#key $currentFile.id}

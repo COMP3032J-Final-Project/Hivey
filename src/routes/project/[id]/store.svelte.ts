@@ -3,8 +3,7 @@ import type { User } from '$lib/types/auth';
 import  { type Project, ProjectType } from '$lib/types/dashboard';
 import type { ChatMessage, File, TreeNode, HistoryMessage } from '$lib/types/editor';
 import { getFiles, getFileURL } from '$lib/api/editor';
-import { buildFileTree } from '$lib/utils';
-import { getFileType } from '$lib/utils';
+import { buildFileTree, getFileCategory, getFileType } from '$lib/utils';
 
 // Project
 export const project = writable<Project>({
@@ -100,7 +99,11 @@ export async function switchCurrentFile(
             filetype: filetype,
             rawData: undefined
         });
-        const fileUrl = await getFileURL(projectId, fileId, true);
+        const fileCategory = getFileCategory(filetype);
+        const fileUrl = await getFileURL(
+            projectId, fileId,
+            fileCategory === "PlainText" ? true : false
+        );
         const resp = await fetch(fileUrl);
         if (!resp.ok) throw new Error(`Response status: ${resp.status}`)
         const rawContent = await resp.bytes();
