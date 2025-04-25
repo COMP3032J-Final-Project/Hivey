@@ -354,7 +354,7 @@ export class WebSocketClient {
     // 处理错误相关事件
     private handleErrorEvent(response: WSResponse): void {
         const errorMessage = response.payload.message;
-        console.error("Project WebSocket error:", errorMessage);
+        console.error("Project WebSocket error:", errorMessage, "response:", response);
     }
 
     // 处理连接关闭事件

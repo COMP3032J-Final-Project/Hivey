@@ -98,7 +98,6 @@ export const updateProject = async (project: { id: string; name: string }): Prom
             type: ProjectType.Project
         };
     }
-    
     throw new Error(response.data.msg || 'Failed to update project');
 };
 

@@ -25,6 +25,14 @@
 	let error = $state<string | null>(null);
 	let isHovered = $state(false);
 
+	// 添加effect，当initialText改变时更新labelText
+	$effect(() => {
+		if (!isEditing) {  // 只在非编辑状态下同步
+			labelText = initialText;
+			text = initialText;
+		}
+	});
+
 	async function handleUpdate() {
 		try {
 			isLoading = true;

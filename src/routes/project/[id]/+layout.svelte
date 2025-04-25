@@ -95,7 +95,7 @@
           wsClient.projectUpdateHandler = async (response: WSResponse) => {
             const timestamp: Date = new Date();
             if (response.payload.name) {
-                updateProject({name: response.payload.name});
+              updateProject({name: response.payload.name});
             }
             const user_id = response.client_id
             let user = $members.find((member) => member.user_id === user_id);
