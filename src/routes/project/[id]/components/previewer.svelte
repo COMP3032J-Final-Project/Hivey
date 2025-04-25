@@ -9,8 +9,7 @@
   import 'pdfjs-dist/web/pdf_viewer.css';
   import { EventBus, PDFViewer, PDFLinkService } from 'pdfjs-dist/web/pdf_viewer.mjs';
   import { ZoomIn, ZoomOut } from 'lucide-svelte';
-  import { onDestroy, onMount, untrack } from 'svelte';
-  import { sleep } from '$lib/utils';
+  import { FileType } from '$lib/types/editor';
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
   let {
@@ -158,7 +157,7 @@
   }
 </style>
 
-{#if $currentFile.filetype === "pdf"}
+{#if $currentFile.filetype === FileType.PDF || $currentFile.filetype === FileType.LATEX || $currentFile.filetype === FileType.TYPST}
   <div class="flex justify-normal">
     <Tooltip.Root>
       <Tooltip.Trigger>
