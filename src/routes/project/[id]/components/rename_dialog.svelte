@@ -27,6 +27,8 @@
 			filepath: file.filepath
 		};
 		updateFile(file.project_id, file.id, formData);
+    // await updateFile(file.project_id, file.id, formData);
+		// loadFiles(file.project_id, $tempFolders);
 		renameDialogRef?.click();
 	};
 </script>

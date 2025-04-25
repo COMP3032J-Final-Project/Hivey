@@ -68,7 +68,11 @@ export const deleteFile = async (projectId: string, fileId: string) => {
 }
 
 export const updateFile = async (projectId: string, fileId: string, fileForm: updateFileFrom) => {
-    const response = await axiosClient.put<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}/mv`, fileForm);
+    //TODO 由于前端没有实现文件移动, 所以这里直接按照文件重名来处理
+    const { filename, filepath } = fileForm;
+    const response = await axiosClient.put<APIResponse<EditorFile[]>>(`/project/${projectId}/files/${fileId}/mv`, {
+        filename
+    });
     if (!response.data.data) {
         throw new Error(response.data.msg);
     }

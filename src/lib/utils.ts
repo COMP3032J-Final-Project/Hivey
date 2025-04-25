@@ -139,7 +139,7 @@ export function buildFileTree(files: EditorFile[], tempFolders: TreeNode[]): Tre
 
       if (!found) {
         found = {
-          id: `folder-${pathParts.slice(0, i + 1).join('/')}`,
+          id: `folder-${pathParts.slice(0, i + 1).join('/')}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
           project_id: node.project_id,
           filename: part,
           filepath: `/${pathParts.slice(0, i + 1).join('/')}`,
