@@ -20,20 +20,20 @@
 		try {
 			const messages: HistoryMessageType[] = await getProjectHistory($project.id);
       // 将messages中Action为MOVED或RENAMED类型的message进行过滤，如果修改前后的filepath或filename相同，则不显示
-      const filteredMessages = messages.filter(message => {
-        // 对于MOVED操作，如果filepath相同则过滤掉
-        if (message.action === HistoryAction.MOVED) {
-          return message.state_before.filepath !== message.state_after.filepath;
-        }
-        // 对于RENAMED操作，如果filename相同则过滤掉
-        if (message.action === HistoryAction.RENAMED) {
-          return message.state_before.filename !== message.state_after.filename;
-        }
-        // 其他类型的消息都保留
-        return true;
-      });
+      // const filteredMessages = messages.filter(message => {
+      //   // 对于MOVED操作，如果filepath相同则过滤掉
+      //   if (message.action === HistoryAction.MOVED) {
+      //     return message.state_before.filepath !== message.state_after.filepath;
+      //   }
+      //   // 对于RENAMED操作，如果filename相同则过滤掉
+      //   if (message.action === HistoryAction.RENAMED) {
+      //     return message.state_before.filename !== message.state_after.filename;
+      //   }
+      //   // 其他类型的消息都保留
+      //   return true;
+      // });
       
-      setHistoryMessages(filteredMessages);
+      setHistoryMessages(messages);
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
