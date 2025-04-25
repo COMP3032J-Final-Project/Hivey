@@ -18,7 +18,7 @@
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { localizeHref } from '$lib/paraglide/runtime';
   import { buildFileTree, sleep } from '$lib/utils';
-  
+  import { getUserInfoById } from '$lib/api/auth';
   import { getFiles } from '$lib/api/editor';
   import { WebSocketClient } from '$lib/api/websocket';
   import { WSResponse } from '$lib/types/websocket';
@@ -26,7 +26,7 @@
   import { initializeProject, getProjectInitializationStatus } from '$lib/api/project';
   import {
       files, tempFolders, project, updateProject, setOnlineMembers, removeOnlineMember,
-      setFilesStruct, setFiles, compiledPdfPreviewUrl, addHistoryMessage
+      setFilesStruct, setFiles, compiledPdfPreviewUrl, addHistoryMessage, members
   } from './store.svelte';
   
   
@@ -92,125 +92,156 @@
               goto(localizeHref('/dashboard/repository/projects/all')); // 重定向到项目列表页面
           }
 
-          wsClient.projectUpdateHandler = (response: WSResponse) => {
-              if (response.payload.name) {
-                  updateProject({name: response.payload.name});
-              }
-              const historyMessage: HistoryMessage = {
-                action: HistoryAction.UPDATE_NAME,
-                project_id: $project.id,
-                user_id: response.client_id,
-                file_id: null,
-                state_before: null,
-                state_after: { name: response.payload.name },
-                timestamp: new Date(),
-              }
-              addHistoryMessage(historyMessage);
+          wsClient.projectUpdateHandler = async (response: WSResponse) => {
+            const timestamp: Date = new Date();
+            if (response.payload.name) {
+                updateProject({name: response.payload.name});
+            }
+            const user_id = response.client_id
+            let user = $members.find((member) => member.user_id === user_id);
+            if (!user){
+              user = await getUserInfoById(user_id);
+            }
+            const historyMessage: HistoryMessage = {
+              action: HistoryAction.UPDATE_NAME,
+              project_id: $project.id,
+              user: user,
+              file_id: null,
+              state_before: null,
+              state_after: { name: response.payload.name },
+              timestamp: timestamp,
+            }
+            addHistoryMessage(historyMessage);
           }
 
-          wsClient.fileAddedHandler = (response: WSResponse) => {
-              // 更新当前文件列表
-              files.update((files) => [ ...files, response.payload ]); 
-              setFilesStruct(buildFileTree($files, $tempFolders));
+          wsClient.fileAddedHandler = async (response: WSResponse) => {
+            const timestamp: Date = new Date();
+            // 更新当前文件列表
+            files.update((files) => [ ...files, response.payload ]); 
+            setFilesStruct(buildFileTree($files, $tempFolders));
 
-              // 添加历史记录
-              const historyMessage: HistoryMessage = {
-                action: HistoryAction.ADDED,
-                project_id: $project.id,
-                user_id: response.client_id,
-                file_id: response.payload.id,
-                state_before: null,
-                state_after: {
-                  filename: response.payload.filename,
-                  filepath: response.payload.filepath,
-                },
-                timestamp: new Date(),
-              }
-              addHistoryMessage(historyMessage);
+            // 添加历史记录
+            const user_id = response.client_id
+            let user = $members.find((member) => member.user_id === user_id);
+            if (!user){
+              user = await getUserInfoById(user_id);
+            }
+            const historyMessage: HistoryMessage = {
+              action: HistoryAction.ADDED,
+              project_id: $project.id,
+              user: user,
+              file_id: response.payload.id,
+              state_before: null,
+              state_after: {
+                filename: response.payload.filename,
+                filepath: response.payload.filepath,
+              },
+              timestamp: timestamp,
+            }
+            addHistoryMessage(historyMessage);
           }
 
-          wsClient.fileDeletedHandler = (response: WSResponse) => {
-              const fileIdList: string[] = response.payload;  
-              files.update((files) => {
-                files.forEach((file) => {
-                  if (fileIdList.includes(file.id)) {
+          wsClient.fileDeletedHandler = async (response: WSResponse) => {
+            const user_id = response.client_id
+            let user = $members.find((member) => member.user_id === user_id);
+            if (!user){
+              user = await getUserInfoById(user_id);
+            }
+            const fileIdList: string[] = response.payload;  
+            files.update((files) => {
+              files.forEach((file) => {
+                const timestamp: Date = new Date();
+                if (fileIdList.includes(file.id)) {
+                  // 添加历史记录
+                  const historyMessage: HistoryMessage = {
+                    action: HistoryAction.DELETED,
+                    project_id: $project.id,
+                    user: user,
+                    file_id: file.id,
+                    state_before: {
+                      filename: file.filename,
+                      filepath: file.filepath,
+                    },
+                    state_after: null,
+                    timestamp: timestamp,
+                  }
+                  addHistoryMessage(historyMessage);
+                }
+              });
+              // 更新当前文件
+              return files.filter((file) => !fileIdList.includes(file.id));
+            });
+            setFilesStruct(buildFileTree($files, $tempFolders));
+          }
+
+          wsClient.fileRenamedHandler = async (response: WSResponse) => {
+            const timestamp: Date = new Date();
+            const user_id = response.client_id
+            let user = $members.find((member) => member.user_id === user_id);
+            if (!user){
+              user = await getUserInfoById(user_id);
+            }
+            files.update((files) => {
+                const file = files.find((file) => file.id === response.payload.id);
+                if (file) {
                     // 添加历史记录
                     const historyMessage: HistoryMessage = {
-                      action: HistoryAction.DELETED,
+                      action: HistoryAction.RENAMED,
                       project_id: $project.id,
-                      user_id: response.client_id,
-                      file_id: file.id,
-                      state_before: {
+                      user: user,
+                      file_id: response.payload.id,
+                      state_before: { 
                         filename: file.filename,
                         filepath: file.filepath,
                       },
-                      state_after: null,
-                      timestamp: new Date(),
+                      state_after: {
+                        filename: response.payload.filename,
+                        filepath: response.payload.filepath,
+                      },
+                      timestamp: timestamp,
                     }
                     addHistoryMessage(historyMessage);
-                  }
-                });
-                return files.filter((file) => !fileIdList.includes(file.id));
-              });
-              setFilesStruct(buildFileTree($files, $tempFolders));
+                    file.filename = response.payload.filename; // 更新文件名称
+                    file.filepath = response.payload.filepath; // 更新文件路径(应对移动+重命名的情况)
+                }
+                return files;
+            });
+            setFilesStruct(buildFileTree($files, $tempFolders));
           }
 
-          wsClient.fileRenamedHandler = (response: WSResponse) => {
-              files.update((files) => {
-                  const file = files.find((file) => file.id === response.payload.id);
-                  if (file) {
-                      // 添加历史记录
-                      const historyMessage: HistoryMessage = {
-                        action: HistoryAction.RENAMED,
-                        project_id: $project.id,
-                        user_id: response.client_id,
-                        file_id: response.payload.id,
-                        state_before: { 
-                          filename: file.filename,
-                          filepath: file.filepath,
-                        },
-                        state_after: {
-                          filename: response.payload.filename,
-                          filepath: response.payload.filepath,
-                        },
-                        timestamp: new Date(),
-                      }
-                      addHistoryMessage(historyMessage);
-                      file.filename = response.payload.filename; // 更新文件名称
-                      file.filepath = response.payload.filepath; // 更新文件路径(应对移动+重命名的情况)
-                  }
-                  return files;
-              });
-              setFilesStruct(buildFileTree($files, $tempFolders));
-          }
-
-          wsClient.fileMoveHandler = (response: WSResponse) => {
-              files.update((files) => {
-                  const file = files.find((file) => file.id === response.payload.id);
-                  if (file) {
-                      // 添加历史记录
-                      const historyMessage: HistoryMessage = {
-                        action: HistoryAction.MOVED,
-                        project_id: $project.id,
-                        user_id: response.client_id,
-                        file_id: response.payload.id,
-                        state_before: { 
-                          filename: file.filename,
-                          filepath: file.filepath,
-                        },
-                        state_after: {
-                          filename: response.payload.filename,
-                          filepath: response.payload.filepath,
-                        },
-                        timestamp: new Date(),
-                      }
-                      addHistoryMessage(historyMessage);
-                      file.filepath = response.payload.filepath; // 更新文件父级ID
-                      file.filename = response.payload.filename; // 更新文件名称(应对移动+重命名的情况)
-                  }
-                  return files;
-              });
-              setFilesStruct(buildFileTree($files, $tempFolders));
+          wsClient.fileMoveHandler = async (response: WSResponse) => {
+            const timestamp: Date = new Date();
+            const user_id = response.client_id
+            let user = $members.find((member) => member.user_id === user_id);
+            if (!user){
+              user = await getUserInfoById(user_id);
+            }
+            files.update((files) => {
+                const file = files.find((file) => file.id === response.payload.id);
+                if (file) {
+                    // 添加历史记录
+                    const historyMessage: HistoryMessage = {
+                      action: HistoryAction.MOVED,
+                      project_id: $project.id,
+                      user: user,
+                      file_id: response.payload.id,
+                      state_before: { 
+                        filename: file.filename,
+                        filepath: file.filepath,
+                      },
+                      state_after: {
+                        filename: response.payload.filename,
+                        filepath: response.payload.filepath,
+                      },
+                      timestamp: timestamp,
+                    }
+                    addHistoryMessage(historyMessage);
+                    file.filepath = response.payload.filepath; // 更新文件父级ID
+                    file.filename = response.payload.filename; // 更新文件名称(应对移动+重命名的情况)
+                }
+                return files;
+            });
+            setFilesStruct(buildFileTree($files, $tempFolders));
           }
 
           wsClient.projectCompiledPdfHanlder = (url) => {

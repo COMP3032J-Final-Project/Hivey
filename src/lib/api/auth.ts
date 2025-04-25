@@ -45,6 +45,12 @@ export const getUserInfo = async (): Promise<User> => {
     return v.parse(User, data);
 };
 
+export const getUserInfoById = async (userId: string): Promise<User> => {
+    const response = await axiosClient.get<APIResponse<User>>(`/user/${userId}`);
+    const data = response.data.data;
+    return v.parse(User, data);
+};
+
 // 更新用户信息
 export const putUserInfo = async (username: string, email: string): Promise<User> => {
     const response = await axiosClient.put<APIResponse<User>>(`/user/me`, {

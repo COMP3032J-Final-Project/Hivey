@@ -18,6 +18,7 @@
 		error = null;
 		try {
 			const messages = await getProjectHistory($project.id);
+      console.log(messages);
       setHistoryMessages(messages);
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);

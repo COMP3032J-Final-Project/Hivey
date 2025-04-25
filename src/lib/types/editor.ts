@@ -55,7 +55,7 @@ export const HistoryMessage = v.union([
     v.object({
         action: v.literal(HistoryAction.ADDED),
         project_id: v.string(),
-        user_id: v.string(),
+        user: User,
         file_id: v.string(),
         state_before: v.null(),
         state_after: v.object({ filename: v.string(), filepath: v.string() }),
@@ -64,7 +64,7 @@ export const HistoryMessage = v.union([
     v.object({
         action: v.literal(HistoryAction.RENAMED),
         project_id: v.string(),
-        user_id: v.string(),
+        user: User,
         file_id: v.string(),
         state_before: v.object({ filename: v.string(), filepath: v.string() }),
         state_after: v.object({ filename: v.string(), filepath: v.string() }),
@@ -73,7 +73,7 @@ export const HistoryMessage = v.union([
     v.object({
         action: v.literal(HistoryAction.MOVED),
         project_id: v.string(),
-        user_id: v.string(),
+        user: User,
         file_id: v.string(),
         state_before: v.object({ filename: v.string(), filepath: v.string() }),
         state_after: v.object({ filename: v.string(), filepath: v.string() }),
@@ -82,7 +82,7 @@ export const HistoryMessage = v.union([
     v.object({
         action: v.literal(HistoryAction.DELETED),
         project_id: v.string(),
-        user_id: v.string(),
+        user: User,
         file_id: v.string(),
         state_before: v.object({ filename: v.string(), filepath: v.string() }),
         state_after: v.null(),
@@ -91,7 +91,7 @@ export const HistoryMessage = v.union([
     v.object({
         action: v.literal(HistoryAction.UPDATE_NAME),
         project_id: v.string(),
-        user_id: v.string(),
+        user: User,
         file_id: v.optional(v.nullable(v.string())),
         state_before: v.null(),
         state_after: v.object({ name: v.string() }),

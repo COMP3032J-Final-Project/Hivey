@@ -21,7 +21,6 @@
 		const filenameInput = document.getElementById('filename') as HTMLInputElement;
 		const filename = filenameInput.value.trim();
 		console.log('Edit file:', file.id, ' to:', filename);
-		// TODO: 接入后端
 
 		let formData: updateFileFrom = {
 			filename: filename,

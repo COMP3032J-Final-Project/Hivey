@@ -77,7 +77,7 @@
 	<div class="min-w-0 flex-1">
 		<!-- 用户名 -->
 		<div>
-			<span class="text-sm font-bold font-serif text-amber-800">{historyMessage.user_id}</span>
+			<span class="text-sm font-bold font-serif text-amber-800">{historyMessage.user.username}</span>
 		</div>
 		
 		<!-- 操作内容 -->
