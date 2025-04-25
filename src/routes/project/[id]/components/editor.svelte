@@ -33,7 +33,7 @@
       username,
       permission,
   }: {
-      docContent: string,
+      docContent: string | undefined,
       username: string;
       permission: UserPermissionEnum;
   } = $props();
@@ -413,6 +413,7 @@
 				  loroDoc = undefined;
 				  loroAwareness = undefined;
 				  undoManager = undefined;
+          docContent = undefined;
 			};
   })
   

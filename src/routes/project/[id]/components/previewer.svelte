@@ -116,19 +116,18 @@
 
   $effect(() => {
       const filetype = $currentFile.filetype;
-      if (!filetype) return;
+      const fileData = $currentFile.rawData;
+      if (!filetype || filetype !== "markdown") return;
+      if (docContent == null) return;
       
-      const content = docContent || '';
+      const content = docContent;
       
-      
-      if (filetype === 'markdown') {
-        renenderedHTML = markdownRender.render(content);
-      }
+      renenderedHTML = markdownRender.render(content);
   });
 
   $effect(() => {
       const filetype = $currentFile.filetype;
-      if (!filetype) return;
+      if (!filetype || filetype === 'markdown') return;
       const fileData = $currentFile.rawData;
 
       if (filetype == "pdf") {
@@ -138,8 +137,7 @@
           pdfSource = $compiledPdfPreviewUrl;
       }
       
-      if (filetype !== 'markdown') renderPDF();
-      
+      renderPDF();
   });
 
 </script>
