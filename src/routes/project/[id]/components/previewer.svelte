@@ -119,8 +119,9 @@
       const content = docContent || '';
       
       
-      if (filetype === 'markdown') 
-          markdownRender.render(content);
+      if (filetype === 'markdown') {
+        renenderedHTML = markdownRender.render(content);
+      }
   });
 
   $effect(() => {
