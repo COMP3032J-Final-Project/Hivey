@@ -30,7 +30,7 @@
 	];
 
 	// 检查当前用户是否有权限编辑目标成员的权限
-	let canEditPermission = $derived(async () => {
+	function canEditPermission() {
 		// 如果当前用户是 Viewer，不能编辑任何权限
 		if (currentUser.permission === UserPermissionEnum.Viewer) {
 			return false;
@@ -60,7 +60,7 @@
 		}
 
 		return false;
-	});
+	}
 
 	// 根据当前用户权限过滤可选权限
 	function getAvailablePermissions() {
@@ -129,7 +129,7 @@
 			}
 
 			// 检查是否有权限编辑
-			if (!(await canEditPermission)) {
+			if (!canEditPermission()) {
 				failure(mpp.error_edit_member_permission());
 				return;
 			}
@@ -173,7 +173,7 @@
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-			{#if await canEditPermission}
+			{#if canEditPermission()}
 				<DropdownMenu.Item onclick={handleEditPermission}>Edit Permission</DropdownMenu.Item>
 			{/if}
 			<DropdownMenu.Item onclick={() => (dialogOpen = true)} class="text-destructive"
