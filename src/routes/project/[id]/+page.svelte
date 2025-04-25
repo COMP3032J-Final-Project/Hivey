@@ -187,6 +187,7 @@
 							Home page
 							<Menubar.Shortcut><House class="size-4" /></Menubar.Shortcut>
 						</Menubar.Item>
+						{#if $project.type !== 'template'}
 						<Menubar.Item
 							onclick={() => {
 								if (currentUser.permission !== UserPermissionEnum.Owner) {
@@ -199,10 +200,11 @@
 							Share as Template
 							<Menubar.Shortcut><Share class="size-4" /></Menubar.Shortcut>
 						</Menubar.Item>
-            <Menubar.Item>
-              Export Source as Zip
-              <Menubar.Shortcut><Download class="size-4" /></Menubar.Shortcut>
-            </Menubar.Item>
+						{/if}
+						<Menubar.Item>
+							Export Source as Zip
+							<Menubar.Shortcut><Download class="size-4" /></Menubar.Shortcut>
+						</Menubar.Item>
 					</Menubar.Content>
 				</Menubar.Menu>
 				<Menubar.Menu>
