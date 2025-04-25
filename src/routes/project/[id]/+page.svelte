@@ -25,6 +25,7 @@
 	import ShareProjectDialog from './components/share-project2template-modal.svelte';
 	import { goto } from '$app/navigation';
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+	import { FileType } from '$lib/types/editor';
 
 	let { data }: PageProps = $props();
 	const getWsClient = getContext<() => WebSocketClient | null>('websocket-client'); // 从context中获取WebSocket客户端的函数
@@ -32,7 +33,7 @@
 	let currentUser: User = $state(data.currentUser);
 	let membersDialogOpen = $state(false);
 	let shareTemplateDialogOpen = $state(false); // 新增：控制对话框显示状态
-	let currentFileType = $derived($currentFile.filetype || 'Format');
+	let currentFileType: FileType = $derived($currentFile.filetype as FileType);
 	let docContent = $state('');
 
 	function formatMarkdown() {
@@ -316,9 +317,9 @@
 			<div class="flex h-full flex-col">
 				<!-- TODO make overflowed area float above editor -->
         <!-- TODO toggleable-toolbar from ./components/toggleable-toolbar.svelte -->
-				{#if ['markdown', 'typst', 'latex'].includes(currentFileType) && $project.type !== 'template' && currentUser.permission !== UserPermissionEnum.Viewer && currentUser.permission !== UserPermissionEnum.NonMember}
+				{#if [FileType.MARKDOWN, FileType.TYPST, FileType.LATEX].includes(currentFileType) && $project.type !== 'template' && currentUser.permission !== UserPermissionEnum.Viewer && currentUser.permission !== UserPermissionEnum.NonMember}
 					<div class="border-b p-1 flex justify-normal">
-						<Button class="mr-1" size="icon" onclick={formatMarkdown}>{currentFileType}</Button>
+						<Button class="mr-1" onclick={formatMarkdown}>{currentFileType}</Button>
 						<Tooltip.Root>
 							<Tooltip.Trigger>
 								<Button class="mr-1" variant="ghost" size="icon" onclick={() => wrapSelection('bold')}>

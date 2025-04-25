@@ -247,27 +247,27 @@ export async function getFileType(
 ): Promise<FileType> {
     const fileExtension = getFileExtension(filename);
     switch (fileExtension) {
-        case 'md':
-        case 'markdown':
+        case '.md':
+        case '.markdown':
             return FileType.MARKDOWN;
-        case 'typ':
-        case 'typst':
+        case '.typ':
+        case '.typst':
             return FileType.TYPST;
-        case 'tex':
-        case 'latex':
+        case '.tex':
+        case '.latex':
             return FileType.LATEX;
-        case 'bib':
+        case '.bib':
             return FileType.BIB;
-        case 'png':
+        case '.png':
             return FileType.PNG;
-        case 'jpg':
-        case 'jpeg':
+        case '.jpg':
+        case '.jpeg':
             return FileType.JPG;
-        case 'webp':
+        case '.webp':
             return FileType.WEBP;
-        case 'pdf':
+        case '.pdf':
             return FileType.PDF;
-        case 'txt':
+        case '.txt':
             return FileType.PLAIN_TEXT;
         default:
             if (file && await isLikelyBinary(file)) 
