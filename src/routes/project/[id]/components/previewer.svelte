@@ -11,6 +11,7 @@
   import { ZoomIn, ZoomOut } from 'lucide-svelte';
   import { onDestroy, onMount, untrack } from 'svelte';
   import { sleep } from '$lib/utils';
+  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
   let {
       docContent,
@@ -151,8 +152,28 @@
 
 {#if $currentFile.filetype === "pdf"}
   <div class="flex justify-normal">
-    <Button class="m-1" variant="ghost" size="icon" onclick={zoomIn}><ZoomIn/></Button>
-    <Button class="m-1" variant="ghost" size="icon" onclick={zoomOut}><ZoomOut/></Button>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        <Button class="m-1" variant="ghost" size="icon" onclick={zoomIn}>
+          <ZoomIn/>
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        Zoom In
+      </Tooltip.Content>
+    </Tooltip.Root>
+    
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        <Button class="m-1" variant="ghost" size="icon" onclick={zoomOut}>
+          <ZoomOut/>
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        Zoom Out
+      </Tooltip.Content>
+    </Tooltip.Root>
+    
     <ExportButton />
   </div>
 {/if}
