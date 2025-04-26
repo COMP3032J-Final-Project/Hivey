@@ -60,8 +60,6 @@
       }
   };
 
-  
-
   const renderPDF = async () => {
       console.log('renderPDF() is called');
       if (pdfSource == null) return;
@@ -112,6 +110,33 @@
           console.error('Error rendering PDF:', error);
       }
   };
+
+  const downloadPDFFromRendered = (pdfDoc: pdfjsLib.PDFDocumentProxy) => {
+    const saveAs = (data: Uint8Array) => {
+      const blob = new Blob([data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'document.pdf';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    // 将 PDF 文档保存为 Uint8Array 格式
+    pdfDoc.getData().then((data) => {
+      saveAs(new Uint8Array(data));
+    }).catch(err => {
+      console.error('Error getting PDF data:', err);
+    });
+  };
+
+  let downloadPDFClick = () => {
+  if (pdfViewer && pdfViewer.pdfDocument) {
+    // 直接使用 pdfViewer 的 pdfDocument 属性
+    const pdfDoc = pdfViewer.pdfDocument;
+    downloadPDFFromRendered(pdfDoc);
+  }
+};
 
   $effect(() => {
       const filetype = $currentFile.filetype;
@@ -181,14 +206,14 @@
       </Tooltip.Content>
     </Tooltip.Root>
     
-    <ExportButton />
+    <ExportButton onClick={downloadPDFClick}/>
   </div>
 {/if}
 <div class={cn("relative flex flex-col size-full shadow-inner group", className)}>
   {#if shouldRenenderHTML}
-    <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block z-index:100">
-      <ExportButton />
-    </div>
+    <!-- <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block z-index:100">
+      <ExportButton onClick={} />
+    </div> -->
     <div class="prose lg:prose-md overflow-y-auto p-2 break-words">
       {@html renenderedHTML}
     </div>

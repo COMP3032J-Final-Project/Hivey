@@ -3,16 +3,13 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import * as Tooltip from "$lib/components/ui/tooltip/index.js";
     
-    function exportPDF() {
-        // TODO: Implement markdown formatting logic here
-        console.log('export PDF');
-    }
+    export let onClick: () => void;
 </script>
 
 <div>
     <Tooltip.Root>
         <Tooltip.Trigger>
-            <Button class="m-1" variant="ghost" size="icon" onclick={() => exportPDF()}>
+            <Button class="m-1" variant="ghost" size="icon" onclick={onClick}>
                 <Download />
             </Button>
         </Tooltip.Trigger>
