@@ -200,6 +200,7 @@
                       },
                       timestamp: timestamp,
                     }
+                    console.log("New history message:", historyMessage);
                     addHistoryMessage(historyMessage);
                     file.filename = response.payload.filename; // 更新文件名称
                     file.filepath = response.payload.filepath; // 更新文件路径(应对移动+重命名的情况)

@@ -32,7 +32,7 @@
       //   // 其他类型的消息都保留
       //   return true;
       // });
-      
+      console.log("History messages:", messages);
       setHistoryMessages(messages);
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);

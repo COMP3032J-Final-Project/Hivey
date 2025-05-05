@@ -77,6 +77,7 @@
       <Sidebar.Header>
         <Sidebar.Menu>
           <Sidebar.MenuItem>
+
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 {#snippet child({ props })}
@@ -87,6 +88,7 @@
                   </Sidebar.MenuButton>
                 {/snippet}
               </DropdownMenu.Trigger>
+
               <DropdownMenu.Content class="w-[--bits-dropdown-menu-anchor-width]">
                 
                 <!-- 创建空白项目 -->
@@ -95,16 +97,16 @@
                 </DropdownMenu.Item>
 
                 <!-- 创建示例项目 -->
-                <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Example)}>
+                <!-- <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Example)}>
                   { mpd.example_project() }
-                </DropdownMenu.Item>
+                </DropdownMenu.Item> -->
 
                 <!-- 创建上传项目 -->
-                <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Upload)}>
+                <!-- <DropdownMenu.Item onclick={() => openProjectDialog(ProjectFormCategory.Upload)}>
                   { mpd.upload_project() }
-                </DropdownMenu.Item>
-
+                </DropdownMenu.Item> -->
               </DropdownMenu.Content>
+              
             </DropdownMenu.Root>
           </Sidebar.MenuItem>
         </Sidebar.Menu>
