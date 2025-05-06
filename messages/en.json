@@ -39,7 +39,12 @@
 
     "_contact": {
       "contact_us_description":"Contact us in case you have any questions about Hivey or want to give feedback. Use the contact form below. We look forward to hearing from you!",
-      "name": "Name"
+      "name": "Name",
+      "name_required": "Name is required",
+      "email_required": "Email is required",
+      "subject_required": "Subject is required",
+      "message_required": "Message is required",
+      "message_sent_successfully": "Message sent successfully"
     },
 
 

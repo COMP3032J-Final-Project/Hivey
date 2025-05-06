@@ -40,7 +40,12 @@
 
     "_contact": {
       "contact_us_description":"在您有任何关于Hivey的问题或想要提供反馈时，请使用下面的联系表单。我们期待您的来信！",
-      "name":"用户名"
+      "name":"用户名",
+      "name_required":"用户名不能为空",
+      "email_required":"邮箱不能为空",
+      "subject_required":"主题不能为空",
+      "message_required":"消息不能为空",
+      "message_sent_successfully":"消息发送成功"
     },
 
 
