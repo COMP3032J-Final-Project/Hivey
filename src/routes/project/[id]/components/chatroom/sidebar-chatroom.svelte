@@ -38,9 +38,15 @@
     if (wsClient) {
       wsClient.chatMessageHandler = (message: ChatMessageType) => {
         addChatMessage(message);
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
       }
     }
     await loadHistoryMessages(); // 加载历史消息
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
   });
  
   async function loadHistoryMessages() {  // 加载历史消息
@@ -48,7 +54,7 @@
     try {
       const result = await getHistoryChatMessages({ // result.code, result.messages
         projectId: $project.id,
-        max_num: 20,
+        max_num: 10,
         last_timestamp: lastMessageTimestamp  // 获取当前时间前的20条消息或指定时间前的消息
       });
 
@@ -59,6 +65,10 @@
         );
         lastMessageTimestamp = new Date(sortedMessages[0].timestamp); // 更新最早消息的时间戳 
         setChatMessages(sortedMessages); // 使用store中的方法设置消息
+        
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
       } 
       hasMoreMessages = result.code === 200; // 根据状态码确定是否还有更多消息
     } catch (error) {
@@ -74,7 +84,7 @@
     try {
       const result = await getHistoryChatMessages({ // result.code, result.messages
         projectId: $project.id,
-        max_num: 20,
+        max_num: 10,
         last_timestamp: lastMessageTimestamp || new Date() // 获取当前时间前的10条消息或指定时间前的消息
       });
       if (result.messages && result.messages.length > 0) {
@@ -135,7 +145,7 @@
 <Sidebar.Content>
   <div class="chat-messages flex-auto flex flex-col overflow-y-auto mt-1" onscroll={handleScrollTop}>
     {#if hasMoreMessages}
-      <div class="sticky top-0 z-10 flex justify-center py-2 bg-white/80 backdrop-blur-sm">
+      <div class="sticky top-0 z-10 flex justify-center py-2">
         {#if isLoadingMore}
           <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-400"></div>
         {:else}
