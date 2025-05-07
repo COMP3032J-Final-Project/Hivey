@@ -21,6 +21,8 @@
 	let isUpdating = $state(false);
 	let selectedPermission = $state<string>('');
 	let currentMemberPermission = $state<UserPermissionEnum | null>(null);
+	let menuOpen = $state(false);
+	let permissionsLoaded = $state(false);
 
 	// 权限选项
 	const permissionOptions = [
@@ -62,6 +64,42 @@
 		return false;
 	}
 
+	// 检查当前用户是否有权限删除目标成员
+	function canDeleteMember() {
+		// 任何用户都可以删除自己（离开项目），除了Owner
+		if (currentUser.username === id) {
+			// Owner只有在项目中没有其他成员时才能离开项目
+			if (currentUser.permission === UserPermissionEnum.Owner) {
+				// 如果没有成员计数数据，假设不能离开
+				return false;
+			}
+			return currentUser.permission !== UserPermissionEnum.Owner;
+		}
+
+		// 如果当前用户是 Viewer 或 Writer，不能删除任何其他人
+		if (currentUser.permission === UserPermissionEnum.Viewer || 
+			currentUser.permission === UserPermissionEnum.Writer) {
+			return false;
+		}
+
+		// 如果当前用户是 Admin
+		if (currentUser.permission === UserPermissionEnum.Admin) {
+			// Admin 不能删除 Owner 或其他 Admin
+			if (currentMemberPermission === UserPermissionEnum.Owner || 
+				currentMemberPermission === UserPermissionEnum.Admin) {
+				return false;
+			}
+			return true;
+		}
+
+		// 如果当前用户是 Owner，可以删除任何其他成员
+		if (currentUser.permission === UserPermissionEnum.Owner) {
+			return true;
+		}
+
+		return false;
+	}
+
 	// 根据当前用户权限过滤可选权限
 	function getAvailablePermissions() {
 		if (currentUser.permission === UserPermissionEnum.Owner) {
@@ -83,6 +121,21 @@
 	async function handleDelete() {
 		try {
 			isDeleting = true;
+			
+			// 如果是删除自己（离开项目）
+			if (currentUser.username === id) {
+				// 这里可以调用离开项目的API，目前使用removeProjectMember
+				await removeProjectMember({
+					currentUser,
+					projectId,
+					memberName: id
+				});
+				notification(`You have successfully left the project`);
+				// 离开项目后跳转到项目列表页
+				window.location.href = '/dashboard/repository/projects/all';
+				return;
+			}
+			
 			await removeProjectMember({
 				currentUser,
 				projectId,
@@ -103,6 +156,7 @@
 			const permission = await getProjectMemberPermission(projectId, id);
 			currentMemberPermission = permission;
 			selectedPermission = permission;
+			permissionsLoaded = true;
 		} catch (error) {
 			failure('Failed to fetch member permission');
 		}
@@ -110,7 +164,6 @@
 
 	async function handleEditPermission() {
 		permissionDialogOpen = true;
-		await fetchCurrentPermission();
 	}
 
 	async function handlePermissionUpdate() {
@@ -159,9 +212,17 @@
 			isUpdating = false;
 		}
 	}
+
+	// 当菜单打开时加载权限
+	function handleMenuOpenChange(open: boolean) {
+		menuOpen = open;
+		if (open && !permissionsLoaded) {
+			fetchCurrentPermission();
+		}
+	}
 </script>
 
-<DropdownMenu.Root>
+<DropdownMenu.Root onOpenChange={handleMenuOpenChange}>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
@@ -173,16 +234,29 @@
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-			{#if canEditPermission()}
-				<DropdownMenu.Item onclick={handleEditPermission} class="flex items-center justify-between">
-					<span>Edit Permission</span>
-					<Pencil class="size-4" />
+			{#if !permissionsLoaded}
+				<DropdownMenu.Item disabled>
+					<span>Loading...</span>
 				</DropdownMenu.Item>
+			{:else}
+				{#if canEditPermission()}
+					<DropdownMenu.Item onclick={handleEditPermission} class="flex items-center justify-between">
+						<span>Edit Permission</span>
+						<Pencil class="size-4" />
+					</DropdownMenu.Item>
+				{/if}
+				{#if canDeleteMember()}
+					<DropdownMenu.Item onclick={() => (dialogOpen = true)} class="flex items-center justify-between">
+						<span>Delete Member</span>
+						<Trash2 class="size-4" />
+					</DropdownMenu.Item>
+				{/if}
+				{#if !canEditPermission() && !canDeleteMember()}
+					<DropdownMenu.Item disabled>
+						<span>No available actions</span>
+					</DropdownMenu.Item>
+				{/if}
 			{/if}
-			<DropdownMenu.Item onclick={() => (dialogOpen = true)} class="flex items-center justify-between">
-				<span>Delete Member</span>
-				<Trash2 class="size-4" />
-			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
@@ -191,9 +265,13 @@
 <Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Remove Member</Dialog.Title>
+			<Dialog.Title>{currentUser.username === id ? 'Leave Project' : 'Remove Member'}</Dialog.Title>
 			<Dialog.Description>
-				Are you sure you want to remove {id} from this project?
+				{#if currentUser.username === id}
+					Are you sure you want to leave this project?
+				{:else}
+					Are you sure you want to remove {id} from this project?
+				{/if}
 			</Dialog.Description>
 		</Dialog.Header>
 		<Dialog.Footer>
@@ -201,7 +279,11 @@
 				>Cancel</Button
 			>
 			<Button variant="destructive" onclick={handleDelete} disabled={isDeleting}>
-				{isDeleting ? 'Removing...' : 'Remove'}
+				{#if isDeleting}
+					{currentUser.username === id ? 'Leaving...' : 'Removing...'}
+				{:else}
+					{currentUser.username === id ? 'Leaving...' : 'Removing...'}
+				{/if}
 			</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
