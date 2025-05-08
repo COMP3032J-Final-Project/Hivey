@@ -214,7 +214,7 @@
     <!-- <div class="absolute top-0 right-0 flex flex-row-reverse hidden group-hover:block z-index:100">
       <ExportButton onClick={} />
     </div> -->
-    <div class="overflow-y-auto p-2 break-words">
+    <div class="prose max-w-none overflow-y-auto p-2 break-words">
       {@html renenderedHTML}
     </div>
   {:else}
