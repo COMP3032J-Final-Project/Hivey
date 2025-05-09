@@ -77,51 +77,101 @@
 
 	function checkSelection() {
 		if (editorRef) {
-			isBold = editorRef.hasSurroundingSymbols('**', '**');
-			isItalic = editorRef.hasSurroundingSymbols('*', '*');
-			isStrikethrough = editorRef.hasSurroundingSymbols('~~', '~~');
+			const boldFormat = getFormatting('bold');
+			const italicFormat = getFormatting('italic');
+			const strikeFormat = getFormatting('strikethrough');
+			
+			isBold = editorRef.hasSurroundingSymbols(boldFormat.prefix, boldFormat.suffix);
+			isItalic = editorRef.hasSurroundingSymbols(italicFormat.prefix, italicFormat.suffix);
+			isStrikethrough = editorRef.hasSurroundingSymbols(strikeFormat.prefix, strikeFormat.suffix);
+			
 			value = [];
-			if (isBold) {
-				value.push('bold');
-			}
-			if (isItalic) {
-				value.push('italic');
-			}
-			if (isStrikethrough) {
-				value.push('strikethrough');
-			}
+			if (isBold) value.push('bold');
+			if (isItalic) value.push('italic');
+			if (isStrikethrough) value.push('strikethrough');
 		}
 	}
 
-	function wrapSelection(value: string) {
+		// Format definitions for different file types
+		type FormatType = 'bold' | 'italic' | 'strikethrough';
+	type FormatDefinition = { prefix: string; suffix: string };
+	type FormatMap = Record<FormatType, FormatDefinition>;
+
+	const formatDefinitions: Record<string, FormatMap> = {
+		'markdown': {
+			bold: { prefix: '**', suffix: '**' },
+			italic: { prefix: '*', suffix: '*' },
+			strikethrough: { prefix: '~~', suffix: '~~' }
+		},
+		'latex': {
+			bold: { prefix: '\\textbf{', suffix: '}' },
+			italic: { prefix: '\\textit{', suffix: '}' },
+			strikethrough: { prefix: '\\underline{', suffix: '}' }
+		},
+		'typst': {
+			bold: { prefix: '*', suffix: '*' },
+			italic: { prefix: '_', suffix: '_' },
+			strikethrough: { prefix: '#underline[', suffix: ']' }
+		}
+	};
+
+	// Map FileType enum to strings for our format dictionary
+	function fileTypeToString(type: FileType): string {
+		switch (type) {
+			case FileType.MARKDOWN:
+				return 'markdown';
+			case FileType.LATEX:
+				return 'latex';
+			case FileType.TYPST:
+				return 'typst';
+			default:
+				return 'markdown'; // Default to markdown
+		}
+	}
+
+	// Default to markdown if file type not recognized
+	function getFormatting(formatType: string): FormatDefinition {
+		const formatKey = fileTypeToString(currentFileType);
+		const fileFormatting = formatDefinitions[formatKey] || formatDefinitions['markdown'];
+		
+		// Type guard to check if the format type is valid
+		if (formatType === 'bold' || formatType === 'italic' || formatType === 'strikethrough') {
+			return fileFormatting[formatType];
+		}
+		
+		// Default empty format if format type is not recognized
+		return { prefix: '', suffix: '' };
+	}
+
+	function wrapSelection(formatType: string) {
 		if (editorRef) {
-			if (value === 'bold') {
+			const format = getFormatting(formatType);
+			const { prefix, suffix } = format;
+			
+			if (formatType === 'bold') {
 				if (isBold) {
-					editorRef.unwrapSelection('**', '**');
+					editorRef.unwrapSelection(prefix, suffix);
 					isBold = false;
-					console.log('Unwrap selection');
 				} else {
-					editorRef.wrapSelection('**', '**');
+					editorRef.wrapSelection(prefix, suffix);
 					isBold = true;
 				}
 			}
-			if (value === 'italic') {
+			else if (formatType === 'italic') {
 				if (isItalic) {
-					editorRef.unwrapSelection('*', '*');
+					editorRef.unwrapSelection(prefix, suffix);
 					isItalic = false;
-					console.log('Unwrap selection');
 				} else {
-					editorRef.wrapSelection('*', '*');
+					editorRef.wrapSelection(prefix, suffix);
 					isItalic = true;
 				}
 			}
-			if (value === 'strikethrough') {
+			else if (formatType === 'strikethrough') {
 				if (isStrikethrough) {
-					editorRef.unwrapSelection('~~', '~~');
+					editorRef.unwrapSelection(prefix, suffix);
 					isStrikethrough = false;
-					console.log('Unwrap selection');
 				} else {
-					editorRef.wrapSelection('~~', '~~');
+					editorRef.wrapSelection(prefix, suffix);
 					isStrikethrough = true;
 				}
 			}
